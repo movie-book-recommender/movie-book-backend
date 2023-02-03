@@ -1,6 +1,7 @@
 import os
 from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
+from datetime import date
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
@@ -66,6 +67,29 @@ class TableMovieTmdbDataFull(db.Model):
             'backdroppaths': self.movie_tmdb_data_full_backdroppaths,
             }
 
+class TableMvMetadataUpdated(db.Model):
+    __tablename__ = 'mv_metadata_updated'
+    mv_metadata_updated_title = db.Column('title', db.String(2001), primary_key=True)
+    mv_metadata_updated_directedby = db.Column('directedby', db.String(2002))
+    mv_metadata_updated_starring = db.Column('starring', db.String(2003))
+    mv_metadata_updated_avgrating = db.Column('avgrating', db.Integer)
+    mv_metadata_updated_imdbid = db.Column('imdbid', db.String(20))
+    mv_metadata_updated_item_id = db.Column('item_id', db.Integer)
+
+    def object_to_dictionary(self):
+        return {
+            'title': self.mv_metadata_updated_title,
+            'directedby': self.mv_metadata_updated_directedby,
+            'starring': self.mv_metadata_updated_starring,
+            'avgrating': self.mv_metadata_updated_avgrating,
+            'imdbid': self.mv_metadata_updated_imdbid,
+            'item_id': self.mv_metadata_updated_item_id,
+            }
+
+class TableTest(db.Model): # Luodaan testitaulu, johon voidaan laittaa jotain
+    __tablename__ = 'input_test'
+    input_test_inputvalue = db.Column('inputvalue', db.String(250), primary_key=True)
+
 def dict_helper(object_list):
     return [item.object_to_dictionary() for item in object_list]
 
@@ -116,3 +140,57 @@ def get_top_10_movies_by_year():
     response = jsonify(allvalues_dict)
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response
+
+@app.route('/dbgettop10newestpublishedmovies', methods = ['GET'])
+def get_top_10_newest_published_movies():
+    date_value = date.today()
+    allvalues = TableMovieTmdbDataFull.query.filter(TableMovieTmdbDataFull.movie_tmdb_data_full_releasedate<date_value).order_by(TableMovieTmdbDataFull.movie_tmdb_data_full_releasedate.desc()).limit(10).all()
+    allvalues_dict = dict_helper(allvalues)
+    response = jsonify(allvalues_dict)
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    return response
+
+@app.route('/dbgettop10oldestmovies', methods = ['GET'])
+def get_top_10_oldest_movies():
+    allvalues = TableMovieTmdbDataFull.query.order_by(TableMovieTmdbDataFull.movie_tmdb_data_full_releasedate.asc()).limit(10).all()
+    allvalues_dict = dict_helper(allvalues)
+    response = jsonify(allvalues_dict)
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    return response
+
+@app.route('/dbsearchmoviesbyname', methods = ['GET'])
+def search_movies_by_name_top_20():
+    search_raw = request.args['input']
+    search_term = f'%{search_raw}%'
+    allvalues = TableMovieTmdbDataFull.query.filter(TableMovieTmdbDataFull.movie_tmdb_data_full_title.ilike(search_term)).order_by(TableMovieTmdbDataFull.movie_tmdb_data_full_title.ilike(search_term).desc(), TableMovieTmdbDataFull.movie_tmdb_data_full_title).limit(20).all()
+    allvalues_dict = dict_helper(allvalues)
+    response = jsonify(allvalues_dict)
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    return response
+
+@app.route('/dbgettop10highestratedmovies')
+def get_top_10_highest_rating_movies():
+    # Note. this api does not yet return all the wanted data. 
+    allvalues = TableMovieTmdbDataFull.query.join(TableMvMetadataUpdated, TableMvMetadataUpdated.mv_metadata_updated_item_id == TableMovieTmdbDataFull.movie_tmdb_data_full_movieid, isouter=False).order_by(TableMvMetadataUpdated.mv_metadata_updated_avgrating.desc().nulls_last(), TableMovieTmdbDataFull.movie_tmdb_data_full_releasedate.desc().nulls_last()).limit(10).all()
+#    allvalues = TableMovieTmdbDataFull.query.join(TableMvMetadataUpdated).filter(TableMovieTmdbDataFull.movie_tmdb_data_full_movieid == TableMvMetadataUpdated.mv_metadata_updated_item_id).order_by(TableMvMetadataUpdated.mv_metadata_updated_avgrating.desc().nulls_last(), TableMovieTmdbDataFull.movie_tmdb_data_full_releasedate.desc().nulls_last()).limit(10).all()
+#    allvalues = db.session.query.join(TableMovieTmdbDataFull).joint(TableMvMetadataUpdated).filter(TableMovieTmdbDataFull.movie_tmdb_data_full_movieid == TableMvMetadataUpdated.mv_metadata_updated_item_id).order_by(TableMvMetadataUpdated.mv_metadata_updated_avgrating.desc().nulls_last(), TableMovieTmdbDataFull.movie_tmdb_data_full_releasedate.desc().nulls_last()).limit(10).all()
+#    allvalues = db.session.query(TableMovieTmdbDataFull, TableMvMetadataUpdated).filter(TableMovieTmdbDataFull.movie_tmdb_data_full_movieid == TableMvMetadataUpdated.mv_metadata_updated_item_id).order_by(TableMvMetadataUpdated.mv_metadata_updated_avgrating.desc().nulls_last(), TableMovieTmdbDataFull.movie_tmdb_data_full_releasedate.desc().nulls_last()).limit(10).all()
+#    allvalues = db.session.query(TableMovieTmdbDataFull).join(TableMvMetadataUpdated).filter(TableMovieTmdbDataFull.movie_tmdb_data_full_movieid == TableMvMetadataUpdated.mv_metadata_updated_item_id).limit(10).all()
+#    allvalues = db.session.query(TableMovieTmdbDataFull, TableMvMetadataUpdated).join(TableMvMetadataUpdated, TableMvMetadataUpdated.mv_metadata_updated_item_id == TableMovieTmdbDataFull.movie_tmdb_data_full_movieid).limit(10).all()
+#    allvalues = db.session.query(TableMovieTmdbDataFull, TableMvMetadataUpdated).join(TableMovieTmdbDataFull.movie_tmdb_data_full_movieid == TableMvMetadataUpdated.mv_metadata_updated_item_id).limit(10).all()
+#    allvalues = TableMovieTmdbDataFull.query(TableMovieTmdbDataFull, TableMvMetadataUpdated).join(TableMovieTmdbDataFull.movie_tmdb_data_full_movieid == TableMvMetadataUpdated.mv_metadata_updated_item_id).limit(10).all()
+#    allvalues = TableMovieTmdbDataFull.query(TableMovieTmdbDataFull, TableMvMetadataUpdated).join(TableMvMetadataUpdated, TableMvMetadataUpdated.mv_metadata_updated_item_id == TableMovieTmdbDataFull.movie_tmdb_data_full_movieid, isouter=False).order_by(TableMvMetadataUpdated.mv_metadata_updated_avgrating.desc().nulls_last(), TableMovieTmdbDataFull.movie_tmdb_data_full_releasedate.desc().nulls_last()).limit(10).all()
+
+    allvalues_dict = dict_helper(allvalues)
+    response = jsonify(allvalues_dict)
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    return response
+
+@app.route('/inserttodb', methods = ['GET'])
+def insert_data_to_db():
+    given_data = request.args['input'] # get data from arguments
+    inval = TableTest(input_test_inputvalue=given_data)
+    db.session.add(inval)
+    db.session.commit()
+    return 'thank you'
+

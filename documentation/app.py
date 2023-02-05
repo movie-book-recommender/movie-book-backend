@@ -47,7 +47,6 @@ class TableMovieTmdbDataFull(db.Model):
             'movieid': self.movie_tmdb_data_full_movieid,
             'tmdbmovieid': self.movie_tmdb_data_full_tmdbmovieid,
             'title': self.movie_tmdb_data_full_title,
-            'movieid': self.movie_tmdb_data_full_movieid,
             'originaltitle': self.movie_tmdb_data_full_originaltitle,
             'collection': self.movie_tmdb_data_full_collection,
             'genres': self.movie_tmdb_data_full_genres,
@@ -125,9 +124,12 @@ def get_given_movie_data_test():
 
 @app.route('/dbgetgivenmoviedata', methods = ['GET'])
 def get_given_movie_data():
-    movieid = int(request.args['movieid'])
-    allvalues = TableMovieTmdbDataFull.query.filter_by(movie_tmdb_data_full_movieid = movieid).first()
-    response = jsonify(allvalues.object_to_dictionary())
+    if request.args['movieid'] != '':
+        movieid = int(request.args['movieid'])
+        allvalues = TableMovieTmdbDataFull.query.filter_by(movie_tmdb_data_full_movieid = movieid).first()
+        response = jsonify(allvalues.object_to_dictionary())
+    else: 
+        response = jsonify({'value': 'not available'})
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response
 
@@ -168,20 +170,27 @@ def search_movies_by_name_top_20():
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response
 
-@app.route('/dbgettop10highestratedmovies')
+@app.route('/dbgettop10highestratedmovies', methods = ['GET'])
 def get_top_10_highest_rating_movies():
-    # Note. this api does not yet return all the wanted data. 
-    allvalues = TableMovieTmdbDataFull.query.join(TableMvMetadataUpdated, TableMvMetadataUpdated.mv_metadata_updated_item_id == TableMovieTmdbDataFull.movie_tmdb_data_full_movieid, isouter=False).order_by(TableMvMetadataUpdated.mv_metadata_updated_avgrating.desc().nulls_last(), TableMovieTmdbDataFull.movie_tmdb_data_full_releasedate.desc().nulls_last()).limit(10).all()
-#    allvalues = TableMovieTmdbDataFull.query.join(TableMvMetadataUpdated).filter(TableMovieTmdbDataFull.movie_tmdb_data_full_movieid == TableMvMetadataUpdated.mv_metadata_updated_item_id).order_by(TableMvMetadataUpdated.mv_metadata_updated_avgrating.desc().nulls_last(), TableMovieTmdbDataFull.movie_tmdb_data_full_releasedate.desc().nulls_last()).limit(10).all()
-#    allvalues = db.session.query.join(TableMovieTmdbDataFull).joint(TableMvMetadataUpdated).filter(TableMovieTmdbDataFull.movie_tmdb_data_full_movieid == TableMvMetadataUpdated.mv_metadata_updated_item_id).order_by(TableMvMetadataUpdated.mv_metadata_updated_avgrating.desc().nulls_last(), TableMovieTmdbDataFull.movie_tmdb_data_full_releasedate.desc().nulls_last()).limit(10).all()
-#    allvalues = db.session.query(TableMovieTmdbDataFull, TableMvMetadataUpdated).filter(TableMovieTmdbDataFull.movie_tmdb_data_full_movieid == TableMvMetadataUpdated.mv_metadata_updated_item_id).order_by(TableMvMetadataUpdated.mv_metadata_updated_avgrating.desc().nulls_last(), TableMovieTmdbDataFull.movie_tmdb_data_full_releasedate.desc().nulls_last()).limit(10).all()
-#    allvalues = db.session.query(TableMovieTmdbDataFull).join(TableMvMetadataUpdated).filter(TableMovieTmdbDataFull.movie_tmdb_data_full_movieid == TableMvMetadataUpdated.mv_metadata_updated_item_id).limit(10).all()
-#    allvalues = db.session.query(TableMovieTmdbDataFull, TableMvMetadataUpdated).join(TableMvMetadataUpdated, TableMvMetadataUpdated.mv_metadata_updated_item_id == TableMovieTmdbDataFull.movie_tmdb_data_full_movieid).limit(10).all()
-#    allvalues = db.session.query(TableMovieTmdbDataFull, TableMvMetadataUpdated).join(TableMovieTmdbDataFull.movie_tmdb_data_full_movieid == TableMvMetadataUpdated.mv_metadata_updated_item_id).limit(10).all()
-#    allvalues = TableMovieTmdbDataFull.query(TableMovieTmdbDataFull, TableMvMetadataUpdated).join(TableMovieTmdbDataFull.movie_tmdb_data_full_movieid == TableMvMetadataUpdated.mv_metadata_updated_item_id).limit(10).all()
-#    allvalues = TableMovieTmdbDataFull.query(TableMovieTmdbDataFull, TableMvMetadataUpdated).join(TableMvMetadataUpdated, TableMvMetadataUpdated.mv_metadata_updated_item_id == TableMovieTmdbDataFull.movie_tmdb_data_full_movieid, isouter=False).order_by(TableMvMetadataUpdated.mv_metadata_updated_avgrating.desc().nulls_last(), TableMovieTmdbDataFull.movie_tmdb_data_full_releasedate.desc().nulls_last()).limit(10).all()
+    allvalues = db.session.query(TableMovieTmdbDataFull, TableMvMetadataUpdated) \
+                          .join(TableMvMetadataUpdated, TableMvMetadataUpdated.mv_metadata_updated_item_id == TableMovieTmdbDataFull.movie_tmdb_data_full_movieid) \
+                          .order_by(TableMvMetadataUpdated.mv_metadata_updated_avgrating.desc().nulls_last(), TableMovieTmdbDataFull.movie_tmdb_data_full_releasedate.desc().nulls_last()) \
+                          .limit(10).all()
 
-    allvalues_dict = dict_helper(allvalues)
+    allvalues_dict = []
+    for value in allvalues:
+        #print(value.TableMovieTmdbDataFull.movie_tmdb_data_full_movieid)
+        #print(value.TableMovieTmdbDataFull.movie_tmdb_data_full_title)
+        #print(value.TableMvMetadataUpdated.mv_metadata_updated_avgrating)
+
+        #allvalues_dict.append({'movieid': value.TableMovieTmdbDataFull.movie_tmdb_data_full_movieid,
+        #                       'title': value.TableMovieTmdbDataFull.movie_tmdb_data_full_title,
+        #                       'avgrating': value.TableMvMetadataUpdated.mv_metadata_updated_avgrating})
+        dict_1 = value.TableMovieTmdbDataFull.object_to_dictionary()
+        dict_2 = value.TableMvMetadataUpdated.object_to_dictionary()
+        dict_1.update(dict_2)
+        allvalues_dict.append(dict_1)
+
     response = jsonify(allvalues_dict)
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response

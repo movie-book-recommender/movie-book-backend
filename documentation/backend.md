@@ -162,6 +162,12 @@ To connect to the virtual machine, instructions from [CSC](https://docs.csc.fi/c
     * You will need to specify the release year of the movie.
     * Results are available in JSON form from address [http://128.214.253.51:3000/dbgettop10moviesbyyear?year=2022](http://128.214.253.51:3000/dbgettop10moviesbyyear?year=2022).
 
+3. All information available for various sorting methods
+    * **Newest 10 movies**: Data is provided via the route `@app.route('/dbgettop10newestpublishedmovies', methods = ['GET'])`
+    * **Oldest 10 movies**: Data is provided via the route `@app.route('/dbgettop10oldestmovies', methods = ['GET'])`
+    * **Highest rated 10 movies**: Data is provided via the route `@app.route('/dbgettop10highestratedmovies', methods = ['GET'])`
+    * **Search based on name**: Also, movies can be searched based on name via the route `@app.route('/dbsearchmoviesbyname', methods = ['GET'])` Note! Route assumes that the input is checked at the front end.
+
 * The JSON output provides fields such as *posterpath* and *backdroppaths*. These are actually just the file names, but can be joined together with the string https://image.tmdb.org/t/p/original in order to build the full url. For example, https://image.tmdb.org/t/p/original/obpPQskaVpSiC9RcJRB6iWDTCXS.jpg
 
 ## Running the backend

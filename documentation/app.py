@@ -1,7 +1,7 @@
 import os
 from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
-from datetime import date
+from datetime import date, datetime
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
@@ -38,7 +38,7 @@ class TableMovieTmdbDataFull(db.Model):
     movie_tmdb_data_full_mpaa = db.Column('mpaa', db.String(100))
     movie_tmdb_data_full_runtime = db.Column('runtime', db.Integer)
     movie_tmdb_data_full_budget = db.Column('budget', db.BigInteger)
-    movie_tmdb_data_full_revenue = db.Column('revenue', db.BigInteger)
+    movie_tmdb_data_full_revenue = db.Column('revenue', db.Integer) # oli: BigInteger
     movie_tmdb_data_full_lastupdated = db.Column('lastupdated', db.DateTime)
     movie_tmdb_data_full_backdroppaths = db.Column('backdroppaths', db.String(10000))
 
@@ -89,6 +89,14 @@ class TableTest(db.Model): # Luodaan testitaulu, johon voidaan laittaa jotain
     __tablename__ = 'input_test'
     input_test_inputvalue = db.Column('inputvalue', db.String(250), primary_key=True)
 
+class TableInputTest2(db.Model): # Luodaan testitaulu, johon voidaan laittaa jotain
+    __tablename__ = 'input_test2'
+    inputtest2_cookie = db.Column('cookie', db.String(250), primary_key=True)
+    inputtest2_document_id = db.Column('document_id', db.String(250), primary_key=True)
+    inputtest2_item_id = db.Column('item_id', db.Integer)
+    inputtest2_users_rating = db.Column('users_rating', db.Integer)
+    inputtest2_input_time = db.Column('input_time', db.Date)
+
 def dict_helper(object_list):
     return [item.object_to_dictionary() for item in object_list]
 
@@ -137,7 +145,7 @@ def get_given_movie_data():
 def get_top_10_movies_by_year():
     year_value = int(request.args['year'])
     allvalues = TableMovieTmdbDataFull.query.filter(db.extract('year', 
-                        TableMovieTmdbDataFull.movie_tmdb_data_full_releasedate) == year_value).order_by(TableMovieTmdbDataFull.movie_tmdb_data_full_revenue.desc()).limit(10).all()
+                        TableMovieTmdbDataFull.movie_tmdb_data_full_releasedate) == year_value).order_by(TableMovieTmdbDataFull.movie_tmdb_data_full_revenue.desc().nulls_last()).limit(10).all()
     allvalues_dict = dict_helper(allvalues)
     response = jsonify(allvalues_dict)
     response.headers.add('Access-Control-Allow-Origin', '*')
@@ -203,3 +211,26 @@ def insert_data_to_db():
     db.session.commit()
     return 'thank you'
 
+@app.route('/inserttodbtest', methods = ['GET'])
+def insert_data_to_db_new():
+#    given_data = request.args['input'] # get data from arguments
+#    given_data = [['0293498m290=3', 'm', 290, 3], ['0293498m290=3', 'm', 290, 5]]
+#    given_data = [['0293498m290=3', 'm', 290, 3], ['0293498m290=3', 'm', 290, 5]]
+#    existing_data = TableInputTest2.query.filter(TableInputTest2.inputtest2_cookie == given_data[0][0])
+#    if existing_data != None:
+#        TableInputTest2.update.filter(TableInputTest2.inputtest2_cookie==given_data[0][0]).values(inputtest2_row_valid='False')
+#        inval = TableInputTest2(inputtest2_cookie=given_data[1][0], inputtest2_document_id=given_data[1][1], inputtest2_item_id=given_data[1][2], inputtest2_users_rating=given_data[1][3], inputtest2_row_valid='True')
+#        db.session.add(inval)
+#        db.session.commit()
+#        return 'updated'
+
+    given_data = ['02934sdf9668m290=5', 'm', 290, 5]
+    inval = TableInputTest2(inputtest2_cookie=given_data[0],
+                            inputtest2_document_id=given_data[1],
+                            inputtest2_item_id=given_data[2],
+                            inputtest2_users_rating=given_data[3],
+                            inputtest2_input_time=datetime.now())
+    db.session.add(inval)
+    db.session.commit()
+
+    return 'thank you'

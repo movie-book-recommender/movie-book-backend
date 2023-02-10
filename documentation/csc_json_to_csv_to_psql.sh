@@ -20,16 +20,19 @@ psql -U moviebook -d mvbkdb -c "\copy mv_survey_answers FROM 'survey_answers.csv
 psql -U moviebook -d mvbkdb -c "\copy mv_tag_count FROM 'tag_count.csv' delimiter '|' csv"
 psql -U moviebook -d mvbkdb -c "\copy mv_tags FROM 'tags.csv' delimiter '|' csv"
 
-#cat ./book_dataset/raw/metadata.json | jq -r '. | join("^")' > bk_metadata.csv
+cat ./book_dataset/raw/metadata.json | jq '. | join("^")' > bk_metadata.csv
+sed 's/^"//;s/"$//' bk_metadata.csv > bk_metadata2.csv
 cat ./book_dataset/raw/ratings.json | jq -r '. | join("|")' > bk_ratings.csv
-#cat ./book_dataset/raw/reviews.json | jq -r '. | join("|")' > bk_reviews.csv
+cat ./book_dataset/raw/reviews.json | jq '. | join("\t")' > bk_reviews1.csv
+sed 's/^"//;s/"$//;s/\\"//g' bk_reviews1.csv > bk_reviews2.csv
+sed -E 's/^([0-9]+)\\t/\1\t/' bk_reviews2.csv > bk_reviews3.csv
 cat ./book_dataset/raw/survey_answers.json | jq -r '. | join("|")' > bk_survey_answers.csv
 cat ./book_dataset/raw/tag_count.json | jq -r '. | join("|")' > bk_tag_count.csv
 cat ./book_dataset/raw/tags.json | jq -r '. | join("|")' > bk_tags.csv
 
-#psql -U moviebook -d mvbkdb -c "\copy bk_metadata FROM 'bk_metadata.csv' delimiter '^' quote E'\b' csv"
+psql -U moviebook -d mvbkdb -c "\copy bk_metadata FROM 'bk_metadata2.csv' delimiter '^' quote E'\b' csv"
 psql -U moviebook -d mvbkdb -c "\copy bk_ratings FROM 'bk_ratings.csv' delimiter '|' csv"
-#psql -U moviebook -d mvbkdb -c "\copy bk_reviews FROM 'bk_reviews.csv' delimiter '|' csv"
+psql -U moviebook -d mvbkdb -c "\copy bk_reviews FROM 'bk_reviews3.csv' delimiter E'\t' csv"
 psql -U moviebook -d mvbkdb -c "\copy bk_survey_answers FROM 'bk_survey_answers.csv' delimiter '|' csv"
 psql -U moviebook -d mvbkdb -c "\copy bk_tag_count FROM 'bk_tag_count.csv' delimiter '|' csv"
 psql -U moviebook -d mvbkdb -c "\copy bk_tags FROM 'bk_tags.csv' delimiter '|' csv"

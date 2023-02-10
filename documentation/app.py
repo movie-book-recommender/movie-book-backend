@@ -7,6 +7,8 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
 db = SQLAlchemy(app)
 
+# Movie classes
+
 class TableMvTags(db.Model):
     __tablename__ = 'mv_tags'
     mv_tags_tag = db.Column('tag', db.String(255), primary_key=True) #orm: must set one as primary key
@@ -85,6 +87,8 @@ class TableMvMetadataUpdated(db.Model):
             'item_id': self.mv_metadata_updated_item_id,
             }
 
+# Input testing
+
 class TableTest(db.Model): # Luodaan testitaulu, johon voidaan laittaa jotain
     __tablename__ = 'input_test'
     input_test_inputvalue = db.Column('inputvalue', db.String(250), primary_key=True)
@@ -97,6 +101,31 @@ class TableInputTest2(db.Model): # Luodaan testitaulu, johon voidaan laittaa jot
     inputtest2_users_rating = db.Column('users_rating', db.Integer)
     inputtest2_input_time = db.Column('input_time', db.Date)
 
+# Book classes
+
+class TableBkMetadata(db.Model):
+    __tablename__ = 'bk_metadata'
+    bk_metadata_item_id = db.Column('item_id', db.Integer, primary_key=True)
+    bk_metadata_url = db.Column('url', db.String(1000))
+    bk_metadata_title = db.Column('title', db.String(255))
+    bk_metadata_authors = db.Column('authors', db.String(2000))
+    bk_metadata_lang = db.Column('lang', db.String(255))
+    bk_metadata_img = db.Column('img', db.String(1000))
+    bk_metadata_year = db.Column('year', db.Integer)
+    bk_metadata_description = db.Column('description', db.String(65535))
+
+    def object_to_dictionary(self):
+        return {
+            'item_id': self.bk_metadata_item_id,
+            'url': self.bk_metadata_url,
+            'title': self.bk_metadata_title,
+            'authors': self.bk_metadata_authors,
+            'lang': self.bk_metadata_lang,
+            'img': self.bk_metadata_img,
+            'year': self.bk_metadata_year,
+            'description': self.bk_metadata_description,
+            }
+
 def dict_helper(object_list):
     return [item.object_to_dictionary() for item in object_list]
 
@@ -107,6 +136,8 @@ def index():
 @app.route('/hello')
 def hello():
     return 'Hello, World'
+
+# Movie routes
 
 @app.route('/dbgettags', methods = ['GET'])
 def gettablevalues():
@@ -133,9 +164,15 @@ def get_given_movie_data_test():
 @app.route('/dbgetgivenmoviedata', methods = ['GET'])
 def get_given_movie_data():
     if request.args['movieid'] != '':
-        movieid = int(request.args['movieid'])
-        allvalues = TableMovieTmdbDataFull.query.filter_by(movie_tmdb_data_full_movieid = movieid).first()
-        response = jsonify(allvalues.object_to_dictionary())
+        if request.args['movieid'].isdigit():
+            movieid = int(request.args['movieid'])
+            allvalues = TableMovieTmdbDataFull.query.filter_by(movie_tmdb_data_full_movieid = movieid).first()
+            if allvalues is not None:
+                response = jsonify(allvalues.object_to_dictionary())
+            else: 
+                response = jsonify({'value': 'not available'})
+        else: 
+            response = jsonify({'value': 'not available'})
     else: 
         response = jsonify({'value': 'not available'})
     response.headers.add('Access-Control-Allow-Origin', '*')
@@ -203,6 +240,8 @@ def get_top_10_highest_rating_movies():
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response
 
+# Test routes
+
 @app.route('/inserttodb', methods = ['GET'])
 def insert_data_to_db():
     given_data = request.args['input'] # get data from arguments
@@ -234,3 +273,47 @@ def insert_data_to_db_new():
     db.session.commit()
 
     return 'thank you'
+
+# Book routes
+
+@app.route('/dbgettop10newestbooks', methods = ['GET'])
+def get_top_10_newest_books():
+    allvalues = TableBkMetadata.query \
+                .order_by(TableBkMetadata.bk_metadata_year.desc().nulls_last(), TableBkMetadata.bk_metadata_title.asc()) \
+                .limit(10).all()
+    allvalues_dict = dict_helper(allvalues)
+    response = jsonify(allvalues_dict)
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    return response
+
+@app.route('/dbgetgivenbookdata', methods = ['GET'])
+def get_given_book_data():
+    if request.args['bookid'] != '':
+        if request.args['bookid'].isdigit():
+            bookid = int(request.args['bookid'])
+            allvalues = TableBkMetadata.query \
+                        .filter_by(bk_metadata_item_id = bookid).first()
+            if allvalues is not None: 
+                response = jsonify(allvalues.object_to_dictionary())
+            else: 
+                response = jsonify({'value': 'not available'})
+        else: 
+            response = jsonify({'value': 'not available'})
+    else:
+        response = jsonify({'value': 'not available'})
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    return response
+
+@app.route('/dbsearchbooksbyname', methods = ['GET'])
+def search_books_by_name_top_20():
+    search_raw = request.args['input']
+    search_term = f'%{search_raw}%'
+    allvalues = TableBkMetadata.query \
+                .filter(TableBkMetadata.bk_metadata_title.ilike(search_term)) \
+                .order_by(TableBkMetadata.bk_metadata_title \
+                .ilike(search_term).desc(), TableBkMetadata.bk_metadata_title) \
+                .limit(20).all()
+    allvalues_dict = dict_helper(allvalues)
+    response = jsonify(allvalues_dict)
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    return response

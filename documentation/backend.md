@@ -168,7 +168,12 @@ To connect to the virtual machine, instructions from [CSC](https://docs.csc.fi/c
     * **Highest rated 10 movies**: Data is provided via the route `@app.route('/dbgettop10highestratedmovies', methods = ['GET'])`
     * **Search based on name**: Also, movies can be searched based on name via the route `@app.route('/dbsearchmoviesbyname', methods = ['GET'])` Note! Route assumes that the input is checked at the front end.
 
-* The JSON output provides fields such as *posterpath* and *backdroppaths*. These are actually just the file names, but can be joined together with the string https://image.tmdb.org/t/p/original in order to build the full url. For example, https://image.tmdb.org/t/p/original/obpPQskaVpSiC9RcJRB6iWDTCXS.jpg
+4. APIs for books follow the same logic. 
+    * **Newest 10 books**: Data is provided via the route `@app.route('/dbgettop10newestbooks', methods = ['GET'])`
+    * **All information for one book**: Data is provided via the route `@app.route('/dbgetgivenbookdata', methods = ['GET'])`, e.g. [http://128.214.253.51:3000/dbgetgivenbookdata?bookid=44752519](http://128.214.253.51:3000/dbgetgivenbookdata?bookid=44752519)
+    * **Search based on name**: Books can be searched based on name via the route `@app.route('/dbsearchbooksbyname', methods = ['GET'])`, e.g. [http://128.214.253.51:3000/dbsearchbooksbyname?input=Sookie%20stackhouse](http://128.214.253.51:3000/dbsearchbooksbyname?input=Sookie%20stackhouse)
+
+* The JSON output for movies provides fields such as *posterpath* and *backdroppaths*. These are actually just the file names, but can be joined together with the string https://image.tmdb.org/t/p/original in order to build the full url. For example, https://image.tmdb.org/t/p/original/obpPQskaVpSiC9RcJRB6iWDTCXS.jpg
 
 ## Running the backend
 

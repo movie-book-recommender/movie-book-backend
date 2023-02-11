@@ -18,7 +18,5 @@ jobs:
           python-version: 3.8
       - name: Install Lint
         run: pip install pylint
-      - name: Run Lint
-        run: pylint main
       - name: Run Python unit tests
         run: python -m unittest

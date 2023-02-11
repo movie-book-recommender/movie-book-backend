@@ -16,7 +16,7 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: 3.8
-      - name: Install Lint
-        run: pip install pylint
+      - name: Install packages
+        run: pip install pylint flask flask_sqlalchemy
       - name: Run Python unit tests
         run: python -m unittest

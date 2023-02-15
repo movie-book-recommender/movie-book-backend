@@ -11,7 +11,7 @@ def create_app():
     
     #app.config['SQLALCHEMY_DATABASE_URI'] = getenv("DATABASE_URL") <- for future use
 
-    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ("DATABASE_URL")
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ["DATABASE_URL"]
 
     # Initiatilize Flask extentions
     db.init_app(app)

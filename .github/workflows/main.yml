@@ -18,10 +18,12 @@ jobs:
           python-version: 3.8
       - name: Install packages
         run: pip install pylint flask flask_sqlalchemy pytest pytest-dotenv python-dotenv psycopg2
-      - name: Create .env file
-        run: |
-          touch .env
-          echo DATABASE_URL=${{ secrets.DATABASE_URL }} >> .env
+      #- name: Create .env file
+        #run: |
+          #touch .env
+          #echo DATABASE_URL=${{ secrets.DATABASE_URL }} >> .env
+      - name: run export script
+        run: export DATABASE_URL=${{ secrets.DATABASE_URL }}
       - name: Run Python unit tests
         run: python3 -m pytest
       - name: Deploy to cPouta
@@ -33,7 +35,5 @@ jobs:
           script: |
             source script.sh
             cd movie-book-backend
-            touch .env
-            echo DATABASE_URL=${{ secrets.DATABASE_LOCAL_URL }} > .env
             git pull
             source ../killscript.sh

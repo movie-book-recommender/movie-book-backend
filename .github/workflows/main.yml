@@ -22,8 +22,8 @@ jobs:
         #run: |
           #touch .env
           #echo DATABASE_URL=${{ secrets.DATABASE_URL }} >> .env
-      - name: run export script
-        run: export "DATABASE_URL=${{ secrets.DATABASE_URL }}"
+      - name: Set environment value (same as export locally)
+        run: echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" > $GITHUB_ENV
       - name: Run Python unit tests
         run: python3 -m pytest
       - name: Deploy to cPouta

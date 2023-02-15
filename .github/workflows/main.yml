@@ -34,6 +34,4 @@ jobs:
             source script.sh
             cd movie-book-backend
             git pull
-            touch .env
-            echo DATABASE_URL=postgresql://{{ secrets.USERNAME }}:{{ secrets.PASSWORD }}@localhost:5432/mvbkdb >> .env
             source ../killscript.sh

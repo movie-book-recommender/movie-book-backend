@@ -17,7 +17,7 @@ jobs:
         with:
           python-version: 3.8
       - name: Install packages
-        run: pip install pylint flask flask_sqlalchemy pytest pytest-dotenv python-dotenv
+        run: pip install pylint flask flask_sqlalchemy pytest pytest-dotenv python-dotenv psycopg2
       - name: Create .env file
         run: |
           touch .env

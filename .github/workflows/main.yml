@@ -33,5 +33,7 @@ jobs:
           script: |
             source script.sh
             cd movie-book-backend
+            touch .env
+            echo DATABASE_URL=${{ secrets.DATABASE_LOCAL_URL }} > .env
             git pull
             source ../killscript.sh

@@ -21,7 +21,7 @@ jobs:
       - name: Create .env file
         run: |
           touch .env
-          echo DATABASE_URL={{ secrets.DATABASE_URL }} >> .env
+          echo DATABASE_URL=${{ secrets.DATABASE_URL }} >> .env
       - name: Run Python unit tests
         run: python3 -m pytest
       - name: Deploy to cPouta

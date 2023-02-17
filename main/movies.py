@@ -1,19 +1,49 @@
+"""
+This module outlines the contents of all the tables with data 
+regarding movies in the application's database.
+"""
+
 from main.extentions import db
 
-# Movie classes
-
 class TableMvTags(db.Model):
+    """This class outlines the structure of the MvTags table 
+    in the application's database, and the related methods.
+    Note. Use of orm syntax requires setting one one of 
+    items as primary key, though it has not been defined in the 
+    underlying database.
+
+    Args:
+        db (object): Table shows tags for movies.
+
+    Returns:
+        Integer, string: Returns data as integers or strings. 
+    """
     __tablename__ = 'mv_tags'
-    mv_tags_tag = db.Column('tag', db.String(255), primary_key=True) #orm: must set one as primary key
+    mv_tags_tag = db.Column('tag', db.String(255), primary_key=True)
     mv_tags_id = db.Column('id', db.Integer)
 
     def object_to_dictionary(self):
+        """This method returns contents of the MvTags table
+        in a dictionary format.
+
+        Returns:
+            Dictionary: Returns contents of the MvTags table.
+        """
         return {
             'tag': self.mv_tags_tag,
             'id': self.mv_tags_id
             }
 
 class TableMovieTmdbDataFull(db.Model):
+    """This class outlines the structure of the MovieTMDBDataFull table 
+    in the application's database, and the related methods.
+
+    Args:
+        db (object): Table shows data related to movies.
+
+    Returns:
+        Integer, string, date, datetime: Returns table's data as e.g., integers.
+    """
     __tablename__ = 'movie_tmdb_data_full'
     movie_tmdb_data_full_movieid = db.Column('movieid', db.Integer, primary_key=True)
     movie_tmdb_data_full_tmdbmovieid = db.Column('tmdbmovieid', db.Integer)
@@ -33,11 +63,17 @@ class TableMovieTmdbDataFull(db.Model):
     movie_tmdb_data_full_mpaa = db.Column('mpaa', db.String(100))
     movie_tmdb_data_full_runtime = db.Column('runtime', db.Integer)
     movie_tmdb_data_full_budget = db.Column('budget', db.BigInteger)
-    movie_tmdb_data_full_revenue = db.Column('revenue', db.Integer) # oli: BigInteger
+    movie_tmdb_data_full_revenue = db.Column('revenue', db.Integer)
     movie_tmdb_data_full_lastupdated = db.Column('lastupdated', db.DateTime)
     movie_tmdb_data_full_backdroppaths = db.Column('backdroppaths', db.String(10000))
 
     def object_to_dictionary(self):
+        """This method returns contents of the MovieTmdbDataFull table
+        in a dictionary format.
+
+        Returns:
+            Dictionary: Returns contents of the MovieTmdbDataFull table.
+        """
         return {
             'movieid': self.movie_tmdb_data_full_movieid,
             'tmdbmovieid': self.movie_tmdb_data_full_tmdbmovieid,
@@ -62,6 +98,15 @@ class TableMovieTmdbDataFull(db.Model):
             }
 
 class TableMvMetadataUpdated(db.Model):
+    """This class outlines the structure of the MvMetadataUpdated table
+    in the application's database, and the related methods.
+
+    Args:
+        db (object): Tables contains updated metadata for movies.
+
+    Returns:
+        Integer, string: Returns data from table as integers or strings.
+    """
     __tablename__ = 'mv_metadata_updated'
     mv_metadata_updated_title = db.Column('title', db.String(2001), primary_key=True)
     mv_metadata_updated_directedby = db.Column('directedby', db.String(2002))
@@ -71,6 +116,12 @@ class TableMvMetadataUpdated(db.Model):
     mv_metadata_updated_item_id = db.Column('item_id', db.Integer)
 
     def object_to_dictionary(self):
+        """This method returns contents of the MvMetadataUpdated table
+        in a dictionary format.
+
+        Returns:
+            Dictionary: Returns contents of the MvMetadataUpdated table.
+        """
         return {
             'title': self.mv_metadata_updated_title,
             'directedby': self.mv_metadata_updated_directedby,

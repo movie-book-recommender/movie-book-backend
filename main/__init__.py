@@ -8,7 +8,7 @@ from main.extentions import db
 def create_app():
     app = Flask(__name__)
     # Possibly later separate configuration to a separate file
-    
+
     #app.config['SQLALCHEMY_DATABASE_URI'] = getenv("DATABASE_URL") <- for future use
 
     app.config['SQLALCHEMY_DATABASE_URI'] = os.environ["DATABASE_URL"]

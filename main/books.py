@@ -1,8 +1,20 @@
+"""
+This module outlines the contents of all the tables with data 
+regarding books in the application's database.
+"""
+
 from main.extentions import db
 
-# Book classes
-
 class TableBkMetadata(db.Model):
+    """This class outlines the structure of the BkMetadata table
+    in the application's database, and the related methods. 
+
+    Args:
+        db (object): Tables contains metadata for books.
+
+    Returns:
+        Integer, string: Returns data as integers or strings.
+    """
     __tablename__ = 'bk_metadata'
     bk_metadata_item_id = db.Column('item_id', db.Integer, primary_key=True)
     bk_metadata_url = db.Column('url', db.String(1000))
@@ -14,6 +26,12 @@ class TableBkMetadata(db.Model):
     bk_metadata_description = db.Column('description', db.String(65535))
 
     def object_to_dictionary(self):
+        """This method returns contents of the BkMetadata table
+        in a dictionary format.
+
+        Returns:
+            Dictionary: Returns contents of the BkMetadata table.
+        """
         return {
             'item_id': self.bk_metadata_item_id,
             'url': self.bk_metadata_url,
@@ -24,4 +42,3 @@ class TableBkMetadata(db.Model):
             'year': self.bk_metadata_year,
             'description': self.bk_metadata_description,
             }
-

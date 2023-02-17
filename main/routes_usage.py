@@ -1,13 +1,22 @@
+"""
+This module implements routes to insert data on usage of the 
+front end application to database.
+"""
+
+from datetime import datetime
+from flask import request
 from app import app
 from main.extentions import db
 from main.usage import TableTest, TableInputTest2
-from flask import request
-from datetime import datetime
-
-# Test routes
 
 @app.route('/inserttodb', methods = ['GET'])
 def insert_data_to_db():
+    """This route implements a page that confirms whether insertion of 
+    data was successful. It is only done for testing purposes.
+
+    Returns:
+        String: String is a confirmation of a successful insertion of data.
+    """
     given_data = request.args['input'] # get data from arguments
     inval = TableTest(input_test_inputvalue=given_data)
     db.session.add(inval)
@@ -16,6 +25,12 @@ def insert_data_to_db():
 
 @app.route('/inserttodbtest', methods = ['GET'])
 def insert_data_to_db_new():
+    """This route implements a page that confirms whether insertion of 
+    data was successful. It is only done for testing purposes.
+
+    Returns:
+        String: String is a confirmation of a successful insertion of data.
+    """
 #    given_data = request.args['input'] # get data from arguments
 #    given_data = [['0293498m290=3', 'm', 290, 3], ['0293498m290=3', 'm', 290, 5]]
 #    given_data = [['0293498m290=3', 'm', 290, 3], ['0293498m290=3', 'm', 290, 5]]

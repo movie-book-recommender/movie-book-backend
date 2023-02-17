@@ -1,5 +1,7 @@
 # Movie-Book-Backend
 
+![Main workflow](https://github.com/movie-book-recommender/movie-book-backend/workflows/CI/badge.svg)
+
 ## Purpose of the repository
 
 This repository contains the code, tests, CI/CD pipe, and documentation for the backend of the Movie Book Recommender application. Application's front end and the guidelines and documentation for the project in general are available in the [Movie Book Recommender Project repository](https://github.com/movie-book-recommender/movie-book-recommender-project). Here, only the topics specific to the backend are covered. 

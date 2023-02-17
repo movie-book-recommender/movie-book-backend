@@ -1,11 +1,19 @@
+"""
+This module is implements a Flask application for back-end APIs
+in the Movie Book Recommender application.
+"""
 import os
 from os import getenv
 from flask import Flask, jsonify, request
 from main.extentions import db
 
-#from flask_sqlalchemy import SQLAlchemy # siirrettävä db.py:n
-
 def create_app():
+    """This function returns a Flask application 
+    and SQLAlchemy database.
+
+    Returns:
+        object: Flaks application and SQLAlchemy database.
+    """
     app = Flask(__name__)
     # Possibly later separate configuration to a separate file
 
@@ -16,11 +24,8 @@ def create_app():
     # Initiatilize Flask extentions
     db.init_app(app)
 
-#    db = SQLAlchemy(app) # siirrä db.py:n
-
     @app.route("/")
     def index():
         return "hello"
 
     return app
-

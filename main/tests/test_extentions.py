@@ -1,3 +1,8 @@
+"""
+This module implements unit and integration tests for 
+routes related to application usage.
+"""
+
 import unittest
 import main.extentions as extentions
 

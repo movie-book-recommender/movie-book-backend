@@ -33,3 +33,9 @@ jobs:
             cd movie-book-backend
             git pull
             source ../killscript.sh
+      - name: Install coverage reporting
+        run: pip install coverage
+      - name: Conduct coverage reporting
+        run: coverage run --branch -m pytest main
+      - name: Show coverage report
+        run: coverage report -m

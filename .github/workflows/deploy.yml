@@ -1,7 +1,7 @@
-name: Health Checks
+name: Deploy
 
 on:
-  pull_request:
+  push:
     branches: [main]
 
 jobs:
@@ -20,6 +20,17 @@ jobs:
         run: echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" > $GITHUB_ENV
       - name: Run Python unit tests
         run: python3 -m pytest
+      - name: Deploy to cPouta
+        uses: appleboy/ssh-action@v0.1.7
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          script: |
+            source script.sh
+            cd movie-book-backend
+            git pull
+            source ../killscript.sh
       - name: Install coverage reporting
         run: pip install coverage
       - name: Conduct coverage reporting

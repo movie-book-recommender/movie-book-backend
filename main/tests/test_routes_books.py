@@ -85,5 +85,15 @@ class TestBooksRoutes(unittest.TestCase):
         )
         json_response = json.loads(response.text)
         wanted_response = "A Touch of Dead (Sookie Stackhouse, #4.1, #4.3, #5.1, #7.1, #8.1)"
-        
+
         self.assertEqual(json_response[0]["title"], wanted_response)
+
+    def test_search_books_by_name_top_20_incorrect_input(self):
+        """Tests whether an incorrect input is detected.
+        """
+        response = self.test_client.get(
+            "/dbsearchbooksbyname?input=oeritpoiew",
+        )
+        json_response = json.loads(response.text)
+
+        self.assertEqual(json_response["value"], "not available")

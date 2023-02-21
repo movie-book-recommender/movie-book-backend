@@ -7,7 +7,7 @@ from flask import jsonify, request
 from app import app
 from main.extentions import db
 from main.movies import TableMovieTmdbDataFull, TableMvMetadataUpdated, TableMvTags
-from main.helper import Helper
+from main.helper import helper
 
 @app.route('/dbgettags', methods = ['GET'])
 def gettablevalues():
@@ -17,7 +17,7 @@ def gettablevalues():
         json: Data is returned in json format.
     """
     allvalues = TableMvTags.query.all()
-    allvalues_dict = Helper.dict_helper(allvalues)
+    allvalues_dict = helper.dict_helper(allvalues)
     response = jsonify(allvalues_dict)
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response
@@ -37,7 +37,7 @@ def get_one_movie_data():
 
 @app.route('/dbgetgivenmoviedata_test', methods = ['GET'])
 def get_given_movie_data_test():
-    """This route implements a page that shows data for one specific movie with 
+    """This route implements a page that shows data for one specific movie with
     a defined id. Route is for testing only.
 
     Returns:
@@ -52,7 +52,7 @@ def get_given_movie_data_test():
 @app.route('/dbgetgivenmoviedata', methods = ['GET'])
 def get_given_movie_data():
     """This route implements a page that shows data for one specific movie
-    that needs to be defined when calling the route. 
+    that needs to be defined when calling the route.
 
     Returns:
         json: Data is returned in json format.
@@ -76,24 +76,33 @@ def get_given_movie_data():
 @app.route('/dbgettop10moviesbyyear', methods = ['GET'])
 def get_top_10_movies_by_year():
     """This route implements a page that shows data for top 10 movies for a year
-    that needs to be defined when calling the route. 
+    that needs to be defined when calling the route.
 
     Returns:
         json: Data is returned in json format.
     """
-    year_value = int(request.args['year'])
-    allvalues = TableMovieTmdbDataFull.query.filter(db.extract('year',
-                        TableMovieTmdbDataFull.movie_tmdb_data_full_releasedate) == year_value) \
-                        .order_by(TableMovieTmdbDataFull.movie_tmdb_data_full_revenue.desc().nulls_last()) \
-                        .limit(10).all()
-    allvalues_dict = Helper.dict_helper(allvalues)
-    response = jsonify(allvalues_dict)
+    if request.args['year'] != '':
+        if request.args['year'].isdigit():
+            year_value = int(request.args['year'])
+            allvalues = TableMovieTmdbDataFull.query.filter(db.extract('year',
+                                TableMovieTmdbDataFull.movie_tmdb_data_full_releasedate) == year_value) \
+                                .order_by(TableMovieTmdbDataFull.movie_tmdb_data_full_revenue.desc().nulls_last()) \
+                                .limit(10).all()
+            if len(allvalues) != 0:
+                allvalues_dict = helper.dict_helper(allvalues)
+                response = jsonify(allvalues_dict)
+            else:
+                response = jsonify({'value': 'not available'})
+        else:
+            response = jsonify({'value': 'not available'})
+    else:
+        response = jsonify({'value': 'not available'})
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response
 
 @app.route('/dbgettop10newestpublishedmovies', methods = ['GET'])
 def get_top_10_newest_published_movies():
-    """This route implements a page that shows data for last 10 published movies. 
+    """This route implements a page that shows data for last 10 published movies.
 
     Returns:
         json: Data is returned in json format.
@@ -103,14 +112,14 @@ def get_top_10_newest_published_movies():
                     .filter(TableMovieTmdbDataFull.movie_tmdb_data_full_releasedate<date_value) \
                     .order_by(TableMovieTmdbDataFull.movie_tmdb_data_full_releasedate.desc()) \
                     .limit(10).all()
-    allvalues_dict = Helper.dict_helper(allvalues)
+    allvalues_dict = helper.dict_helper(allvalues)
     response = jsonify(allvalues_dict)
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response
 
 @app.route('/dbgettop10oldestmovies', methods = ['GET'])
 def get_top_10_oldest_movies():
-    """This route implements a page that shows data for oldest 10 movies. 
+    """This route implements a page that shows data for oldest 10 movies.
 
     Returns:
         json: Data is returned in json format.
@@ -118,7 +127,7 @@ def get_top_10_oldest_movies():
     allvalues = TableMovieTmdbDataFull.query \
                     .order_by(TableMovieTmdbDataFull.movie_tmdb_data_full_releasedate.asc()) \
                     .limit(10).all()
-    allvalues_dict = Helper.dict_helper(allvalues)
+    allvalues_dict = helper.dict_helper(allvalues)
     response = jsonify(allvalues_dict)
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response
@@ -138,15 +147,15 @@ def search_movies_by_name_top_20():
                     .order_by(TableMovieTmdbDataFull.movie_tmdb_data_full_title.ilike(search_term).desc(),
                     TableMovieTmdbDataFull.movie_tmdb_data_full_title) \
                     .limit(20).all()
-    allvalues_dict = Helper.dict_helper(allvalues)
+    allvalues_dict = helper.dict_helper(allvalues)
     response = jsonify(allvalues_dict)
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response
 
 @app.route('/dbgettop10highestratedmovies', methods = ['GET'])
 def get_top_10_highest_rating_movies():
-    """This route implements a page that shows data for 10 movies with 
-    the highest rating in the database. 
+    """This route implements a page that shows data for 10 movies with
+    the highest rating in the database.
 
     Returns:
         json: Data is returned in json format.

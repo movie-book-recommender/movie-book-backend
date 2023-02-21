@@ -6,7 +6,10 @@ class Helper:
     """
     This class implements methods used across all other classes. 
     """
-    def dict_helper(object_list):
+    def __init__(self):
+        pass
+
+    def dict_helper(self, object_list):
         """
         This method implements conversion of input into a dictionary
 
@@ -17,3 +20,5 @@ class Helper:
             Dictionary: Returns the given data in dictionary form.
         """
         return [item.object_to_dictionary() for item in object_list]
+
+helper = Helper()

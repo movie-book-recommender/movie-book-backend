@@ -4,8 +4,10 @@ This module implements routes for books data in the flask app.
 
 from flask import jsonify, request
 from app import app
-from main.books import TableBkMetadata
+from main.extentions import db
+from main.books import TableBkMetadata, TableBkRatings
 from main.helper import helper
+from sqlalchemy import func
 
 @app.route('/dbgettop10newestbooks', methods = ['GET'])
 def get_top_10_newest_books():
@@ -72,3 +74,31 @@ def search_books_by_name_top_20():
         response = jsonify({'value': 'not available'})
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response
+
+@app.route('/dbgettop10highestratedbooks', methods = ['GET'])
+def get_top_10_highest_rated_books():
+    """This function searches the 10 books with best average rating. 
+
+    Returns:
+        json: json with fields item id and rating: for example:
+        {
+            "115": "5.0000000000000000",
+            ...
+            "731": "5.0000000000000000",
+            "742": "5.0000000000000000"
+            }
+    """
+    best_rated_books = (
+    db.session.query(TableBkRatings.bk_ratings_item_id, func.avg(TableBkRatings.bk_ratings_rating).label("avg_rating"))
+    .group_by(TableBkRatings.bk_ratings_item_id, TableBkRatings.bk_ratings_rating)
+    .order_by(func.avg(TableBkRatings.bk_ratings_rating).desc())
+    .limit(10)
+    .all()
+    )
+    best_rated_books_dict = {}
+    for book in best_rated_books:
+        best_rated_books_dict[book[0]]=book[1]
+    response = jsonify(best_rated_books_dict)
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    return response
+

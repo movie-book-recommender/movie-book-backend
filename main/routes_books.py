@@ -7,7 +7,7 @@ from app import app
 from main.extentions import db
 from main.books import TableBkMetadata, TableBkRatings
 from main.helper import helper
-from sqlalchemy import func
+from sqlalchemy.sql import text
 
 @app.route('/dbgettop10newestbooks', methods = ['GET'])
 def get_top_10_newest_books():
@@ -91,7 +91,7 @@ def get_top_10_highest_rated_books():
     ORDER BY T.avg_rating DESC
     LIMIT 10"""
     best_rated_books = (
-        db.session.execute(sql)
+        db.session.execute(text(sql))
         ).fetchall()
     best_rated_books_list = []
     for result in best_rated_books:
@@ -105,7 +105,6 @@ def get_top_10_highest_rated_books():
                   "year":result.url,
                   "avg_rating": result.avg_rating}
         best_rated_books_list.append(result)
-    print(best_rated_books_list)
     response = response = jsonify(best_rated_books_list)
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response

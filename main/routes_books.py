@@ -57,32 +57,26 @@ def search_books_by_name_top_20():
     Returns:
         json: Data is returned in json format.
     """
-    if request.args['input'] != '':
-        search_raw = request.args['input']
-        search_term = f'%{search_raw}%'
-        allvalues = TableBkMetadata.query \
-                    .filter(TableBkMetadata.bk_metadata_title.ilike(search_term)) \
-                    .order_by(TableBkMetadata.bk_metadata_title \
-                    .ilike(search_term).desc(), TableBkMetadata.bk_metadata_title) \
-                    .limit(20).all()
-        if len(allvalues) != 0:
-            allvalues_dict = helper.dict_helper(allvalues)
-            response = jsonify(allvalues_dict)
-        else:
-            response = jsonify({'value': 'not available'})
-    else:
-        response = jsonify({'value': 'not available'})
+    search_raw = request.args['input']
+    search_term = f'%{search_raw}%'
+    allvalues = TableBkMetadata.query \
+                .filter(TableBkMetadata.bk_metadata_title.ilike(search_term)) \
+                .order_by(TableBkMetadata.bk_metadata_title \
+                .ilike(search_term).desc(), TableBkMetadata.bk_metadata_title) \
+                .limit(20).all()
+    allvalues_dict = helper.dict_helper(allvalues)
+    response = jsonify(allvalues_dict)
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response
 
 @app.route('/dbgettop10highestratedbooks', methods = ['GET'])
 def get_top_10_highest_rated_books():
-    """This function searches the 10 books with best average rating. 
+    """This function searches the 10 books with best average rating.
 
     Returns:
         json:
     """
-    sql = """SELECT M.authors, M.description, M.img, M.item_id, M.lang, M.title, M.url, M.year, T.avg_rating 
+    sql = """SELECT M.authors, M.description, M.img, M.item_id, M.lang, M.title, M.url, M.year, T.avg_rating
     FROM (SELECT item_id, AVG(rating) as avg_rating
             FROM bk_ratings
             GROUP BY item_id)
@@ -108,4 +102,3 @@ def get_top_10_highest_rated_books():
     response = response = jsonify(best_rated_books_list)
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response
-

@@ -66,9 +66,9 @@ def search_books_by_name_top_20():
         if len(allvalues) != 0:
             allvalues_dict = helper.dict_helper(allvalues)
             response = jsonify(allvalues_dict)
-        else: 
+        else:
             response = jsonify({'value': 'not available'})
-    else: 
+    else:
         response = jsonify({'value': 'not available'})
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response

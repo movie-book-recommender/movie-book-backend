@@ -97,3 +97,12 @@ class TestBooksRoutes(unittest.TestCase):
         json_response = json.loads(response.text)
 
         self.assertEqual(json_response["value"], "not available")
+    
+    def test_get_top_10_highest_rated_books(self):
+        """Testing the top 10 books function
+        """
+        response = self.test_client.get(
+            "/dbgettop10highestratedbooks",
+        )
+        json_response = json.loads(response.text)
+        self.assertEqual(len(json_response), 10)

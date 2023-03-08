@@ -42,3 +42,16 @@ class TableBkMetadata(db.Model):
             'year': self.bk_metadata_year,
             'description': self.bk_metadata_description,
             }
+class TableBkRatings(db.Model):
+
+    __tablename__ = "bk_ratings"
+    bk_ratings_item_id = db.Column("item_id", db.Integer, primary_key=True)
+    bk_ratings_user_id = db.Column("user_id", db.Integer)
+    bk_ratings_rating = db.Column("rating", db.Integer)
+
+    def object_to_dictionary(self):
+        return {
+            "item_id": self.bk_ratings_item_id,
+            "user_id": self.bk_ratings_user_id,
+            "rating": self.bk_ratings_rating
+        }

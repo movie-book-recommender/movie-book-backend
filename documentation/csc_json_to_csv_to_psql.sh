@@ -19,6 +19,7 @@ psql -U moviebook -d mvbkdb -c "\copy mv_reviews FROM 'reviews.csv' delimiter '|
 psql -U moviebook -d mvbkdb -c "\copy mv_survey_answers FROM 'survey_answers.csv' delimiter '|' csv"
 psql -U moviebook -d mvbkdb -c "\copy mv_tag_count FROM 'tag_count.csv' delimiter '|' csv"
 psql -U moviebook -d mvbkdb -c "\copy mv_tags FROM 'tags.csv' delimiter '|' csv"
+psql -U moviebook -d mvbkdb -c "\copy mv_tagdl FROM './movie_dataset_public_final/scores/tagdl.csv' delimiter ',' csv header"
 
 cat ./book_dataset/raw/metadata.json | jq '. | join("^")' > bk_metadata.csv
 sed 's/^"//;s/"$//' bk_metadata.csv > bk_metadata2.csv
@@ -36,10 +37,15 @@ psql -U moviebook -d mvbkdb -c "\copy bk_reviews FROM 'bk_reviews3.csv' delimite
 psql -U moviebook -d mvbkdb -c "\copy bk_survey_answers FROM 'bk_survey_answers.csv' delimiter '|' csv"
 psql -U moviebook -d mvbkdb -c "\copy bk_tag_count FROM 'bk_tag_count.csv' delimiter '|' csv"
 psql -U moviebook -d mvbkdb -c "\copy bk_tags FROM 'bk_tags.csv' delimiter '|' csv"
-
+psql -U moviebook -d mvbkdb -c "\copy bk_tagdl FROM './book_dataset/scores/tagdl.csv' delimiter ',' csv header"
 
 cat ./movie_tmdb_data_full.json | jq -r '.[] | join("^")' > movie_tmdb_data_full.csv
 
 # Note! Here errors were corrected manually. Script is to be improved.
 
 psql -U moviebook -d mvbkdb -c "\copy movie_tmdb_data_full FROM 'movie_tmdb_data_full2a.csv' delimiter '^' quote E'\b' csv"
+
+# To get recommendations to database, need to run another script that creates movie to movie recommendations and then add it to database
+python3 dot_product.py
+#psql -U moviebook -d mvbkdb -c "\copy mv_similar_mvbk FROM 'mv_sim.csv' delimiter ',' csv header"
+psql -U moviebook -d mvbkdb -c "\copy mv_similar_mvbk (item_id, similar_item_id, similar_item_type, similarity_score) FROM 'mv_sim.csv' delimiter ',' csv header"

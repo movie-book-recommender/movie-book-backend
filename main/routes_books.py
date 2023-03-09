@@ -57,21 +57,15 @@ def search_books_by_name_top_20():
     Returns:
         json: Data is returned in json format.
     """
-    if request.args['input'] != '':
-        search_raw = request.args['input']
-        search_term = f'%{search_raw}%'
-        allvalues = TableBkMetadata.query \
-                    .filter(TableBkMetadata.bk_metadata_title.ilike(search_term)) \
-                    .order_by(TableBkMetadata.bk_metadata_title \
-                    .ilike(search_term).desc(), TableBkMetadata.bk_metadata_title) \
-                    .limit(20).all()
-        if len(allvalues) != 0:
-            allvalues_dict = helper.dict_helper(allvalues)
-            response = jsonify(allvalues_dict)
-        else:
-            response = jsonify({'value': 'not available'})
-    else:
-        response = jsonify({'value': 'not available'})
+    search_raw = request.args['input']
+    search_term = f'%{search_raw}%'
+    allvalues = TableBkMetadata.query \
+                .filter(TableBkMetadata.bk_metadata_title.ilike(search_term)) \
+                .order_by(TableBkMetadata.bk_metadata_title \
+                .ilike(search_term).desc(), TableBkMetadata.bk_metadata_title) \
+                .limit(20).all()
+    allvalues_dict = helper.dict_helper(allvalues)
+    response = jsonify(allvalues_dict)
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response
 
@@ -108,7 +102,6 @@ def get_top_10_highest_rated_books():
     response = response = jsonify(best_rated_books_list)
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response
-
 @app.route('/dbgetforgivenbookrecommendedbooks', methods = ['GET'])
 def get_for_given_book_recommended_books():
     """This route implements a page that lists the recommended 10 books for

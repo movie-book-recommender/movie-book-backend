@@ -49,3 +49,5 @@ psql -U moviebook -d mvbkdb -c "\copy movie_tmdb_data_full FROM 'movie_tmdb_data
 python3 dot_product.py
 #psql -U moviebook -d mvbkdb -c "\copy mv_similar_mvbk FROM 'mv_sim.csv' delimiter ',' csv header"
 psql -U moviebook -d mvbkdb -c "\copy mv_similar_mvbk (item_id, similar_item_id, similar_item_type, similarity_score) FROM 'mv_sim.csv' delimiter ',' csv header"
+python3 book_to_books.py
+psql -U moviebook -d mvbkdb -c "\copy bk_similar_books (item_id, similar_item_id, similar_item_type, similarity_score) FROM 'bk_sim.csv' delimiter ',' csv header"

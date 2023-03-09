@@ -5,7 +5,7 @@ This module implements routes for books data in the flask app.
 from flask import jsonify, request
 from app import app
 from main.extentions import db
-from main.books import TableBkMetadata, TableBkRatings
+from main.books import TableBkMetadata, TableBkRatings, TableBkSimilarBooks
 from main.helper import helper
 from sqlalchemy.sql import text
 
@@ -77,12 +77,12 @@ def search_books_by_name_top_20():
 
 @app.route('/dbgettop10highestratedbooks', methods = ['GET'])
 def get_top_10_highest_rated_books():
-    """This function searches the 10 books with best average rating. 
+    """This function searches the 10 books with best average rating.
 
     Returns:
         json:
     """
-    sql = """SELECT M.authors, M.description, M.img, M.item_id, M.lang, M.title, M.url, M.year, T.avg_rating 
+    sql = """SELECT M.authors, M.description, M.img, M.item_id, M.lang, M.title, M.url, M.year, T.avg_rating
     FROM (SELECT item_id, AVG(rating) as avg_rating
             FROM bk_ratings
             GROUP BY item_id)
@@ -109,3 +109,63 @@ def get_top_10_highest_rated_books():
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response
 
+@app.route('/dbgetforgivenbookrecommendedbooks', methods = ['GET'])
+def get_for_given_book_recommended_books():
+    """This route implements a page that lists the recommended 10 books for
+    a given books that needs to be defined when calling the route.
+    """
+    if request.args['bookid'] != '':
+        if request.args['bookid'].isdigit():
+            bookid = int(request.args['bookid'])
+            allvalues = TableBkSimilarBooks.query \
+                            .filter_by(bk_similar_books_item_id = bookid) \
+                            .order_by(TableBkSimilarBooks.bk_similar_books_similarity_score.desc()) \
+                            .offset(1) \
+                            .all()
+            if len(allvalues) != 0:
+                allvalues_dict = helper.dict_helper(allvalues)
+                response = jsonify(allvalues_dict)
+            else:
+                response = jsonify({'value': 'not available'})
+        else:
+            response = jsonify({'value': 'not available'})
+    else:
+        response = jsonify({'value': 'not available'})
+
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    return response
+
+@app.route('/dbgetforgivenbookrecommendedbooksalldata', methods = ['GET'])
+def get_for_given_book_recommended_books_all_data():
+    """This route implements a page that lists the recommended 10 books and their key data for
+    a given book that needs to be defined when calling the route
+
+    Returns:
+        json: data is returned in json format.
+    """
+    if request.args['bookid'] != '':
+        if request.args['bookid'].isdigit():
+            bookid = int(request.args['bookid'])
+            allvalues = db.session.query(TableBkMetadata, TableBkSimilarBooks) \
+                            .join(TableBkSimilarBooks, TableBkSimilarBooks.bk_similar_books_similar_item_id == TableBkMetadata.bk_metadata_item_id) \
+                            .filter_by(bk_similar_books_item_id = bookid) \
+                            .order_by(TableBkSimilarBooks.bk_similar_books_similarity_score.desc()) \
+                            .offset(1) \
+                            .all()
+            if len(allvalues) != 0:
+                allvalues_dict = []
+                for value in allvalues:
+                    dict_1 = value.TableBkMetadata.object_to_dictionary()
+                    dict_2 = value.TableBkSimilarBooks.object_to_dictionary()
+                    dict_1.update(dict_2)
+                    allvalues_dict.append(dict_1)
+                response = jsonify(allvalues_dict)
+            else:
+                response = jsonify({'value': 'not available'})
+        else:
+            response = jsonify({'value': 'not available'})
+    else:
+        response = jsonify({'value': 'not available'})
+
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    return response

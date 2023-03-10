@@ -1,5 +1,5 @@
 """
-This module outlines the contents of all the tables with data 
+This module outlines the contents of all the tables with data
 regarding books in the application's database.
 """
 
@@ -7,7 +7,7 @@ from main.extentions import db
 
 class TableBkMetadata(db.Model):
     """This class outlines the structure of the BkMetadata table
-    in the application's database, and the related methods. 
+    in the application's database, and the related methods.
 
     Args:
         db (object): Tables contains metadata for books.
@@ -55,3 +55,26 @@ class TableBkRatings(db.Model):
             "user_id": self.bk_ratings_user_id,
             "rating": self.bk_ratings_rating
         }
+
+class TableBkSimilarBooks(db.Model):
+    __tablename__ = "bk_similar_books"
+    bk_similar_books_item_id = db.Column('item_id', db.Integer)
+    bk_similar_books_similar_item_id = db.Column('similar_item_id', db.Integer)
+    bk_similar_books_similar_item_type = db.Column('similar_item_type', db.String(16))
+    bk_similar_books_similarity_score = db.Column('similarity_score', db.Integer)
+    bk_similar_books_row_index = db.Column('row_index', db.Integer, primary_key=True)
+
+    def object_to_dictionary(self):
+        """This method returns contents of the BkSimilarBooks table
+        in a dictionary format.
+
+        Returns:
+            Dictionary: Returns contents of the BkSimilarBooks table.
+        """
+        return {
+            'item_id': self.bk_similar_books_item_id,
+            'similar_item_id': self.bk_similar_books_similar_item_id,
+            'similar_item_type': self.bk_similar_books_similar_item_type,
+            'similarity_score': self.bk_similar_books_similarity_score,
+            'row_index': self.bk_similar_books_row_index
+            }

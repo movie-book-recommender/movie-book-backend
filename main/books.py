@@ -72,8 +72,8 @@ class TableBkSimilarBooks(db.Model):
             Dictionary: Returns contents of the BkSimilarBooks table.
         """
         return {
-            'item_id': self.bk_similar_books_item_id,
-            'similar_item_id': self.bk_similar_books_similar_item_id,
+            'original_item_id': self.bk_similar_books_item_id, # Original item id is the book of which recommendations are generated from.
+            'item_id': self.bk_similar_books_similar_item_id, # This is named item_id because front end's carousel uses item_id.
             'similar_item_type': self.bk_similar_books_similar_item_type,
             'similarity_score': self.bk_similar_books_similarity_score,
             'row_index': self.bk_similar_books_row_index

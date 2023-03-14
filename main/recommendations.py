@@ -11,19 +11,19 @@ class Recommendations:
         """Initializes tag resources from database.
         """
         pass
-        #self.tg_movies = pd.read_csv("/home/evahteri/Koulu/OHTUPROJEKTI/se_project/tagdl_movies.csv")
-        #self.tg_movies = self.get_movie_tags()
-        #self.tg_books = pd.read_csv("/home/evahteri/Koulu/OHTUPROJEKTI/se_project/tagdl_books.csv")
+        #self.tg_movies = pd.read_csv("./movie_dataset_public_final/scores/tagdl.csv")
+        #self.tg_movies_own = self.get_movie_tags()
+        #self.tg_books = pd.read_csv("./book_dataset/scores/tagdl.csv")
         #self.book_tags = set(self.tg_books.tag.unique()) # not needed during algo
         #self.movie_tags = set(self.tg_movies.tag.unique()) # not needed during algo
-        #self.common_tags = self.book_tags.intersection(self.movie_tags) # this will be made as a single table
+        #self.common_tags = self.book_tags.intersection(self.movie_tags)
     
 
-    def get_movie_tags(self):
-        allvalues = TableMvTagDl.query.all()
-        allvalues_dict = helper.dict_helper(allvalues)
-        response = pd.DataFrame(allvalues_dict)
-        return response
+    #def get_movie_tags(self):
+    #    allvalues = TableMvTagDl.query.all()
+    #    allvalues_dict = helper.dict_helper(allvalues)
+    #    response = pd.DataFrame(allvalues_dict)
+    #    return response
 
     def get_user_profile(self, tg, domain_ratings):
         """Generates a dataframe that represents user's preferences.
@@ -143,17 +143,12 @@ class Recommendations:
         Returns:
             list: List of id's, which are the recommended movies for the user. Best one is at index 0.
         """
-
         self.tg_movies = pd.read_csv("./movie_dataset_public_final/scores/tagdl.csv")
         #self.tg_movies_own = self.get_movie_tags()
         self.tg_books = pd.read_csv("./book_dataset/scores/tagdl.csv")
         self.book_tags = set(self.tg_books.tag.unique()) # not needed during algo
         self.movie_tags = set(self.tg_movies.tag.unique()) # not needed during algo
         self.common_tags = self.book_tags.intersection(self.movie_tags)
-
-        print(self.tg_movies)
-        print(self.tg_movies_own)
-
 
         profile = self.get_user_profile(self.tg_movies, ratings["movies"])
         profile = pd.concat([profile, self.get_user_profile(self.tg_books, ratings["books"])])
@@ -168,6 +163,7 @@ class Recommendations:
         results = movie_sim_df.sort_values("sim", ascending=False, ignore_index=True).head(amount).drop(columns=["dot_product", "length", "item_id_x", "sim"])
 
         results = results["item_id"].values.tolist()
+
 
         #test_tags = self.get_movie_tags()
         #print(test_tags)

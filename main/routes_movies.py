@@ -8,7 +8,7 @@ from app import app
 from main.extentions import db
 from main.movies import TableMovieTmdbDataFull, TableMvMetadataUpdated, TableMvTags, TableMvSimilarMvbk
 from main.helper import helper
-from main.recommendations import recommendations
+#from main.recommendations import recommendations
 
 @app.route('/dbgettags', methods = ['GET'])
 def gettablevalues():
@@ -284,25 +284,25 @@ def get_recommendations_all_data_for_given_movie():
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response
 
-@app.route("/dbgetpersonalmovierecommendations", methods = ['GET'])
-def get_personal_movie_recommendations():
-    ratings = {"movies" : [{"item_id" : 1270, "rating" : 4}, # Back to the Future
-                        {"item_id" : 5445, "rating" : 5}, # Minority Report
-                        {"item_id" : 7361, "rating" : 1}], # Eternal Sunshine of the Spotless Mind
-            "books" : [{"item_id" : 150259, "rating" : 4}, # Stephen King - IT
-                        {"item_id" : 3230869, "rating" : 3}]} # Stephen King -Misery
-    
-    results = recommendations.get_movie_recommendations(ratings, 11)
-
-    all_values = []
-
-    for result in results:
-        value = TableMovieTmdbDataFull.query \
-                .filter_by(movie_tmdb_data_full_movieid = result).first()
-        all_values.append(value)
-
-    allvalues_dict = helper.dict_helper(all_values)
-    response = jsonify(allvalues_dict)
-    response.headers.add('Access-Control-Allow-Origin', '*')
-    
-    return response
+#@app.route("/dbgetpersonalmovierecommendations", methods = ['GET'])
+#def get_personal_movie_recommendations():
+#    ratings = {"movies" : [{"item_id" : 1270, "rating" : 4}, # Back to the Future
+#                        {"item_id" : 5445, "rating" : 5}, # Minority Report
+#                        {"item_id" : 7361, "rating" : 1}], # Eternal Sunshine of the Spotless Mind
+#            "books" : [{"item_id" : 150259, "rating" : 4}, # Stephen King - IT
+#                        {"item_id" : 3230869, "rating" : 3}]} # Stephen King -Misery
+#    
+#    results = recommendations.get_movie_recommendations(ratings, 11)
+#
+#    all_values = []
+#
+#    for result in results:
+#        value = TableMovieTmdbDataFull.query \
+#                .filter_by(movie_tmdb_data_full_movieid = result).first()
+#        all_values.append(value)
+#
+#    allvalues_dict = helper.dict_helper(all_values)
+#    response = jsonify(allvalues_dict)
+#    response.headers.add('Access-Control-Allow-Origin', '*')
+#
+#    return response

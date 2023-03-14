@@ -156,6 +156,7 @@ class Recommendations:
         results = movie_sim_df.sort_values("sim", ascending=False, ignore_index=True).head(amount).drop(columns=["dot_product", "length", "item_id_x", "sim"])
 
         results = results["item_id"].values.tolist()
+        
 
         #test_tags = self.get_movie_tags()
         #print(test_tags)

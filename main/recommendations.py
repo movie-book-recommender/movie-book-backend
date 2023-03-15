@@ -6,12 +6,13 @@ class Recommendations:
     def __init__(self):
         """Initializes tag resources from database.
         """
-        self.tg_movies = pd.read_csv("./movie_dataset_public_final/scores/tagdl.csv")
+        pass
+        #self.tg_movies = pd.read_csv("./movie_dataset_public_final/scores/tagdl.csv")
         #self.tg_movies_own = self.get_movie_tags()
-        self.tg_books = pd.read_csv("./book_dataset/scores/tagdl.csv")
-        self.book_tags = set(self.tg_books.tag.unique()) # not needed during algo
-        self.movie_tags = set(self.tg_movies.tag.unique()) # not needed during algo
-        self.common_tags = self.book_tags.intersection(self.movie_tags)
+        #self.tg_books = pd.read_csv("./book_dataset/scores/tagdl.csv")
+        #self.book_tags = set(self.tg_books.tag.unique()) # not needed during algo
+        #self.movie_tags = set(self.tg_movies.tag.unique()) # not needed during algo
+        #self.common_tags = self.book_tags.intersection(self.movie_tags)
     
 
     #def get_movie_tags(self):
@@ -138,6 +139,12 @@ class Recommendations:
         Returns:
             list: List of id's, which are the recommended movies for the user. Best one is at index 0.
         """
+        self.tg_movies = pd.read_csv("./movie_dataset_public_final/scores/tagdl.csv")
+        #self.tg_movies_own = self.get_movie_tags()
+        self.tg_books = pd.read_csv("./book_dataset/scores/tagdl.csv")
+        self.book_tags = set(self.tg_books.tag.unique()) # not needed during algo
+        self.movie_tags = set(self.tg_movies.tag.unique()) # not needed during algo
+        self.common_tags = self.book_tags.intersection(self.movie_tags)
 
         profile = self.get_user_profile(self.tg_movies, ratings["movies"])
         profile = pd.concat([profile, self.get_user_profile(self.tg_books, ratings["books"])])

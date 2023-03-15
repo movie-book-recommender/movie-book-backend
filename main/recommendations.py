@@ -163,5 +163,6 @@ class Recommendations:
         return results
 
 recommendations = Recommendations()
+
 # example:
 #print(recommendations.get_movie_recommendations(ratings, 11))

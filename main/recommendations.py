@@ -1,8 +1,4 @@
 import pandas as pd
-from main.movies import TableMvTagDl
-from main.helper import helper
-from flask import jsonify
-from app import app
 
 class Recommendations:
     """Class that generates personal recommendations for users. Main fucntion is get_movie_recommendations.
@@ -163,10 +159,6 @@ class Recommendations:
         results = movie_sim_df.sort_values("sim", ascending=False, ignore_index=True).head(amount).drop(columns=["dot_product", "length", "item_id_x", "sim"])
 
         results = results["item_id"].values.tolist()
-
-
-        #test_tags = self.get_movie_tags()
-        #print(test_tags)
 
         return results
 

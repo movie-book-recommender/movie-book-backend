@@ -305,7 +305,7 @@ def get_personal_movie_recommendations():
 
             allvalues_dict = helper.dict_helper(all_values)
             response = jsonify(allvalues_dict)
-            response.headers.add('Access-Control-Allow-Origin', '*')
     else:
         response = jsonify({'value': 'not available'})
+    response.headers.add('Access-Control-Allow-Origin', '*')
     return response

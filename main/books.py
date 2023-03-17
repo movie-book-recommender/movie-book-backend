@@ -42,6 +42,7 @@ class TableBkMetadata(db.Model):
             'year': self.bk_metadata_year,
             'description': self.bk_metadata_description,
             }
+
 class TableBkRatings(db.Model):
 
     __tablename__ = "bk_ratings"
@@ -77,4 +78,37 @@ class TableBkSimilarBooks(db.Model):
             'similar_item_type': self.bk_similar_books_similar_item_type,
             'similarity_score': self.bk_similar_books_similarity_score,
             'row_index': self.bk_similar_books_row_index
+            }
+
+class TableBkSimilarMovies(db.Model):
+    """This class outlines the structure of the BkSimilarMovies table
+    in the application's database, and the related methods.
+
+    Args:
+        db (object): Table contains for each book the top 250 movies 
+        that are most similar to this book.
+
+    Returns:
+        Integer, string: Returns data from table as integers or strings.
+    """
+    __tablename__ = 'bk_similar_movies'
+    bk_similar_movies_item_id = db.Column('item_id', db.Integer)
+    bk_similar_movies_similar_item_id = db.Column('similar_item_id', db.Integer)
+    bk_similar_movies_similar_item_type = db.Column('similar_item_type', db.String(16))
+    bk_similar_movies_similarity_score = db.Column('similarity_score', db.Integer)
+    bk_similar_movies_row_index = db.Column('row_index', db.Integer, primary_key=True)
+
+    def object_to_dictionary(self):
+        """This method returns contents of the BkSimilarMovies table
+        in a dictionary format.
+
+        Returns:
+            Dictionary: Returns contents of the BkSimilarMovies table.
+        """
+        return {
+            'item_id': self.bk_similar_movies_item_id,
+            'similar_item_id': self.bk_similar_movies_similar_item_id,
+            'similar_item_type': self.bk_similar_movies_similar_item_type,
+            'similarity_score': self.bk_similar_movies_similarity_score,
+            'row_index': self.bk_similar_movies_row_index
             }

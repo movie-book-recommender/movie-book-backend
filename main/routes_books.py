@@ -3,11 +3,12 @@ This module implements routes for books data in the flask app.
 """
 
 from flask import jsonify, request
+from sqlalchemy.sql import text
 from app import app
 from main.extentions import db
-from main.books import TableBkMetadata, TableBkRatings, TableBkSimilarBooks
+from main.books import TableBkMetadata, TableBkRatings, TableBkSimilarBooks, TableBkSimilarMovies
+from main.movies import TableMovieTmdbDataFull
 from main.helper import helper
-from sqlalchemy.sql import text
 
 @app.route('/dbgettop10newestbooks', methods = ['GET'])
 def get_top_10_newest_books():
@@ -102,6 +103,7 @@ def get_top_10_highest_rated_books():
     response = response = jsonify(best_rated_books_list)
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response
+
 @app.route('/dbgetforgivenbookrecommendedbooks', methods = ['GET'])
 def get_for_given_book_recommended_books():
     """This route implements a page that lists the recommended 10 books for
@@ -150,6 +152,67 @@ def get_for_given_book_recommended_books_all_data():
                 for value in allvalues:
                     dict_1 = value.TableBkMetadata.object_to_dictionary()
                     dict_2 = value.TableBkSimilarBooks.object_to_dictionary()
+                    dict_1.update(dict_2)
+                    allvalues_dict.append(dict_1)
+                response = jsonify(allvalues_dict)
+            else:
+                response = jsonify({'value': 'not available'})
+        else:
+            response = jsonify({'value': 'not available'})
+    else:
+        response = jsonify({'value': 'not available'})
+
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    return response
+
+@app.route('/dbgetrecommendedmoviesforgivenbook', methods = ['GET'])
+def get_recommended_movies_for_given_book():
+    """This route implements a page that lists all the recommended movies for
+    a given book that needs to be defined when calling the route. 
+    It returns all the movies that have been recommended for a given book.
+    """
+    if request.args['bookid'] != '':
+        if request.args['bookid'].isdigit():
+            bookid = int(request.args['bookid'])
+            allvalues = TableBkSimilarMovies.query \
+                            .filter_by(bk_similar_movies_item_id = bookid) \
+                            .order_by(TableBkSimilarMovies.bk_similar_movies_similarity_score.desc()) \
+                            .all()
+            print(len(allvalues))
+            if len(allvalues) != 0:
+                allvalues_dict = helper.dict_helper(allvalues)
+                response = jsonify(allvalues_dict)
+            else:
+                response = jsonify({'value': 'not available'})
+        else:
+            response = jsonify({'value': 'not available'})
+    else:
+        response = jsonify({'value': 'not available'})
+
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    return response
+
+@app.route('/dbgetrecommendedmoviesalldataforgivenbook', methods = ['GET'])
+def get_recommended_movies_all_data_for_given_book():
+    """This route implements a page that lists a limited number of recommended movies 
+    and their key data for a given book that needs to be defined when calling the route
+
+    Returns:
+        json: data is returned in json format.
+    """
+    if request.args['bookid'] != '':
+        if request.args['bookid'].isdigit():
+            bookid = int(request.args['bookid'])
+            allvalues = db.session.query(TableMovieTmdbDataFull, TableBkSimilarMovies) \
+                            .join(TableBkSimilarMovies, TableBkSimilarMovies.bk_similar_movies_similar_item_id == TableMovieTmdbDataFull.movie_tmdb_data_full_movieid) \
+                            .filter_by(bk_similar_movies_item_id = bookid) \
+                            .order_by(TableBkSimilarMovies.bk_similar_movies_similarity_score.desc()) \
+                            .limit(10).all()
+            if len(allvalues) != 0:
+                allvalues_dict = []
+                for value in allvalues:
+                    dict_1 = value.TableMovieTmdbDataFull.object_to_dictionary()
+                    dict_2 = value.TableBkSimilarMovies.object_to_dictionary()
                     dict_1.update(dict_2)
                     allvalues_dict.append(dict_1)
                 response = jsonify(allvalues_dict)

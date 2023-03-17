@@ -345,6 +345,7 @@ def get_recommended_books_all_data_for_given_movie():
         response = jsonify({'value': 'not available'})
 
     response.headers.add('Access-Control-Allow-Origin', '*')
+    return response
 
 @app.route("/dbgetpersonalmovierecommendations", methods = ['GET'])
 def get_personal_movie_recommendations():

@@ -26,6 +26,8 @@ class Helper:
             ratings = False
         elif "Books" not in cookie:
             ratings = False
+        elif len(cookie["Movies"]) == 0 or len(cookie["Books"]) == 0:
+            ratings = False
         else:
             ratings = {"movies": [],
                     "books": []}

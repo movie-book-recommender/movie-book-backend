@@ -164,6 +164,39 @@ class TableMvSimilarMvbk(db.Model):
             'row_index': self.mv_similar_mvbk_row_index
             }
 
+class TableMvSimilarBooks(db.Model):
+    """This class outlines the structure of the MvSimilarBooks table
+    in the application's database, and the related methods.
+
+    Args:
+        db (object): Table contains for each movie the top 250 books 
+        that are most similar to this movie.
+
+    Returns:
+        Integer, string: Returns data from table as integers or strings.
+    """
+    __tablename__ = 'mv_similar_books'
+    mv_similar_books_item_id = db.Column('item_id', db.Integer)
+    mv_similar_books_similar_item_id = db.Column('similar_item_id', db.Integer)
+    mv_similar_books_similar_item_type = db.Column('similar_item_type', db.String(16))
+    mv_similar_books_similarity_score = db.Column('similarity_score', db.Integer)
+    mv_similar_books_row_index = db.Column('row_index', db.Integer, primary_key=True)
+
+    def object_to_dictionary(self):
+        """This method returns contents of the MvSimilarBooks table
+        in a dictionary format.
+
+        Returns:
+            Dictionary: Returns contents of the MvSimilarMvbk table.
+        """
+        return {
+            'item_id': self.mv_similar_books_item_id,
+            'similar_item_id': self.mv_similar_books_similar_item_id,
+            'similar_item_type': self.mv_similar_books_similar_item_type,
+            'similarity_score': self.mv_similar_books_similarity_score,
+            'row_index': self.mv_similar_books_row_index
+            }
+
 class TableMvTagDl(db.Model):
     """This class outlines the structure of the MvTagDl table 
     in the application's database, and the related methods.

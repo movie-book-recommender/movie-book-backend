@@ -7,7 +7,8 @@ import json
 from flask import jsonify, request
 from app import app
 from main.extentions import db
-from main.movies import TableMovieTmdbDataFull, TableMvMetadataUpdated, TableMvTags, TableMvSimilarMvbk
+from main.movies import TableMovieTmdbDataFull, TableMvMetadataUpdated, TableMvTags, TableMvSimilarMvbk, TableMvSimilarBooks
+from main.books import TableBkMetadata
 from main.helper import helper
 from main.recommendations import recommendations
 
@@ -285,6 +286,66 @@ def get_recommendations_all_data_for_given_movie():
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response
 
+@app.route('/dbgetrecommendedbooksforgivenmovie', methods = ['GET'])
+def get_recommended_books_for_given_movie():
+    """This route implements a page that lists all the recommended books for
+    a given movie that needs to be defined when calling the route. 
+    It returns all the books that have been recommended for a given movie.
+    """
+    if request.args['movieid'] != '':
+        if request.args['movieid'].isdigit():
+            movieid = int(request.args['movieid'])
+            allvalues = TableMvSimilarBooks.query \
+                            .filter_by(mv_similar_books_item_id = movieid) \
+                            .order_by(TableMvSimilarBooks.mv_similar_books_similarity_score.desc()) \
+                            .all()
+            if len(allvalues) != 0:
+                allvalues_dict = helper.dict_helper(allvalues)
+                response = jsonify(allvalues_dict)
+            else:
+                response = jsonify({'value': 'not available'})
+        else:
+            response = jsonify({'value': 'not available'})
+    else:
+        response = jsonify({'value': 'not available'})
+
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    return response
+
+@app.route('/dbgetrecommendedbooksalldataforgivenmovie', methods = ['GET'])
+def get_recommended_books_all_data_for_given_movie():
+    """This route implements a page that lists a limited number of recommended books 
+    and their key data for a given movie that needs to be defined when calling the route
+
+    Returns:
+        json: data is returned in json format.
+    """
+    if request.args['movieid'] != '':
+        if request.args['movieid'].isdigit():
+            movieid = int(request.args['movieid'])
+            allvalues = db.session.query(TableBkMetadata, TableMvSimilarBooks) \
+                            .join(TableMvSimilarBooks, TableMvSimilarBooks.mv_similar_books_similar_item_id == TableBkMetadata.bk_metadata_item_id) \
+                            .filter_by(mv_similar_books_item_id = movieid) \
+                            .order_by(TableMvSimilarBooks.mv_similar_books_similarity_score.desc()) \
+                            .limit(20).all()
+#            print(len(allvalues))
+            if len(allvalues) != 0:
+                allvalues_dict = []
+                for value in allvalues:
+                    dict_1 = value.TableBkMetadata.object_to_dictionary()
+                    dict_2 = value.TableMvSimilarBooks.object_to_dictionary()
+                    dict_1.update(dict_2)
+                    allvalues_dict.append(dict_1)
+                response = jsonify(allvalues_dict)
+            else:
+                response = jsonify({'value': 'not available'})
+        else:
+            response = jsonify({'value': 'not available'})
+    else:
+        response = jsonify({'value': 'not available'})
+
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    return response
 
 @app.route("/dbgetpersonalmovierecommendations", methods = ['GET'])
 def get_personal_movie_recommendations():

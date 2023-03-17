@@ -195,7 +195,7 @@ def get_recommended_movies_for_given_book():
 @app.route('/dbgetrecommendedmoviesalldataforgivenbook', methods = ['GET'])
 def get_recommended_movies_all_data_for_given_book():
     """This route implements a page that lists a limited number of recommended movies 
-    and their key data for a given book that needs to be defined when calling the route
+    and their key data for a given book that needs to be defined when calling the route.
 
     Returns:
         json: data is returned in json format.
@@ -207,7 +207,7 @@ def get_recommended_movies_all_data_for_given_book():
                             .join(TableBkSimilarMovies, TableBkSimilarMovies.bk_similar_movies_similar_item_id == TableMovieTmdbDataFull.movie_tmdb_data_full_movieid) \
                             .filter_by(bk_similar_movies_item_id = bookid) \
                             .order_by(TableBkSimilarMovies.bk_similar_movies_similarity_score.desc()) \
-                            .limit(10).all()
+                            .limit(20).all()
             if len(allvalues) != 0:
                 allvalues_dict = []
                 for value in allvalues:

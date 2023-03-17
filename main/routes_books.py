@@ -195,7 +195,7 @@ def get_recommended_movies_for_given_book():
 @app.route('/dbgetrecommendedmoviesalldataforgivenbook', methods = ['GET'])
 def get_recommended_movies_all_data_for_given_book():
     """This route implements a page that lists a limited number of recommended movies 
-    and their key data for a given book that needs to be defined when calling the route
+    and their key data for a given book that needs to be defined when calling the route.
 
     Returns:
         json: data is returned in json format.

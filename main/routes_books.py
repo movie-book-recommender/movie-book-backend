@@ -207,7 +207,7 @@ def get_recommended_movies_all_data_for_given_book():
                             .join(TableBkSimilarMovies, TableBkSimilarMovies.bk_similar_movies_similar_item_id == TableMovieTmdbDataFull.movie_tmdb_data_full_movieid) \
                             .filter_by(bk_similar_movies_item_id = bookid) \
                             .order_by(TableBkSimilarMovies.bk_similar_movies_similarity_score.desc()) \
-                            .limit(10).all()
+                            .limit(20).all()
             if len(allvalues) != 0:
                 allvalues_dict = []
                 for value in allvalues:

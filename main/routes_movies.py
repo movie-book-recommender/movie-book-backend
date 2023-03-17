@@ -3,6 +3,7 @@ This module implements routes for movies data in the flask app.
 """
 
 from datetime import date
+import json
 from flask import jsonify, request
 from app import app
 from main.extentions import db
@@ -284,28 +285,27 @@ def get_recommendations_all_data_for_given_movie():
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response
 
-@app.route("/dbgetpersonalmovierecommendations", methods = ['GET', "POST"])
+
+@app.route("/dbgetpersonalmovierecommendations", methods = ['GET'])
 def get_personal_movie_recommendations():
-    cookie = request.get_json()
-    if cookie:
-
-        ratings = helper.ratings_helper(cookie)
+    response = jsonify({'value': 'not available'}) # Set response as not available default
+    if request.args['ratings'] != '': # Check if there is an input
+        cookie_raw = request.args['ratings'] # Get the input in raw format
+        cookie = json.loads(cookie_raw) # Convert from json to python dict
+        ratings = helper.ratings_helper(cookie) # Call helper function to parse json data
         if ratings is False:
-            response = jsonify({'value': 'not available'})
+            response = jsonify({'value': 'not available'}) # If returns false, the data is not valid
         else:
-
-            results = recommendations.get_movie_recommendations(ratings, 10)
-
+            results = recommendations.get_movie_recommendations(ratings, 10) # Call algorithm function to form recommendations
             all_values = []
-
             for result in results:
                 value = TableMovieTmdbDataFull.query \
                         .filter_by(movie_tmdb_data_full_movieid = result).first()
-                all_values.append(value)
+                all_values.append(value) # Add result to a list
 
-            allvalues_dict = helper.dict_helper(all_values)
-            response = jsonify(allvalues_dict)
+            allvalues_dict = helper.dict_helper(all_values) # Convert list to a dict
+            response = jsonify(allvalues_dict) # Turn dict to json
     else:
         response = jsonify({'value': 'not available'})
-    response.headers.add('Access-Control-Allow-Origin', '*')
+    response.headers.add('Access-Control-Allow-Origin', '*') # Add correct headers
     return response

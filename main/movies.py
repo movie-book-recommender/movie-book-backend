@@ -196,3 +196,36 @@ class TableMvSimilarBooks(db.Model):
             'similarity_score': self.mv_similar_books_similarity_score,
             'row_index': self.mv_similar_books_row_index
             }
+
+class TableMvTagDl(db.Model):
+    """This class outlines the structure of the MvTagDl table 
+    in the application's database, and the related methods.
+    Note. Use of orm syntax requires setting one one of 
+    items as primary key, though it has not been defined in the 
+    underlying database.
+
+    Args:
+        db (object): Table shows tags for movies.
+
+    Returns:
+        Integer, string: Returns data as integers or strings. 
+    """
+    __tablename__ = 'mv_tagdl'
+    mv_tagdl_tag = db.Column('tag', db.String(255), primary_key=True)
+    mv_tagdl_item_id = db.Column('item_id', db.Integer)
+    mv_tagdl_score = db.Column("score", db.Integer, primary_key=True)
+    mv_tagdl_row_index = db.Column('row_index', db.Integer, primary_key=True)
+
+    def object_to_dictionary(self):
+        """This method returns contents of the MvTagDl table
+        in a dictionary format.
+
+        Returns:
+            Dictionary: Returns contents of the MvTagDl table.
+        """
+        return {
+            'tag': self.mv_tagdl_tag,
+            'item_id': self.mv_tagdl_item_id,
+            "score": self.mv_tagdl_score,
+            "row_index": self.mv_tagdl_row_index
+            }

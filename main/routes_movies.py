@@ -3,12 +3,14 @@ This module implements routes for movies data in the flask app.
 """
 
 from datetime import date
+import json
 from flask import jsonify, request
 from app import app
 from main.extentions import db
 from main.movies import TableMovieTmdbDataFull, TableMvMetadataUpdated, TableMvTags, TableMvSimilarMvbk, TableMvSimilarBooks
 from main.books import TableBkMetadata
 from main.helper import helper
+from main.recommendations import recommendations
 
 @app.route('/dbgettags', methods = ['GET'])
 def gettablevalues():
@@ -343,4 +345,27 @@ def get_recommended_books_all_data_for_given_movie():
         response = jsonify({'value': 'not available'})
 
     response.headers.add('Access-Control-Allow-Origin', '*')
+
+@app.route("/dbgetpersonalmovierecommendations", methods = ['GET'])
+def get_personal_movie_recommendations():
+    response = jsonify({'value': 'not available'}) # Set response as not available default
+    if request.args['ratings'] != '': # Check if there is an input
+        cookie_raw = request.args['ratings'] # Get the input in raw format
+        cookie = json.loads(cookie_raw) # Convert from json to python dict
+        ratings = helper.ratings_helper(cookie) # Call helper function to parse json data
+        if ratings is False:
+            response = jsonify({'value': 'not available'}) # If returns false, the data is not valid
+        else:
+            results = recommendations.get_movie_recommendations(ratings, 10) # Call algorithm function to form recommendations
+            all_values = []
+            for result in results:
+                value = TableMovieTmdbDataFull.query \
+                        .filter_by(movie_tmdb_data_full_movieid = result).first()
+                all_values.append(value) # Add result to a list
+
+            allvalues_dict = helper.dict_helper(all_values) # Convert list to a dict
+            response = jsonify(allvalues_dict) # Turn dict to json
+    else:
+        response = jsonify({'value': 'not available'})
+    response.headers.add('Access-Control-Allow-Origin', '*') # Add correct headers
     return response

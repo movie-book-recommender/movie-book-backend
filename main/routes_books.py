@@ -231,7 +231,7 @@ def get_recommended_movies_all_data_for_given_book():
 @app.route("/dbgetpersonalbookrecommendations", methods = ['GET']) # when uusing, add ?ratings to address
 def get_personal_book_recommendations():
     response = jsonify({'value' : 'not available'}) # set response as not available default
-#
+#   de-bugging
 #    if request.args['ratings'] != '': # check if there is an input
 #        cookie_raw = request.args['ratings'] # get the input in raw-format
 #        cookie = json.loads(cookie_raw) #convert from json to python dict

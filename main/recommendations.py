@@ -139,9 +139,13 @@ class Recommendations:
         Returns:
             list: List of id's, which are the recommended movies for the user. Best one is at index 0.
         """
-        self.tg_movies = pd.read_csv("/home/mvbkrunner/data/movietagdl.csv")
+        self.tg_movies = pd.read_csv("/home/mvbkrunner/data/movietagdl.csv") # correct
         #self.tg_movies_own = self.get_movie_tags()
-        self.tg_books = pd.read_csv("/home/mvbkrunner/data/booktagdl.csv")
+        self.tg_books = pd.read_csv("/home/mvbkrunner/data/booktagdl.csv") # correct
+
+ #       self.tg_movies = pd.read_csv("C:/MyFolder/Projects/ohtu_project/key_data/movies_tagdl.csv") # testing only
+ #       self.tg_books = pd.read_csv("C:/MyFolder/Projects/ohtu_project/key_data/books_tagdl.csv") # testing only
+
         self.book_tags = set(self.tg_books.tag.unique()) # not needed during algo
         self.movie_tags = set(self.tg_movies.tag.unique()) # not needed during algo
         self.common_tags = self.book_tags.intersection(self.movie_tags)
@@ -162,7 +166,7 @@ class Recommendations:
 
         return results
 
-def get_book_recommendations(self, ratings, amount):
+    def get_book_recommendations(self, ratings, amount):
         """
         Main function to fetch recommendations based on ratings.
         Args:
@@ -171,9 +175,13 @@ def get_book_recommendations(self, ratings, amount):
         Returns:
             list: List of id's, which are the recommended movies for the user. Best one is at index 0.
         """
-        self.tg_movies = pd.read_csv("/home/mvbkrunner/data/movietagdl.csv")
+        self.tg_movies = pd.read_csv("/home/mvbkrunner/data/movietagdl.csv") # correct
         #self.tg_movies_own = self.get_movie_tags()
-        self.tg_books = pd.read_csv("/home/mvbkrunner/data/booktagdl.csv")
+        self.tg_books = pd.read_csv("/home/mvbkrunner/data/booktagdl.csv") # correct
+
+#        self.tg_movies = pd.read_csv("C:/MyFolder/Projects/ohtu_project/key_data/movies_tagdl.csv") # testing only
+#        self.tg_books = pd.read_csv("C:/MyFolder/Projects/ohtu_project/key_data/books_tagdl.csv") # testing only
+
         self.book_tags = set(self.tg_books.tag.unique()) # not needed during algo
         self.movie_tags = set(self.tg_movies.tag.unique()) # not needed during algo
         self.common_tags = self.movie_tags.intersection(self.book_tags)

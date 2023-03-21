@@ -357,7 +357,7 @@ def get_personal_movie_recommendations():
         if ratings is False:
             response = jsonify({'value': 'not available'}) # If returns false, the data is not valid
         else:
-            results = recommendations.get_movie_recommendations(ratings, 10) # Call algorithm function to form recommendations
+            results = recommendations.get_movie_recommendations(ratings, 20) # Call algorithm function to form recommendations
             all_values = []
             for result in results:
                 value = TableMovieTmdbDataFull.query \

@@ -3,12 +3,14 @@ This module implements routes for books data in the flask app.
 """
 
 from flask import jsonify, request
+import json
 from sqlalchemy.sql import text
 from app import app
 from main.extentions import db
 from main.books import TableBkMetadata, TableBkRatings, TableBkSimilarBooks, TableBkSimilarMovies
 from main.movies import TableMovieTmdbDataFull
 from main.helper import helper
+from main.recommendations import recommendations
 
 @app.route('/dbgettop10newestbooks', methods = ['GET'])
 def get_top_10_newest_books():
@@ -224,4 +226,27 @@ def get_recommended_movies_all_data_for_given_book():
         response = jsonify({'value': 'not available'})
 
     response.headers.add('Access-Control-Allow-Origin', '*')
+    return response
+
+@app.route("/dbgetpersonalbookrecommendations", methods = ['GET']) # when uusing, add ?ratings to address
+def get_personal_book_recommendations():
+    response = jsonify({'value' : 'not available'}) # set response as not available default
+    if request.args['ratings'] != '': # check if there is an input
+        cookie_raw = request.args['ratings'] # get the input in raw-format
+        cookie = json.loads(cookie_raw) #convert from json to python dict
+        ratings = helper.ratings_helper(cookie) # call helper function to parse json data
+        if ratings is False:
+            response = jsonify({'value' : 'not available'}) # if returns false data is not valid
+        else:
+            results = recommendations.get_book_recommendations(ratings, 10) # call algorithm function to form recommendations
+            all_values = []
+            for result in results:
+                value = TableBkMetadata.query \
+                        .filter_by(bk_metadata_item_id = result).first()
+                all_values.append(value) # add result to a list
+            allvalues_dict = helper.dict_helper(all_values) # Convert list to a dict
+            response = jsonify(allvalues_dict) # Turn dict to json
+    else:
+        response = jsonify({'value': 'not available'})
+    response.headers.add('Access-Control-Allow-Origin', '*') # Add correct headers
     return response

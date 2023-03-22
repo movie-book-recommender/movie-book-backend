@@ -246,6 +246,8 @@ def get_books_by_author():
     allvalues_dict = helper.dict_helper(allvalues)
     response = jsonify(allvalues_dict)
     response.headers.add('Access-Control-Allow-Origin', '*')
+    return response
+
 @app.route("/dbgetpersonalbookrecommendations", methods = ['GET']) # when uusing, add ?ratings to address
 def get_personal_book_recommendations():
     response = jsonify({'value' : 'not available'}) # set response as not available default

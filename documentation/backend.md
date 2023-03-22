@@ -1,6 +1,6 @@
 # Backend: Instructions
 
-This document describes setting up and using the backend for Movie-book recommender. It would be possible to deploy front end code here as well. 
+This document describes setting up and using the backend for Movie Book Recommender.
 
 ## Set-up virtual machine in cPouta
 
@@ -10,7 +10,7 @@ To create a virtual machine in cPouta, instructions from [CSC](https://docs.csc.
 2. **SSH keys.** 
     SSH keys were set up for the project. Public key was generated in cPouta. Private key was extracted and stored with the help of [puttygen](https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html).
 3. **Firewalls and security groups.** 
-    The movie book recommender uses three cPouta security groups: default and ssh (available by default in cPouta) as well as postgres (new one created to open a port to access the database). Details on the security groups are available for project members through [cPouta](https://pouta.csc.fi/).
+    The movie book recommender uses five cPouta security groups: default and ssh (available by default in cPouta) as well as postgres (new one created to open a port to access the database), and watchtower and docker (new ones created to open ports to deploy frontend to cPouta). Details on the security groups are available for project members through [cPouta](https://pouta.csc.fi/).
 4. **Launching a virtual machine.** 
     In cPouta, an instance called moviebook_test was launched. Ubuntu-22.04 was selected as the image (provided by cPouta) and standard.large was selected as the flavor.
 5. **IP address.** 
@@ -98,7 +98,7 @@ To connect to the virtual machine, instructions from [CSC](https://docs.csc.fi/c
     unzip genome_2021.zip
     ```
 
-## Populate the database with data
+## Populate the database with raw data
 
 * Due to the large size of the files, population of the database was done using program called `jq`
     ```
@@ -117,8 +117,26 @@ To connect to the virtual machine, instructions from [CSC](https://docs.csc.fi/c
 
 * The script used to populate the database is available in [csc_json_to_csv_to_psql.sh](csc_json_to_csv_to_psql.sh)
 * Please note that to make a script executable on Linux, the following command is needed `chmod +x filename.sh`.
+* At the moment only one file is yet to be added to the database.
 
-* Work is yet to be done to add all of the files into the database.
+
+## Populate the database with data on recommendations
+
+* Core functionality in the application lies in an algorithm that calculates recommendations for movies and books. For further details, please see a [video](https://www.youtube.com/watch?v=RD5Xz02x33U) outlining the algorithm used in the research project.
+
+* Use of the algorithm requires additional packages:
+    ```
+    pip install pandas
+    ```
+
+* Research project has previously calculated for each movie and book ratings that indicate the movie's/book's characteristics. Based on this data, an algorithm calculates recommendations between movies and books for the following pairs:
+
+    * [Movie-to-Movies](mv_to_mvs.py)
+    * [Book-to-Books](book_to_books.py)
+    * [Movie-to-Books](movie_to_books.py) (TBC)
+    * [Book-to-Movies](book_to_movies.py)
+
+* As the results from these calculations do not change over time, the algorithms have been run and their results populated in the database. Please see related commands [here](recommendations.sh).
 
 ## Write backend API to serve data from database
 
@@ -132,14 +150,14 @@ To connect to the virtual machine, instructions from [CSC](https://docs.csc.fi/c
     pip install flask_sqlalchemy
     ```
 
-* Code for backend the API is available in [app.py](app.py).
+* Code for backend the APIs is available for [movies](../main/movies.py) and [books](../main/routes_books.py).
 
-* To establish connection with the database, the following command was run in the command line:
+* To establish connection with the database, the following command needs to be run in the command line:
     ```
     export DATABASE_URL="postgresql://user:password@localhost:5432/mvbkdb"
     ```
 
-* Backend API is run from command line with the following command:
+* Backend API can be run from command line in the virtual machine with the following command:
     ```
     flask run --host=0.0.0.0 --port=3000
     ```
@@ -148,13 +166,13 @@ To connect to the virtual machine, instructions from [CSC](https://docs.csc.fi/c
 
 * Output from the backend API is availabe via the address [http://128.214.253.51:3000/](http://128.214.253.51:3000/).
 
-* Data can be accessed by using the routes created. Currently, for example the following data is available for use in the front end:
+* Data can be accessed by using the routes created. For example the following data is available for use in the front end:
 
 1. All information available for **one movie** 
     * Data is provided via the route `@app.route('/dbgetonemoviedata', methods = ['GET'])`
     * You will need to specify the movie based on the movieid in the tmbd_movie_data_full table, for example movie *Heat* has movieid 6.
     * Results are available in JSON form from address [http://128.214.253.51:3000/dbgetgivenmoviedata?movieid=6](http://128.214.253.51:3000/dbgetgivenmoviedata?movieid=6).
-    * Output looks as follows (note: this page is only done for debugging and illustrative purposes. In reality, front end should just use the routes and addresses stated above)
+    * Output looks as follows (note: this page is only done for debugging and illustrative purposes. In reality, front end uses just the routes and addresses stated above)
     ![Heat](one_movie.jpg)
 
 2. All information available for **top 10 movies by budget for a given year**
@@ -177,10 +195,26 @@ To connect to the virtual machine, instructions from [CSC](https://docs.csc.fi/c
 
 ## Running the backend
 
-* Currently the application is set to run on the cPouta server with the following command
+* Application can be set to run on the cPouta server with the following command
     ```
     flask run --host=0.0.0.0 --port=3000 > log.txt 2>&1 &
     ```
-
+* At the moment, the CI/CD pipeline is automated, and the steps taken to deploy to production are part of GitHub workflows.
 * Please note that this method of running an API is incorrect and is done only for development and testing purposes.
 
+## Rebooting the back and front end
+
+* Note! Before running system updates, it is important to make back-up of key files in the virtual machine, both as ubuntu and mvbkrunner users.
+* After updating and upgrading the software, in cases of larger system updates (e.g. Linux kernel is updated), the entire virtual machine needs to be **rebooted**.
+
+    ```
+    sudo apt update
+    sudo apt upgrade
+    sudo reboot now
+    ```
+
+* After this, the **backend** needs to be restarted. To do this, log into the virtual machine as mvbkrunner. Follow key steps in the [deployment workflow](../.github/workflows/deploy.yml)
+
+(https://github.com/movie-book-recommender/movie-book-backend/blob/main/.github/workflows/deploy.yml); script.sh and killscript.sh are the most critical ones. (links to be added)
+
+* Finally, the **front end** needs to be restarted. To do this, log into the virtual machine as ubuntu. Follow the key steps in the publish.sh script (link to be added).

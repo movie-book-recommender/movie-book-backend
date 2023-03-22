@@ -45,6 +45,12 @@ class Helper:
                 else:
                     ratings["books"].append({"item_id": int(book[0]), "rating": int(book[1])})
         return ratings
+    
+    def split_helper(self, string):
+        string_list = string.split(",", 1)
+        result = string_list[0]
+        return result
+
 helper = Helper()
 
 #Cookie looks like this: {'Books': [], 'Movies': [['210579', '5'], ['270352', '1']]}

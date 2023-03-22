@@ -7,7 +7,7 @@ import json
 from flask import jsonify, request
 from app import app
 from main.extentions import db
-from main.movies import TableMovieTmdbDataFull, TableMvMetadataUpdated, TableMvTags, TableMvSimilarMvbk, TableMvSimilarBooks
+from main.movies import TableMovieTmdbDataFull, TableMvMetadataUpdated, TableMvTags, TableMvSimilarMvbk, TableMvSimilarMovies, TableMvSimilarBooks
 from main.books import TableBkMetadata
 from main.helper import helper
 from main.recommendations import recommendations
@@ -219,7 +219,7 @@ def get_top_10_highest_rating_movies():
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response
 
-@app.route('/dbgetrecommendeditemsforgivenmovie', methods = ['GET'])
+@app.route('/dbgetrecommendeditemsforgivenmovie', methods = ['GET']) # POISTA TÄMÄ API
 def get_recommended_items_for_given_movie():
     """This route implements a page that lists the recommended 10 movies for
     a given movie that needs to be defined when calling the route.
@@ -247,7 +247,34 @@ def get_recommended_items_for_given_movie():
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response
 
-@app.route('/dbgetrecommendationsalldataforgivenmovie', methods = ['GET'])
+@app.route('/dbgetforgivenmovierecommendedmovies', methods = ['GET']) # Päivitetty api
+def get_for_given_movie_recommended_movies():
+    """This route implements a page that lists the recommended 250 movies for
+    a given movie that needs to be defined when calling the route.
+    """
+    if request.args['movieid'] != '':
+        if request.args['movieid'].isdigit():
+            movieid = int(request.args['movieid'])
+            allvalues = TableMvSimilarMovies.query \
+                            .filter_by(mv_similar_movies_item_id = movieid) \
+                            .order_by(TableMvSimilarMovies.mv_similar_movies_similarity_score.desc()) \
+                            .offset(1) \
+                            .all()
+#            print(len(allvalues))
+            if len(allvalues) != 0:
+                allvalues_dict = helper.dict_helper(allvalues)
+                response = jsonify(allvalues_dict)
+            else:
+                response = jsonify({'value': 'not available'})
+        else:
+            response = jsonify({'value': 'not available'})
+    else:
+        response = jsonify({'value': 'not available'})
+
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    return response
+
+@app.route('/dbgetrecommendationsalldataforgivenmovie', methods = ['GET']) # POISTA TÄMÄ API
 def get_recommendations_all_data_for_given_movie():
     """This route implements a page that lists the recommended 10 movies and their key data for
     a given movie that needs to be defined when calling the route
@@ -273,6 +300,44 @@ def get_recommendations_all_data_for_given_movie():
                 for value in allvalues:
                     dict_1 = value.TableMovieTmdbDataFull.object_to_dictionary()
                     dict_2 = value.TableMvSimilarMvbk.object_to_dictionary()
+                    dict_1.update(dict_2)
+                    allvalues_dict.append(dict_1)
+                response = jsonify(allvalues_dict)
+            else:
+                response = jsonify({'value': 'not available'})
+        else:
+            response = jsonify({'value': 'not available'})
+    else:
+        response = jsonify({'value': 'not available'})
+
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    return response
+
+@app.route('/dbgetforgivenmovierecommendedmoviesalldata', methods = ['GET']) # UUSI API
+def get_for_given_movie_recommended_movies_all_data():
+    """This route implements a page that lists the recommended 20 movies and their key data for
+    a given movie that needs to be defined when calling the route
+
+    Returns:
+        json: data is returned in json format.
+    """
+#    movieid = 1
+#    ref_item_type = 'movie'
+    if request.args['movieid'] != '':
+        if request.args['movieid'].isdigit():
+            movieid = int(request.args['movieid'])
+            allvalues = db.session.query(TableMovieTmdbDataFull, TableMvSimilarMovies) \
+                            .join(TableMvSimilarMovies, TableMvSimilarMovies.mv_similar_movies_similar_item_id == TableMovieTmdbDataFull.movie_tmdb_data_full_movieid) \
+                            .filter_by(mv_similar_movies_item_id = movieid) \
+                            .order_by(TableMvSimilarMovies.mv_similar_movies_similarity_score.desc()) \
+                            .offset(1) \
+                            .limit(20).all()
+            print(len(allvalues))
+            if len(allvalues) != 0:
+                allvalues_dict = []
+                for value in allvalues:
+                    dict_1 = value.TableMovieTmdbDataFull.object_to_dictionary()
+                    dict_2 = value.TableMvSimilarMovies.object_to_dictionary()
                     dict_1.update(dict_2)
                     allvalues_dict.append(dict_1)
                 response = jsonify(allvalues_dict)

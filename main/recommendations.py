@@ -139,12 +139,14 @@ class Recommendations:
         Returns:
             list: List of id's, which are the recommended movies for the user. Best one is at index 0.
         """
-        self.tg_movies = pd.read_csv("/home/mvbkrunner/data/movietagdl.csv") # correct
+        #self.tg_movies = pd.read_csv("/home/mvbkrunner/data/movietagdl.csv") # correct
         #self.tg_movies_own = self.get_movie_tags()
-        self.tg_books = pd.read_csv("/home/mvbkrunner/data/booktagdl.csv") # correct
+        #self.tg_books = pd.read_csv("/home/mvbkrunner/data/booktagdl.csv") # correct
 
  #       self.tg_movies = pd.read_csv("C:/MyFolder/Projects/ohtu_project/key_data/movies_tagdl.csv") # testing only
  #       self.tg_books = pd.read_csv("C:/MyFolder/Projects/ohtu_project/key_data/books_tagdl.csv") # testing only
+        self.tg_movies = pd.read_csv("/home/seppaemi/Documents/deniksen algo/se_project/tagdl_movies.csv") # testing only
+        self.tg_books = pd.read_csv("/home/seppaemi/Documents/deniksen algo/se_project/tagdl_books.csv") # testing only
 
         self.book_tags = set(self.tg_books.tag.unique()) # not needed during algo
         self.movie_tags = set(self.tg_movies.tag.unique()) # not needed during algo
@@ -175,12 +177,14 @@ class Recommendations:
         Returns:
             list: List of id's, which are the recommended movies for the user. Best one is at index 0.
         """
-        self.tg_movies = pd.read_csv("/home/mvbkrunner/data/movietagdl.csv") # correct
+        #self.tg_movies = pd.read_csv("/home/mvbkrunner/data/movietagdl.csv") # correct
         #self.tg_movies_own = self.get_movie_tags()
-        self.tg_books = pd.read_csv("/home/mvbkrunner/data/booktagdl.csv") # correct
+        #self.tg_books = pd.read_csv("/home/mvbkrunner/data/booktagdl.csv") # correct
 
-#        self.tg_movies = pd.read_csv("C:/MyFolder/Projects/ohtu_project/key_data/movies_tagdl.csv") # testing only
-#        self.tg_books = pd.read_csv("C:/MyFolder/Projects/ohtu_project/key_data/books_tagdl.csv") # testing only
+#        self.tg_movies = pd.read_csv("/home/seppaemi/Documents/deniksen algo/se_project/tagdl_movies.csv") # testing only
+#        self.tg_books = pd.read_csv("/home/seppaemi/Documents/deniksen algo/se_project/tagdl_books.csv") # testing only
+        self.tg_movies = pd.read_csv("/home/seppaemi/Documents/deniksen algo/se_project/tagdl_movies.csv") # testing only
+        self.tg_books = pd.read_csv("/home/seppaemi/Documents/deniksen algo/se_project/tagdl_books.csv") # testing only
 
         self.book_tags = set(self.tg_books.tag.unique()) # not needed during algo
         self.movie_tags = set(self.tg_movies.tag.unique()) # not needed during algo

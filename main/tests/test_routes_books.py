@@ -115,7 +115,7 @@ class TestBooksRoutes(unittest.TestCase):
         )
         json_response = json.loads(response.text)
 
-        self.assertEqual(len(json_response), 10)
+        self.assertEqual(len(json_response), 250)
 
     def test_get_for_given_book_recommended_books_wrong_input(self):
         """Tests whether correct error message is returned, if input is incorrect.
@@ -195,3 +195,16 @@ class TestBooksRoutes(unittest.TestCase):
         json_response = json.loads(response.text)
 
         self.assertEqual(json_response["value"], "not available")
+
+    def test_get_top_20_books_by_author(self):
+        """Test for getting 20 books whose author matches the search word.
+        """
+        response = self.test_client.get(
+            "/dbsearchbooksbyauthor?input=jane%20austen",
+        )
+
+        json_response = json.loads(response.text)
+        author = "Jane Austen"
+
+        self.assertTrue(author, json_response[0]["authors"])
+        self.assertTrue(author, json_response[-1]["authors"])

@@ -225,3 +225,22 @@ def get_recommended_movies_all_data_for_given_book():
 
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response
+
+@app.route('/dbsearchbooksbyauthor', methods = ['GET'])
+def get_books_by_author():
+    """This route implements a page that shows data for top 20 books
+    whose author match to the search word.
+
+    Returns:
+        json: Data is returned in json format.
+    """
+    search_raw = request.args['input']
+    search_term = f'{search_raw}%'
+    allvalues = TableBkMetadata.query \
+                .filter(TableBkMetadata.bk_metadata_authors.ilike(search_term)) \
+                .order_by(TableBkMetadata.bk_metadata_authors, TableBkMetadata.bk_metadata_title) \
+                .limit(20).all()
+    allvalues_dict = helper.dict_helper(allvalues)
+    response = jsonify(allvalues_dict)
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    return response

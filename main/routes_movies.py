@@ -155,37 +155,41 @@ def search_movies_by_name_top_20():
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response
 
-#@app.route('/dbsearchmoviesbynamen', methods = ['GET'])
-#def search_movies_by_name_top_n():
-#    """This route implements a page that shows data for a number of movies whose
-#    name is closest to the search term typed by user. Number needs to defined;
-#    it is has not been defined, a default value is returned.
-#
-#    Returns:
-#        json: Data is returned in json format.
-#    """
-#    number_of_movies_default = 20
-#    if request.args['amount'] != '':
-#        if request.args['amount'].isdigit():
-#            number_of_movies = request.args['amount']
-#        else:
-#            number_of_movies = number_of_movies_default
-#    else:
-##        number_of_movies = request.args.get('amount', 3)
-#        number_of_movies = number_of_movies_default
-#
-#    search_raw = request.args['input']
-#    search_term = f'%{search_raw}%'
-#    allvalues = TableMovieTmdbDataFull.query \
-#                    .filter(TableMovieTmdbDataFull.movie_tmdb_data_full_title.ilike(search_term)) \
-#                    .order_by(TableMovieTmdbDataFull.movie_tmdb_data_full_title.ilike(search_term).desc(),
-#                            TableMovieTmdbDataFull.movie_tmdb_data_full_title) \
-#                    .limit(number_of_movies).all()
-#    allvalues_dict = helper.dict_helper(allvalues)
-#    response = jsonify(allvalues_dict)
-#
-#    response.headers.add('Access-Control-Allow-Origin', '*')
-#    return response
+@app.route('/dbsearchmoviesbyactor', methods = ['GET'])
+def search_movies_by_actor_top_50():
+    """This route implements a page that shows data for 50 movies
+    whose list of actors icludes term typed by user.
+
+    Returns:
+        json: Data is returned in json format.
+    """
+    search_raw = request.args['input']
+    search_term = f'{search_raw}%'
+    allvalues = TableMovieTmdbDataFull.query \
+                    .filter(TableMovieTmdbDataFull.movie_tmdb_data_full_actors.ilike(search_term)) \
+                    .limit(50).all()
+    allvalues_dict = helper.dict_helper(allvalues)
+    response = jsonify(allvalues_dict)
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    return response
+
+@app.route('/dbsearchmoviesbydirector', methods = ['GET'])
+def search_movies_by_director_top_50():
+    """This route implements a page that shows data for 50 movies
+    whose list of directors icludes term typed by user.
+
+    Returns:
+        json: Data is returned in json format.
+    """
+    search_raw = request.args['input']
+    search_term = f'{search_raw}%'
+    allvalues = TableMovieTmdbDataFull.query \
+                    .filter(TableMovieTmdbDataFull.movie_tmdb_data_full_directors.ilike(search_term)) \
+                    .limit(50).all()
+    allvalues_dict = helper.dict_helper(allvalues)
+    response = jsonify(allvalues_dict)
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    return response
 
 @app.route('/dbgettop10highestratedmovies', methods = ['GET'])
 def get_top_10_highest_rating_movies():

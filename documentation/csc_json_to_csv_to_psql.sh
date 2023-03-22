@@ -1,3 +1,4 @@
+# These commands insert basic data related to movies and books to database.
 cat ./movie_dataset_public_final/raw/metadata.json | jq -r '. | join("^")' > metadata.csv
 cat ./movie_dataset_public_final/raw/metadata_updated.json | jq -r '. | join("^")' > metadata_updated.csv
 cat ./movie_dataset_public_final/raw/ratings.json | jq -r '. | join("|")' > ratings.csv
@@ -44,17 +45,3 @@ cat ./movie_tmdb_data_full.json | jq -r '.[] | join("^")' > movie_tmdb_data_full
 # Note! Here errors were corrected manually. Script is to be improved.
 
 psql -U moviebook -d mvbkdb -c "\copy movie_tmdb_data_full FROM 'movie_tmdb_data_full2a.csv' delimiter '^' quote E'\b' csv"
-
-# To get recommendations to database, need to run another script that creates movie to movie recommendations and then add it to database
-#python3 dot_product.py # päivitetty versio tehty
-#psql -U moviebook -d mvbkdb -c "\copy mv_similar_mvbk FROM 'mv_sim.csv' delimiter ',' csv header"
-#psql -U moviebook -d mvbkdb -c "\copy mv_similar_mvbk (item_id, similar_item_id, similar_item_type, similarity_score) FROM 'mv_sim.csv' delimiter ',' csv header" # vanha versio
-python3 mv_to_mvs.py # päivitetty versio, laskee 251 leffaa
-psql -U moviebook -d mvbkdb -c "\copy mv_similar_movies (item_id, similar_item_id, similar_item_type, similarity_score) FROM 'mv_to_mvs_updated.csv' delimiter ',' csv header" # päivitetty, tässä 251 leffaa per leffa
-python3 book_to_books.py # päivitysajo käynnissä
-#psql -U moviebook -d mvbkdb -c "\copy bk_similar_books (item_id, similar_item_id, similar_item_type, similarity_score) FROM 'bk_sim.csv' delimiter ',' csv header" #vanha
-psql -U moviebook -d mvbkdb -c "\copy bk_similar_books (item_id, similar_item_id, similar_item_type, similarity_score) FROM 'bk_to_bks_updated.csv' delimiter ',' csv header" # päivitetty
-python3 movie_to_books.py
-psql -U moviebook -d mvbkdb -c "\copy mv_similar_books (item_id, similar_item_id, similar_item_type, similarity_score) FROM 'mv_to_bks_sim.csv' delimiter ',' csv header"
-python3 book_to_movies.py
-psql -U moviebook -d mvbkdb -c "\copy bk_similar_movies (item_id, similar_item_id, similar_item_type, similarity_score) FROM 'bk_to_mvs.csv' delimiter ',' csv header"

@@ -418,6 +418,12 @@ def get_recommended_books_all_data_for_given_movie():
 
 @app.route("/dbgetpersonalmovierecommendations", methods = ['GET'])
 def get_personal_movie_recommendations():
+    """
+    This route implements a page that lists a limited number (20) of recommended movies
+    and they key data based on users personal preference
+    Returns:
+        json: data is returned in json format.
+    """
     response = jsonify({'value': 'not available'}) # Set response as not available default
     if request.args['ratings'] != '': # Check if there is an input
         cookie_raw = request.args['ratings'] # Get the input in raw format
@@ -439,3 +445,37 @@ def get_personal_movie_recommendations():
         response = jsonify({'value': 'not available'})
     response.headers.add('Access-Control-Allow-Origin', '*') # Add correct headers
     return response
+
+
+@app.route("/dbgetmoviesbypersonalgenre", methods = ['GET'])
+def db_get_movies_by_personal_genre(): #use ?ratings when web
+    """
+    This route implements a page that lists a limited number (20) of recommended movies
+    and they key data based on users personal genre preference
+    Returns:
+        json: data is returned in json format.
+    """
+    response = jsonify({'value': 'not available'}) # Set response as not available default
+    if request.args['ratings'] != '': # Check if there is an input
+        cookie_raw = request.args['ratings'] # Get the input in raw format
+        cookie = json.loads(cookie_raw) # Convert from json to python dict
+        ratings = helper.ratings_helper(cookie) # Call helper function to parse json data
+        
+        if ratings is False:
+            response = jsonify({'value': 'not available'}) # If returns false, the data is not valid
+        else:
+            results = recommendations.get_movie_recommendations(ratings, 1) # Call algorithm function to form recommendations
+            for result in results:
+                value = TableMovieTmdbDataFull.query \
+                    .filter_by(movie_tmdb_data_full_movieid = result).first()
+            genre = helper.split_helper(value.movie_tmdb_data_full_genres) # return first string in genres
+            allvalues = TableMovieTmdbDataFull.query \
+                        .filter(TableMovieTmdbDataFull.movie_tmdb_data_full_genres.ilike(genre)) \
+                        .limit(20).all()
+        allvalues_dict = helper.dict_helper(allvalues)
+        response = jsonify(allvalues_dict)
+    else:
+        response = jsonify({'value': 'not available'})
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    return response
+

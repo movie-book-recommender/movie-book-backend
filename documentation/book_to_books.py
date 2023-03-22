@@ -49,13 +49,14 @@ def get_sim_df(dot_product_df, len_df, profile_vector_len):
     return sim_df
 
 full_dataframe = pd.DataFrame(columns=["i", "item_id", "item_type", "sim"])
+full_dataframe.to_csv("bk_to_bks_updated.csv", index=False)
 
 #book_ids = [150259]
 
 for i in book_ids:
     print(i)
-    #if i == 21856269:
-        #break
+#    if i == 21856269:
+#        break
     target_book = tg_books[tg_books.item_id == i].copy()
 
     target_book_len = get_vector_length(target_book)
@@ -71,12 +72,14 @@ for i in book_ids:
 
     related_book_sim_df = get_sim_df(book_to_books_dot_product, full_book_len_df, target_book_len)
 
-    result =related_book_sim_df.sort_values("sim", ascending=False, ignore_index=True).head(11).drop(columns=["dot_product", "length", "item_id_x"])
+    result =related_book_sim_df.sort_values("sim", ascending=False, ignore_index=True).head(251).drop(columns=["dot_product", "length", "item_id_x"])
     result["i"] = i
     result["item_type"] = "book"
     #print(result)
-    full_dataframe = full_dataframe.append(result)
-    full_dataframe.to_csv("bk_sim.csv", index=False)
+    ordered_result = result[["i", "item_id", "item_type", "sim"]]
+    #full_dataframe = full_dataframe.append(result)
+    #full_dataframe.to_csv("bk_sim.csv", index=False)
+    ordered_result.to_csv("bk_to_bks_updated.csv", mode='a', index=False, header=False)
 
 #print(full_dataframe.reset_index(drop=True))
 #full_dataframe.to_csv("bk_sim.csv", index=False)

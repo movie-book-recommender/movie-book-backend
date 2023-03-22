@@ -106,7 +106,7 @@ def get_top_10_highest_rated_books():
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response
 
-@app.route('/dbgetforgivenbookrecommendedbooks', methods = ['GET'])
+@app.route('/dbgetforgivenbookrecommendedbooks', methods = ['GET']) #PÄIVITÄ TÄMÄ HAKEMAAN 251 -> 250 kirjaa
 def get_for_given_book_recommended_books():
     """This route implements a page that lists the recommended 10 books for
     a given books that needs to be defined when calling the route.
@@ -119,6 +119,7 @@ def get_for_given_book_recommended_books():
                             .order_by(TableBkSimilarBooks.bk_similar_books_similarity_score.desc()) \
                             .offset(1) \
                             .all()
+            print(len(allvalues))
             if len(allvalues) != 0:
                 allvalues_dict = helper.dict_helper(allvalues)
                 response = jsonify(allvalues_dict)
@@ -134,7 +135,7 @@ def get_for_given_book_recommended_books():
 
 @app.route('/dbgetforgivenbookrecommendedbooksalldata', methods = ['GET'])
 def get_for_given_book_recommended_books_all_data():
-    """This route implements a page that lists the recommended 10 books and their key data for
+    """This route implements a page that lists the recommended 20 books and their key data for
     a given book that needs to be defined when calling the route
 
     Returns:
@@ -148,7 +149,7 @@ def get_for_given_book_recommended_books_all_data():
                             .filter_by(bk_similar_books_item_id = bookid) \
                             .order_by(TableBkSimilarBooks.bk_similar_books_similarity_score.desc()) \
                             .offset(1) \
-                            .all()
+                            .limit(20).all()
             if len(allvalues) != 0:
                 allvalues_dict = []
                 for value in allvalues:

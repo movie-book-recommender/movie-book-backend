@@ -106,9 +106,9 @@ def get_top_10_highest_rated_books():
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response
 
-@app.route('/dbgetforgivenbookrecommendedbooks', methods = ['GET']) #PÄIVITÄ TÄMÄ HAKEMAAN 251 -> 250 kirjaa
+@app.route('/dbgetforgivenbookrecommendedbooks', methods = ['GET'])
 def get_for_given_book_recommended_books():
-    """This route implements a page that lists the recommended 10 books for
+    """This route implements a page that lists the recommended 250 books for
     a given books that needs to be defined when calling the route.
     """
     if request.args['bookid'] != '':
@@ -119,7 +119,7 @@ def get_for_given_book_recommended_books():
                             .order_by(TableBkSimilarBooks.bk_similar_books_similarity_score.desc()) \
                             .offset(1) \
                             .all()
-            print(len(allvalues))
+#            print(len(allvalues))
             if len(allvalues) != 0:
                 allvalues_dict = helper.dict_helper(allvalues)
                 response = jsonify(allvalues_dict)

@@ -198,3 +198,23 @@ class TestMovieRoutes(unittest.TestCase):
         json_response = json.loads(response.text)
 
         self.assertEqual(json_response["value"], "not available")
+
+    def test_get_top_50_movies_by_actor(self):
+        response = self.test_client.get(
+            "/dbsearchmoviesbyactor?input=johnny%20depp",
+        )
+        json_response = json.loads(response.text)
+        actor = 'Johnny Depp'
+
+        self.assertTrue(actor, json_response[0]["actors"])
+        self.assertTrue(actor, json_response[-1]["actors"])
+
+    def test_get_top_50_movies_by_director(self):
+        response = self.test_client.get(
+            "/dbsearchmoviesbydirector?input=tim%20burton",
+        )
+        json_response = json.loads(response.text)
+        actor = 'Tim Burton'
+
+        self.assertTrue(actor, json_response[0]["directors"])
+        self.assertTrue(actor, json_response[-1]["directors"])

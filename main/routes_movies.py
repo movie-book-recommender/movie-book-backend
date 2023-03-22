@@ -155,37 +155,41 @@ def search_movies_by_name_top_20():
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response
 
-#@app.route('/dbsearchmoviesbynamen', methods = ['GET'])
-#def search_movies_by_name_top_n():
-#    """This route implements a page that shows data for a number of movies whose
-#    name is closest to the search term typed by user. Number needs to defined;
-#    it is has not been defined, a default value is returned.
-#
-#    Returns:
-#        json: Data is returned in json format.
-#    """
-#    number_of_movies_default = 20
-#    if request.args['amount'] != '':
-#        if request.args['amount'].isdigit():
-#            number_of_movies = request.args['amount']
-#        else:
-#            number_of_movies = number_of_movies_default
-#    else:
-##        number_of_movies = request.args.get('amount', 3)
-#        number_of_movies = number_of_movies_default
-#
-#    search_raw = request.args['input']
-#    search_term = f'%{search_raw}%'
-#    allvalues = TableMovieTmdbDataFull.query \
-#                    .filter(TableMovieTmdbDataFull.movie_tmdb_data_full_title.ilike(search_term)) \
-#                    .order_by(TableMovieTmdbDataFull.movie_tmdb_data_full_title.ilike(search_term).desc(),
-#                            TableMovieTmdbDataFull.movie_tmdb_data_full_title) \
-#                    .limit(number_of_movies).all()
-#    allvalues_dict = helper.dict_helper(allvalues)
-#    response = jsonify(allvalues_dict)
-#
-#    response.headers.add('Access-Control-Allow-Origin', '*')
-#    return response
+@app.route('/dbsearchmoviesbyactor', methods = ['GET'])
+def search_movies_by_actor_top_50():
+    """This route implements a page that shows data for 50 movies
+    whose list of actors icludes term typed by user.
+
+    Returns:
+        json: Data is returned in json format.
+    """
+    search_raw = request.args['input']
+    search_term = f'{search_raw}%'
+    allvalues = TableMovieTmdbDataFull.query \
+                    .filter(TableMovieTmdbDataFull.movie_tmdb_data_full_actors.ilike(search_term)) \
+                    .limit(50).all()
+    allvalues_dict = helper.dict_helper(allvalues)
+    response = jsonify(allvalues_dict)
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    return response
+
+@app.route('/dbsearchmoviesbydirector', methods = ['GET'])
+def search_movies_by_director_top_50():
+    """This route implements a page that shows data for 50 movies
+    whose list of directors icludes term typed by user.
+
+    Returns:
+        json: Data is returned in json format.
+    """
+    search_raw = request.args['input']
+    search_term = f'{search_raw}%'
+    allvalues = TableMovieTmdbDataFull.query \
+                    .filter(TableMovieTmdbDataFull.movie_tmdb_data_full_directors.ilike(search_term)) \
+                    .limit(50).all()
+    allvalues_dict = helper.dict_helper(allvalues)
+    response = jsonify(allvalues_dict)
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    return response
 
 @app.route('/dbgettop10highestratedmovies', methods = ['GET'])
 def get_top_10_highest_rating_movies():
@@ -414,6 +418,12 @@ def get_recommended_books_all_data_for_given_movie():
 
 @app.route("/dbgetpersonalmovierecommendations", methods = ['GET'])
 def get_personal_movie_recommendations():
+    """
+    This route implements a page that lists a limited number (20) of recommended movies
+    and they key data based on users personal preference
+    Returns:
+        json: data is returned in json format.
+    """
     response = jsonify({'value': 'not available'}) # Set response as not available default
     if request.args['ratings'] != '': # Check if there is an input
         cookie_raw = request.args['ratings'] # Get the input in raw format
@@ -435,3 +445,37 @@ def get_personal_movie_recommendations():
         response = jsonify({'value': 'not available'})
     response.headers.add('Access-Control-Allow-Origin', '*') # Add correct headers
     return response
+
+
+@app.route("/dbgetmoviesbypersonalgenre", methods = ['GET'])
+def db_get_movies_by_personal_genre(): #use ?ratings when web
+    """
+    This route implements a page that lists a limited number (20) of recommended movies
+    and they key data based on users personal genre preference
+    Returns:
+        json: data is returned in json format.
+    """
+    response = jsonify({'value': 'not available'}) # Set response as not available default
+    if request.args['ratings'] != '': # Check if there is an input
+        cookie_raw = request.args['ratings'] # Get the input in raw format
+        cookie = json.loads(cookie_raw) # Convert from json to python dict
+        ratings = helper.ratings_helper(cookie) # Call helper function to parse json data
+        
+        if ratings is False:
+            response = jsonify({'value': 'not available'}) # If returns false, the data is not valid
+        else:
+            results = recommendations.get_movie_recommendations(ratings, 1) # Call algorithm function to form recommendations
+            for result in results:
+                value = TableMovieTmdbDataFull.query \
+                    .filter_by(movie_tmdb_data_full_movieid = result).first()
+            genre = helper.split_helper(value.movie_tmdb_data_full_genres) # return first string in genres
+            allvalues = TableMovieTmdbDataFull.query \
+                        .filter(TableMovieTmdbDataFull.movie_tmdb_data_full_genres.ilike(genre)) \
+                        .limit(20).all()
+        allvalues_dict = helper.dict_helper(allvalues)
+        response = jsonify(allvalues_dict)
+    else:
+        response = jsonify({'value': 'not available'})
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    return response
+

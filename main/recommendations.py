@@ -139,9 +139,13 @@ class Recommendations:
         Returns:
             list: List of id's, which are the recommended movies for the user. Best one is at index 0.
         """
-        self.tg_movies = pd.read_csv("/home/mvbkrunner/data/movietagdl.csv")
+        self.tg_movies = pd.read_csv("/home/mvbkrunner/data/movietagdl.csv") # correct
         #self.tg_movies_own = self.get_movie_tags()
-        self.tg_books = pd.read_csv("/home/mvbkrunner/data/booktagdl.csv")
+        self.tg_books = pd.read_csv("/home/mvbkrunner/data/booktagdl.csv") # correct
+
+ #       self.tg_movies = pd.read_csv("C:/MyFolder/Projects/ohtu_project/key_data/movies_tagdl.csv") # testing only
+ #       self.tg_books = pd.read_csv("C:/MyFolder/Projects/ohtu_project/key_data/books_tagdl.csv") # testing only
+
         self.book_tags = set(self.tg_books.tag.unique()) # not needed during algo
         self.movie_tags = set(self.tg_movies.tag.unique()) # not needed during algo
         self.common_tags = self.book_tags.intersection(self.movie_tags)
@@ -160,6 +164,37 @@ class Recommendations:
 
         results = results["item_id"].values.tolist()
 
+        return results
+
+    def get_book_recommendations(self, ratings, amount):
+        """
+        Main function to fetch recommendations based on ratings.
+        Args:
+            ratings (dict): Dictionary that has fields movies and books that have the ratings as id and value
+            amount (int): The amount of results
+        Returns:
+            list: List of id's, which are the recommended movies for the user. Best one is at index 0.
+        """
+        self.tg_movies = pd.read_csv("/home/mvbkrunner/data/movietagdl.csv") # correct
+        #self.tg_movies_own = self.get_movie_tags()
+        self.tg_books = pd.read_csv("/home/mvbkrunner/data/booktagdl.csv") # correct
+
+#        self.tg_movies = pd.read_csv("C:/MyFolder/Projects/ohtu_project/key_data/movies_tagdl.csv") # testing only
+#        self.tg_books = pd.read_csv("C:/MyFolder/Projects/ohtu_project/key_data/books_tagdl.csv") # testing only
+
+        self.book_tags = set(self.tg_books.tag.unique()) # not needed during algo
+        self.movie_tags = set(self.tg_movies.tag.unique()) # not needed during algo
+        self.common_tags = self.movie_tags.intersection(self.book_tags)
+
+        profile = self.get_user_profile(self.tg_books, ratings["books"])
+        profile = pd.concat([profile, self.get_user_profile(self.tg_movies, ratings["movies"])])
+        book_dot_product = self.get_dot_product(profile[profile.tag.isin(self.common_tags)], self.tg_books) # we only consider common tags
+        book_len_df = self.get_item_length_df(self.tg_books[self.tg_books.tag.isin(self.common_tags)])
+        profile_vector_len = self.get_vector_length(profile[profile.tag.isin(self.common_tags)])
+        book_sim_df = self.get_sim_df(book_dot_product, book_len_df, profile_vector_len)
+        results = book_sim_df.sort_values("sim", ascending=False, ignore_index=True).head(amount).drop(columns=["dot_product", "length", "item_id_x", "sim"])
+        results = results["item_id"].values.tolist()
+        
         return results
 
 recommendations = Recommendations()

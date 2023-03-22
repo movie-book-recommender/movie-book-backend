@@ -108,14 +108,15 @@ class TestBooksRoutes(unittest.TestCase):
         self.assertEqual(len(json_response), 10)
 
     def test_get_for_given_book_recommended_books(self):
-        """Tests whether 10 recommended books are returned for a given book.
+        """Tests whether 250 recommended books are returned for a given book.
         """
         response = self.test_client.get(
             "/dbgetforgivenbookrecommendedbooks?bookid=150259",
         )
         json_response = json.loads(response.text)
+        wanted_answer = 250
 
-        self.assertEqual(len(json_response), 250)
+        self.assertEqual(len(json_response), wanted_answer)
 
     def test_get_for_given_book_recommended_books_wrong_input(self):
         """Tests whether correct error message is returned, if input is incorrect.

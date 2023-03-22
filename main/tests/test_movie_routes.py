@@ -67,7 +67,7 @@ class TestMovieRoutes(unittest.TestCase):
                           json_response[2]["title"]), ("Assassins (2020)",
                           "There Will Be No More Night (2020)", "Halley's Comet (2020)"))
 
-    def test_get_recommended_items_for_given_movie(self):
+    def test_get_recommended_items_for_given_movie(self): # POISTA TÄMÄ TESTI
         """Tests whether 10 recommended movies are returned for a given movie.
         """
         response = self.test_client.get(
@@ -77,7 +77,7 @@ class TestMovieRoutes(unittest.TestCase):
 
         self.assertEqual(len(json_response), 10)
 
-    def test_get_recommended_items_for_given_movie_wrong_input(self):
+    def test_get_recommended_items_for_given_movie_wrong_input(self): # POISTA TÄMÄ TESTI
         """Tests whether correct error message is returned, if input is incorrect.
         """
         response = self.test_client.get(
@@ -87,7 +87,27 @@ class TestMovieRoutes(unittest.TestCase):
 
         self.assertEqual(json_response["value"], "not available")
 
-    def test_get_recommendations_all_data_for_given_movie(self):
+    def test_get_for_given_movie_recommended_movies(self): # PÄIVITETTY TESTI
+        """Tests whether 250 recommended movies are returned for a given movie.
+        """
+        response = self.test_client.get(
+            "/dbgetforgivenmovierecommendedmovies?movieid=5445",
+        )
+        json_response = json.loads(response.text)
+        wanted_answer = 250
+        self.assertEqual(len(json_response), wanted_answer)
+
+    def test_get_for_given_movie_recommended_movies_wrong_input(self): # PÄIVITETTY TESTI
+        """Tests whether correct error message is returned, if input is incorrect.
+        """
+        response = self.test_client.get(
+            "/dbgetforgivenmovierecommendedmovies?movieid=sdlkfjslfjlskjf",
+        )
+        json_response = json.loads(response.text)
+
+        self.assertEqual(json_response["value"], "not available")
+
+    def test_get_recommendations_all_data_for_given_movie(self): # DELETE THIS TEST
         """Tests whether data is returned for the correct recommended movies.
         """
         response = self.test_client.get(
@@ -100,11 +120,34 @@ class TestMovieRoutes(unittest.TestCase):
         self.assertEqual((json_response[0]["originaltitle"],
                         json_response[9]["originaltitle"]), (wanted_response_1, wanted_response_2))
 
-    def test_get_recommendations_all_data_for_given_movie_wrong_input(self):
+    def test_get_recommendations_all_data_for_given_movie_wrong_input(self): # DELETE THIS TEST
         """Tests whether correct error message is returned, if input is incorrect.
         """
         response = self.test_client.get(
             "/dbgetrecommendationsalldataforgivenmovie?movieid=söfdslkfdjgpoipoirepwrpoewr",
+        )
+        json_response = json.loads(response.text)
+
+        self.assertEqual(json_response["value"], "not available")
+
+    def test_get_for_given_movie_recommended_movies_all_data(self): # UPDATED TEST
+        """Tests whether data is returned for the correct recommended movies.
+        """
+        response = self.test_client.get(
+            "/dbgetforgivenmovierecommendedmoviesalldata?movieid=5445",
+        )
+        json_response = json.loads(response.text)
+        wanted_response_1 = 'Source Code'
+        wanted_response_2 = 'Limitless'
+
+        self.assertEqual((json_response[0]["originaltitle"],
+                        json_response[9]["originaltitle"]), (wanted_response_1, wanted_response_2))
+
+    def test_get_for_given_movie_recommended_movies_all_data_wrong_input(self): # UPDATED TEST
+        """Tests whether correct error message is returned, if input is incorrect.
+        """
+        response = self.test_client.get(
+            "/dbgetforgivenmovierecommendedmoviesalldata?movieid=söfdslkfdjgpoipoirepwrpoewr",
         )
         json_response = json.loads(response.text)
 

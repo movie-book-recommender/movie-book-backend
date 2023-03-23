@@ -64,8 +64,6 @@ The test files can be seen in folder [main/tests](main/tests/).
 
 ## To do's
 
-- Project main branch
-- Github actions to update the newest version only when merging
 - More tests for different API's
 - Add coverage reporting to the yml file
 

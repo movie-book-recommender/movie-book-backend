@@ -66,6 +66,7 @@ The test files can be seen in folder [main/tests](main/tests/).
 ## To do's
 
 - More tests for different API's
+- Improve stability of the back end
 
 ## Licensing
 

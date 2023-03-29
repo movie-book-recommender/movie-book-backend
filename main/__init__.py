@@ -25,6 +25,7 @@ def create_app():
     if os.getenv("GITHUB_ACTIONS_CI") == True:
         print("App initialization: In GitHUb actions")
     else: 
+        print(os.getenv("GITHUB_ACTIONS_CI"))
         print("App initialization: not in GitHub actions")
 
     # Initiatilize Flask extentions

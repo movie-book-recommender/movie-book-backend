@@ -2,6 +2,8 @@
 This module implements routes for books data in the flask app.
 """
 
+import os
+from os import getenv
 from flask import jsonify, request
 import json
 from sqlalchemy.sql import text
@@ -250,25 +252,32 @@ def get_books_by_author():
 
 @app.route("/dbgetpersonalbookrecommendations", methods = ['GET']) # when uusing, add ?ratings to address
 def get_personal_book_recommendations():
-    response = jsonify({'value' : 'not available'}) # set response as not available default
-#   de-bugging
-    if request.args['ratings'] != '': # check if there is an input
-        cookie_raw = request.args['ratings'] # get the input in raw-format
-        cookie = json.loads(cookie_raw) #convert from json to python dict
-        ratings = helper.ratings_helper(cookie) # call helper function to parse json data
-        if ratings is False:
-            response = jsonify({'value' : 'not available'}) # if returns false data is not valid
-        else:
-            results = recommendations.get_book_recommendations(ratings, 10) # call algorithm function to form recommendations
-            all_values = []
-            for result in results:
-                value = TableBkMetadata.query \
-                        .filter_by(bk_metadata_item_id = result).first()
-                all_values.append(value) # add result to a list
-            allvalues_dict = helper.dict_helper(all_values) # Convert list to a dict
-            response = jsonify(allvalues_dict) # Turn dict to json
-    else:
+    if os.getenv("ACTIONS_CI") == "is_in_github": # added as a test just in case
+        print("Book route: In GitHUb actions")
         response = jsonify({'value': 'not available'})
+    else: 
+        print("Book route: not in GitHub actions")
+
+        response = jsonify({'value' : 'not available'}) # set response as not available default
+    #   de-bugging
+        if request.args['ratings'] != '': # check if there is an input
+            cookie_raw = request.args['ratings'] # get the input in raw-format
+            cookie = json.loads(cookie_raw) #convert from json to python dict
+            ratings = helper.ratings_helper(cookie) # call helper function to parse json data
+            if ratings is False:
+                response = jsonify({'value' : 'not available'}) # if returns false data is not valid
+            else:
+                results = recommendations.get_book_recommendations(ratings, 10) # call algorithm function to form recommendations
+                all_values = []
+                for result in results:
+                    value = TableBkMetadata.query \
+                            .filter_by(bk_metadata_item_id = result).first()
+                    all_values.append(value) # add result to a list
+                allvalues_dict = helper.dict_helper(all_values) # Convert list to a dict
+                response = jsonify(allvalues_dict) # Turn dict to json
+        else:
+            response = jsonify({'value': 'not available'})
+
     response.headers.add('Access-Control-Allow-Origin', '*') # Add correct headers
 
 #    ratings = {"movies" : [{"item_id" : 1270, "rating" : 4}, # Back to the Future

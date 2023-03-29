@@ -23,7 +23,7 @@ To be added
 
 ## Key dependencies
 
-flask, flask_sqlalchemy, pytest, unittest, coverage
+flask, flask_sqlalchemy, pytest, unittest, coverage, psycopg2, pandas
 
 ## Development
 
@@ -32,12 +32,12 @@ To develop the backend:
 - Install dependencies with
 
 ```
-pip install flask flask_sqlalchemy pytest unittest
+pip install flask flask_sqlalchemy pytest unittest psycopg2 pandas
 ```
 
 - Set up connection to the database in cPouta
 ```
-export "DATABASE_URL={{ database url from a team member }}"
+export DATABASE_URL=postgresql://username:password@ip_address:gate/database
 ```
 - You can run the backend locally with
 
@@ -63,10 +63,17 @@ coverage html
 
 The test files can be seen in folder [main/tests](main/tests/).
 
+## Checking quality locally
+
+To check quality locally, please use the following command: 
+```
+pylint main
+```
+
 ## To do's
 
-- More tests for different API's
-- Improve stability of the back end
+- Improve speed when generating user specific recommendations
+- Improve security of the APIs
 
 ## Licensing
 

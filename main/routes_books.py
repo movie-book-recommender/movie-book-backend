@@ -252,7 +252,7 @@ def get_books_by_author():
 
 @app.route("/dbgetpersonalbookrecommendations", methods = ['GET']) # when uusing, add ?ratings to address
 def get_personal_book_recommendations():
-    if os.getenv("GITHUB_ACTIONS") == True: # added as a test just in case
+    if os.getenv("GITHUB_ACTIONS_CI") == True: # added as a test just in case
         print("Book route: In GitHUb actions")
         response = jsonify({'value': 'not available'})
     else: 

@@ -9,7 +9,7 @@ class Recommendations:
         """Initializes tag resources from database.
         """
 #        pass
-        if os.getenv("GITHUB_ACTIONS") == True:
+        if os.getenv("GITHUB_ACTIONS_CI") == True:
             print("Recommendations  constructor: In GitHUb actions")
             self.tg_movies = {}
             self.tg_books = {}
@@ -150,7 +150,7 @@ class Recommendations:
         Returns:
             list: List of id's, which are the recommended movies for the user. Best one is at index 0.
         """
-        if os.getenv("GITHUB_ACTIONS") == True:
+        if os.getenv("GITHUB_ACTIONS_CI") == True:
             print("Movie recommendations in GitHub actions, not in constructor")
             self.tg_movies = pd.read_csv("/home/mvbkrunner/data/movietagdl.csv") # correct # IN TEST. MOVED UP
             self.tg_books = pd.read_csv("/home/mvbkrunner/data/booktagdl.csv") # correct # IN TEST. MOVED UP
@@ -189,7 +189,7 @@ class Recommendations:
         Returns:
             list: List of id's, which are the recommended movies for the user. Best one is at index 0.
         """
-        if os.getenv("GITHUB_ACTIONS") == True:
+        if os.getenv("GITHUB_ACTIONS_CI") == True:
             print("book recommendations in GitHub actions, not in constructor")
             self.tg_movies = pd.read_csv("/home/mvbkrunner/data/movietagdl.csv") # correct
             self.tg_books = pd.read_csv("/home/mvbkrunner/data/booktagdl.csv") # correct

@@ -22,7 +22,7 @@ def create_app():
     app.config['SQLALCHEMY_DATABASE_URI'] = os.environ["DATABASE_URL"]
 
     # testi: toimii
-    if os.getenv("GITHUB_ACTIONS") == True:
+    if os.getenv("GITHUB_ACTIONS_CI") == True:
         print("App initialization: In GitHUb actions")
     else: 
         print("App initialization: not in GitHub actions")

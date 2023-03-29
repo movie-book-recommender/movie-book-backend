@@ -453,7 +453,7 @@ def get_personal_movie_recommendations():
     Returns:
         json: data is returned in json format.
     """
-    if os.getenv("GITHUB_ACTIONS") == True: # added as a test just in case
+    if os.getenv("GITHUB_ACTIONS_CI") == True: # added as a test just in case
         print("Movie route: In GitHUb actions")
         response = jsonify({'value': 'not available'})
     else: 

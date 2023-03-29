@@ -8,23 +8,23 @@ class Recommendations:
     def __init__(self):
         """Initializes tag resources from database.
         """
-        pass
-#        if os.getenv("GITHUB_ACTIONS") == True:
-#            print("Recommendations constructor: In GitHUb actions")
-#            self.tg_movies = {}
-#            self.tg_books = {}
-#            self.common_tags = {}
-#        else: 
-#            print("Recommendations constructor: not in GitHub actions")
-##            self.tg_movies = pd.read_csv("C:/MyFolder/Projects/ohtu_project/key_data/movies_tagdl.csv") # OWN MACHINE TESTING ONLY
-##            self.tg_books = pd.read_csv("C:/MyFolder/Projects/ohtu_project/key_data/books_tagdl.csv") # OWN MACHINE TESTING ONLY
-#
-#            self.tg_movies = pd.read_csv("./movie_dataset_public_final/scores/tagdl.csv")
-#            #self.tg_movies_own = self.get_movie_tags()
-#            self.tg_books = pd.read_csv("./book_dataset/scores/tagdl.csv")
-#            self.book_tags = set(self.tg_books.tag.unique()) # not needed during algo
-#            self.movie_tags = set(self.tg_movies.tag.unique()) # not needed during algo
-#            self.common_tags = self.book_tags.intersection(self.movie_tags)
+#        pass
+        if os.getenv("GITHUB_ACTIONS") == True:
+            print("Recommendations constructor: In GitHUb actions")
+            self.tg_movies = {}
+            self.tg_books = {}
+            self.common_tags = {}
+        else: 
+            print("Recommendations constructor: not in GitHub actions")
+            self.tg_movies = pd.read_csv("./movie_dataset_public_final/scores/tagdl.csv")
+            self.tg_books = pd.read_csv("./book_dataset/scores/tagdl.csv")
+
+#            self.tg_movies = pd.read_csv("C:/MyFolder/Projects/ohtu_project/key_data/movies_tagdl.csv") # OWN MACHINE TESTING ONLY
+#            self.tg_books = pd.read_csv("C:/MyFolder/Projects/ohtu_project/key_data/books_tagdl.csv") # OWN MACHINE TESTING ONLY
+
+            self.book_tags = set(self.tg_books.tag.unique()) # not needed during algo
+            self.movie_tags = set(self.tg_movies.tag.unique()) # not needed during algo
+            self.common_tags = self.book_tags.intersection(self.movie_tags)
 
     #def get_movie_tags(self):
     #    allvalues = TableMvTagDl.query.all()
@@ -150,18 +150,19 @@ class Recommendations:
         Returns:
             list: List of id's, which are the recommended movies for the user. Best one is at index 0.
         """
-        self.tg_movies = pd.read_csv("/home/mvbkrunner/data/movietagdl.csv") # correct # IN TEST. MOVED UP
-        #self.tg_movies_own = self.get_movie_tags()
-        self.tg_books = pd.read_csv("/home/mvbkrunner/data/booktagdl.csv") # correct # IN TEST. MOVED UP
+        if os.getenv("GITHUB_ACTIONS") == True:
+            print("Movie recommendations in GitHub actions, not in constructor")
+            self.tg_movies = pd.read_csv("/home/mvbkrunner/data/movietagdl.csv") # correct # IN TEST. MOVED UP
+            self.tg_books = pd.read_csv("/home/mvbkrunner/data/booktagdl.csv") # correct # IN TEST. MOVED UP
 
- #       self.tg_movies = pd.read_csv("C:/MyFolder/Projects/ohtu_project/key_data/movies_tagdl.csv") # testing only
- #       self.tg_books = pd.read_csv("C:/MyFolder/Projects/ohtu_project/key_data/books_tagdl.csv") # testing only
- #       self.tg_movies = pd.read_csv("/home/seppaemi/Documents/deniksen algo/se_project/tagdl_movies.csv") # testing only
- #       self.tg_books = pd.read_csv("/home/seppaemi/Documents/deniksen algo/se_project/tagdl_books.csv") # testing only
+#            self.tg_movies = pd.read_csv("C:/MyFolder/Projects/ohtu_project/key_data/movies_tagdl.csv") # testing only
+#            self.tg_books = pd.read_csv("C:/MyFolder/Projects/ohtu_project/key_data/books_tagdl.csv") # testing only
+    #       self.tg_movies = pd.read_csv("/home/seppaemi/Documents/deniksen algo/se_project/tagdl_movies.csv") # testing only
+    #       self.tg_books = pd.read_csv("/home/seppaemi/Documents/deniksen algo/se_project/tagdl_books.csv") # testing only
 
-        self.book_tags = set(self.tg_books.tag.unique()) # not needed during algo # IN TEST. MOVED UP
-        self.movie_tags = set(self.tg_movies.tag.unique()) # not needed during algo # IN TEST. MOVED UP
-        self.common_tags = self.book_tags.intersection(self.movie_tags) # IN TEST. MOVED UP
+            self.book_tags = set(self.tg_books.tag.unique()) # not needed during algo # IN TEST. MOVED UP
+            self.movie_tags = set(self.tg_movies.tag.unique()) # not needed during algo # IN TEST. MOVED UP
+            self.common_tags = self.book_tags.intersection(self.movie_tags) # IN TEST. MOVED UP
 
         profile = self.get_user_profile(self.tg_movies, ratings["movies"])
         profile = pd.concat([profile, self.get_user_profile(self.tg_books, ratings["books"])])
@@ -188,18 +189,22 @@ class Recommendations:
         Returns:
             list: List of id's, which are the recommended movies for the user. Best one is at index 0.
         """
-        self.tg_movies = pd.read_csv("/home/mvbkrunner/data/movietagdl.csv") # correct
-        #self.tg_movies_own = self.get_movie_tags()
-        self.tg_books = pd.read_csv("/home/mvbkrunner/data/booktagdl.csv") # correct
+        if os.getenv("GITHUB_ACTIONS") == True:
+            print("book recommendations in GitHub actions, not in constructor")
+            self.tg_movies = pd.read_csv("/home/mvbkrunner/data/movietagdl.csv") # correct
+            self.tg_books = pd.read_csv("/home/mvbkrunner/data/booktagdl.csv") # correct
 
-#        self.tg_movies = pd.read_csv("/home/seppaemi/Documents/deniksen algo/se_project/tagdl_movies.csv") # testing only
-#        self.tg_books = pd.read_csv("/home/seppaemi/Documents/deniksen algo/se_project/tagdl_books.csv") # testing only
-#        self.tg_movies = pd.read_csv("/home/seppaemi/Documents/deniksen algo/se_project/tagdl_movies.csv") # testing only
-#        self.tg_books = pd.read_csv("/home/seppaemi/Documents/deniksen algo/se_project/tagdl_books.csv") # testing only
+#            self.tg_movies = pd.read_csv("C:/MyFolder/Projects/ohtu_project/key_data/movies_tagdl.csv") # testing only
+#            self.tg_books = pd.read_csv("C:/MyFolder/Projects/ohtu_project/key_data/books_tagdl.csv") # testing only
 
-        self.book_tags = set(self.tg_books.tag.unique()) # not needed during algo
-        self.movie_tags = set(self.tg_movies.tag.unique()) # not needed during algo
-        self.common_tags = self.movie_tags.intersection(self.book_tags)
+    #        self.tg_movies = pd.read_csv("/home/seppaemi/Documents/deniksen algo/se_project/tagdl_movies.csv") # testing only
+    #        self.tg_books = pd.read_csv("/home/seppaemi/Documents/deniksen algo/se_project/tagdl_books.csv") # testing only
+    #        self.tg_movies = pd.read_csv("/home/seppaemi/Documents/deniksen algo/se_project/tagdl_movies.csv") # testing only
+    #        self.tg_books = pd.read_csv("/home/seppaemi/Documents/deniksen algo/se_project/tagdl_books.csv") # testing only
+
+            self.book_tags = set(self.tg_books.tag.unique()) # not needed during algo
+            self.movie_tags = set(self.tg_movies.tag.unique()) # not needed during algo
+            self.common_tags = self.movie_tags.intersection(self.book_tags)
 
         profile = self.get_user_profile(self.tg_books, ratings["books"])
         profile = pd.concat([profile, self.get_user_profile(self.tg_movies, ratings["movies"])])
@@ -225,5 +230,5 @@ recommendations = Recommendations()
 #
 ##example:
 #print(recommendations.get_movie_recommendations(ratings, 11))
-#
-## Result: [5445, 1240, 589, 68358, 1270, 2571, 1036, 6537, 85414, 8644, 2916]
+
+# Result: [5445, 1240, 589, 68358, 1270, 2571, 1036, 6537, 85414, 8644, 2916]

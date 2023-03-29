@@ -8,6 +8,7 @@ class Recommendations:
     def __init__(self):
         """Initializes tag resources from database.
         """
+        self.data_uploaded = False
         pass
 #        if os.getenv("ACTIONS_CI") == "is_in_github":
 #            print("Recommendations constructor: In GitHUb actions")

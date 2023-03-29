@@ -25,7 +25,7 @@ def create_app():
     print('variable is possibly like maybe:')
     print(os.getenv("ACTIONS_CI"))
 
-    if os.getenv("ACTIONS_CI") == True:
+    if os.getenv("ACTIONS_CI") == "is_in_github":
         print("App initialization: In GitHUb actions")
     else: 
         print("App initialization: not in GitHub actions")

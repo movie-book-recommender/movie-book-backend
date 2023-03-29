@@ -5,7 +5,7 @@ on:
     branches: [main]
 
 env:
-  ACTIONS_CI: "harry"
+  ACTIONS_CI: "is_in_github"
 
 jobs:
   build:

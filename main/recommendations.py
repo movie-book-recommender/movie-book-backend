@@ -10,7 +10,9 @@ class Recommendations:
         """
         if os.getenv("GITHUB_ACTIONS") == True:
             print("Recommendations constructor: In GitHUb actions")
-            pass
+            self.tg_movies = {}
+            self.tg_books = {}
+            self.common_tags = {}
         else: 
             print("Recommendations constructor: not in GitHub actions")
 #            self.tg_movies = pd.read_csv("C:/MyFolder/Projects/ohtu_project/key_data/movies_tagdl.csv") # OWN MACHINE TESTING ONLY

@@ -5,7 +5,7 @@ on:
     branches: [main]
 
 env:
-  GITHUB_ACTUIBS: True
+  GITHUB_ACTIONS: True
 
 jobs:
   build:

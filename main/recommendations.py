@@ -215,10 +215,15 @@ class Recommendations:
         Returns:
             list: List of id's, which are the recommended movies for the user. Best one is at index 0.
         """
+        if self.data_uploaded == False: 
+            print("data is not yet uploaded")
+            self.get_data()
+        else: 
+            print("data is already uploaded")
 #        if os.getenv("ACTIONS_CI") == "is_in_github":
 #            print("book recommendations in GitHub actions, not in constructor")
-        self.tg_movies = pd.read_csv("/home/mvbkrunner/data/movietagdl.csv") # correct
-        self.tg_books = pd.read_csv("/home/mvbkrunner/data/booktagdl.csv") # correct
+#        self.tg_movies = pd.read_csv("/home/mvbkrunner/data/movietagdl.csv") # correct
+#        self.tg_books = pd.read_csv("/home/mvbkrunner/data/booktagdl.csv") # correct
 #
 ##            self.tg_movies = pd.read_csv("C:/MyFolder/Projects/ohtu_project/key_data/movies_tagdl.csv") # testing only
 ##            self.tg_books = pd.read_csv("C:/MyFolder/Projects/ohtu_project/key_data/books_tagdl.csv") # testing only
@@ -228,9 +233,9 @@ class Recommendations:
 #    #        self.tg_movies = pd.read_csv("/home/seppaemi/Documents/deniksen algo/se_project/tagdl_movies.csv") # testing only
 #    #        self.tg_books = pd.read_csv("/home/seppaemi/Documents/deniksen algo/se_project/tagdl_books.csv") # testing only
 #
-        self.book_tags = set(self.tg_books.tag.unique()) # not needed during algo
-        self.movie_tags = set(self.tg_movies.tag.unique()) # not needed during algo
-        self.common_tags = self.movie_tags.intersection(self.book_tags)
+#        self.book_tags = set(self.tg_books.tag.unique()) # not needed during algo
+#        self.movie_tags = set(self.tg_movies.tag.unique()) # not needed during algo
+#        self.common_tags = self.movie_tags.intersection(self.book_tags)
 
         profile = self.get_user_profile(self.tg_books, ratings["books"])
         profile = pd.concat([profile, self.get_user_profile(self.tg_movies, ratings["movies"])])

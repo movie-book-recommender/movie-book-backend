@@ -22,7 +22,7 @@ def create_app():
     app.config['SQLALCHEMY_DATABASE_URI'] = os.environ["DATABASE_URL"]
 
     # testi: toimii
-    print('variable is possibly like:')
+    print('variable is possibly like maybe:')
     print(os.getenv("ACTIONS_CI"))
 
     if os.getenv("ACTIONS_CI") == True:

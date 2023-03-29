@@ -7,6 +7,7 @@ from os import getenv
 from datetime import date
 import json
 from flask import jsonify, request
+from sqlalchemy import func
 from app import app
 from main.extentions import db
 from main.movies import TableMovieTmdbDataFull, TableMvMetadataUpdated, TableMvTags, TableMvSimilarMvbk, TableMvSimilarMovies, TableMvSimilarBooks
@@ -153,6 +154,32 @@ def search_movies_by_name_top_20():
                     TableMovieTmdbDataFull.movie_tmdb_data_full_title) \
                     .limit(20).all()
     allvalues_dict = helper.dict_helper(allvalues)
+    response = jsonify(allvalues_dict)
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    return response
+
+@app.route('/dbsearchmoviesbysimilarname', methods = ['GET'])
+def search_movies_by_similar_name():
+    """This route implements a page that shows data for max 100 movies whose
+    name is closest to the search term typed by user.
+
+    Returns:
+        json: Data is returned in json format.
+    """
+    search_raw = request.args['input']
+    search_term = f'{search_raw}'
+    allvalues = db.session.query(TableMovieTmdbDataFull,func.similarity(
+        TableMovieTmdbDataFull.movie_tmdb_data_full_title, search_term)) \
+            .order_by(func.similarity(
+                TableMovieTmdbDataFull.movie_tmdb_data_full_title, search_term) \
+            .desc().nulls_last()) \
+            .limit(100).all()
+
+    allvalues_dict = []
+    for value in allvalues:
+        if value[1] > 0.35:
+            allvalues_dict.append(value[0].object_to_dictionary())
+
     response = jsonify(allvalues_dict)
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response

@@ -218,3 +218,12 @@ class TestMovieRoutes(unittest.TestCase):
 
         self.assertTrue(actor, json_response[0]["directors"])
         self.assertTrue(actor, json_response[-1]["directors"])
+
+    def test_get_similary_movies_by_title(self):
+        response = self.test_client.get(
+            "/dbsearchmoviesbysimilarname?input=king",
+        )
+        json_response = json.loads(response.text)
+
+        self.assertEqual("King", json_response[0]["title"])
+        self.assertEqual("King", json_response[1]["title"])

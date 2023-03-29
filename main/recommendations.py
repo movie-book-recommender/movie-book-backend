@@ -10,7 +10,7 @@ class Recommendations:
         """
 #        pass
         if os.getenv("GITHUB_ACTIONS") == True:
-            print("Recommendations constructor: In GitHUb actions")
+            print("Recommendations  constructor: In GitHUb actions")
             self.tg_movies = {}
             self.tg_books = {}
             self.common_tags = {}

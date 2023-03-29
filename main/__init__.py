@@ -22,10 +22,12 @@ def create_app():
     app.config['SQLALCHEMY_DATABASE_URI'] = os.environ["DATABASE_URL"]
 
     # testi: toimii
-    if os.getenv("GITHUB_ACTIONS_CI") == True:
+    print('variable is')
+    print(os.getenv("ACTIONS_CI"))
+
+    if os.getenv("ACTIONS_CI") == True:
         print("App initialization: In GitHUb actions")
     else: 
-        print(os.getenv("GITHUB_ACTIONS_CI"))
         print("App initialization: not in GitHub actions")
 
     # Initiatilize Flask extentions

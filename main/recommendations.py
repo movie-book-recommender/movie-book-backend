@@ -13,12 +13,12 @@ class Recommendations:
             pass
         else: 
             print("Recommendations constructor: not in GitHub actions")
-            self.tg_movies = pd.read_csv("C:/MyFolder/Projects/ohtu_project/key_data/movies_tagdl.csv") # OWN MACHINE TESTING ONLY
-            self.tg_books = pd.read_csv("C:/MyFolder/Projects/ohtu_project/key_data/books_tagdl.csv") # OWN MACHINE TESTING ONLY
+#            self.tg_movies = pd.read_csv("C:/MyFolder/Projects/ohtu_project/key_data/movies_tagdl.csv") # OWN MACHINE TESTING ONLY
+#            self.tg_books = pd.read_csv("C:/MyFolder/Projects/ohtu_project/key_data/books_tagdl.csv") # OWN MACHINE TESTING ONLY
 
-            #self.tg_movies = pd.read_csv("./movie_dataset_public_final/scores/tagdl.csv")
+            self.tg_movies = pd.read_csv("./movie_dataset_public_final/scores/tagdl.csv")
             #self.tg_movies_own = self.get_movie_tags()
-            #self.tg_books = pd.read_csv("./book_dataset/scores/tagdl.csv")
+            self.tg_books = pd.read_csv("./book_dataset/scores/tagdl.csv")
             self.book_tags = set(self.tg_books.tag.unique()) # not needed during algo
             self.movie_tags = set(self.tg_movies.tag.unique()) # not needed during algo
             self.common_tags = self.book_tags.intersection(self.movie_tags)

@@ -32,10 +32,9 @@ jobs:
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
           script: |
-            source script.sh
             cd movie-book-backend
             git pull
-            source ../killscript.sh
+            sudo systemctl restart mvbkbackend.service
       - name: Install coverage reporting
         run: pip install coverage
       - name: Conduct coverage reporting

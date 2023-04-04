@@ -72,9 +72,10 @@ pylint main
 
 ## To do's
 
+
 - Improve speed when generating user specific recommendations
 - Improve security of the APIs
 
 ## Licensing
 
-The application is licensed under the MIT License.
+The application is licensed under the MIT License. 

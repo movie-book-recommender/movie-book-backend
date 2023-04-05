@@ -1,0 +1,492 @@
+common_tag,common_tag_id
+18th century,1
+1920s,2
+1930s,3
+1950s,4
+1960s,5
+1970s,6
+1980s,7
+19th century,8
+abortion,9
+absurd,10
+action,11
+action packed,12
+adaptation,13
+addiction,14
+adolescence,15
+adoption,16
+adultery,17
+adventure,18
+africa,19
+afterlife,20
+aging,21
+aids,22
+alaska,23
+alcatraz,24
+alcoholism,25
+alien invasion,26
+aliens,27
+allegory,28
+alternate history,29
+alternate reality,30
+alternate universe,31
+amnesia,32
+androids,33
+animals,34
+animation,35
+anime,36
+antarctica,37
+apocalypse,38
+archaeology,39
+argentina,40
+art,41
+artificial intelligence,42
+assassination,43
+astronauts,44
+atheism,45
+australia,46
+australian,47
+autism,48
+aviation,49
+awesome,50
+ballet,51
+baseball,52
+basketball,53
+beautiful,54
+beer,55
+berlin,56
+betrayal,57
+biblical,58
+biographical,59
+biography,60
+birds,61
+black comedy,62
+blindness,63
+boarding school,64
+boring,65
+boston,66
+boxing,67
+brainwashing,68
+brazil,69
+british,70
+broadway,71
+brothers,72
+bullying,73
+business,74
+california,75
+camp,76
+canada,77
+cancer,78
+cannibalism,79
+caper,80
+capitalism,81
+cars,82
+catastrophe,83
+catholicism,84
+censorship,85
+character study,86
+chase,87
+cheating,88
+cheerleading,89
+cheesy,90
+chess,91
+chicago,92
+chick flick,93
+child abuse,94
+childhood,95
+children,96
+china,97
+chocolate,98
+christian,99
+christmas,100
+cia,101
+circus,102
+civil war,103
+classic,104
+clones,105
+cold war,106
+college,107
+colonialism,108
+comedy,109
+comics,110
+coming of age,111
+communism,112
+competition,113
+computers,114
+conspiracy,115
+controversial,116
+cooking,117
+cool,118
+corruption,119
+courage,120
+courtroom,121
+courtroom drama,122
+crazy,123
+creativity,124
+creepy,125
+crime,126
+cross dressing,127
+crude humor,128
+cuba,129
+cult,130
+cute,131
+cyberpunk,132
+dance,133
+dark,134
+dark fantasy,135
+dark humor,136
+death,137
+death penalty,138
+demons,139
+depressing,140
+depression,141
+destiny,142
+detective,143
+devil,144
+dinosaurs,145
+disability,146
+disappointing,147
+disturbing,148
+divorce,149
+doctors,150
+dogs,151
+dragons,152
+drama,153
+dreams,154
+drinking,155
+drugs,156
+dystopia,157
+ecology,158
+educational,159
+egypt,160
+emotional,161
+end of the world,162
+england,163
+entertaining,164
+environment,165
+epic,166
+erotic,167
+espionage,168
+evolution,169
+existentialism,170
+factual,171
+fairy tales,172
+fantasy,173
+fascism,174
+fashion,175
+fbi,176
+fighting,177
+finnish,178
+first contact,179
+fish,180
+food,181
+football,182
+foreign,183
+france,184
+french,185
+friendship,186
+fun,187
+funny,188
+funny as hell,189
+future,190
+futuristic,191
+gambling,192
+gangs,193
+gangsters,194
+gay,195
+geeks,196
+genetics,197
+genius,198
+genocide,199
+german,200
+germany,201
+ghosts,202
+global warming,203
+god,204
+good,205
+gore,206
+goth,207
+gothic,208
+graphic design,209
+great,210
+gritty,211
+guilt,212
+hackers,213
+hacking,214
+halloween,215
+haunted house,216
+hawaii,217
+heartbreaking,218
+heroin,219
+high fantasy,220
+high school,221
+hilarious,222
+historical,223
+history,224
+hitman,225
+hollywood,226
+holocaust,227
+homeless,228
+homosexuality,229
+hong kong,230
+horror,231
+horses,232
+hospital,233
+humanity,234
+humor,235
+identity,236
+imagination,237
+immigrants,238
+immortality,239
+incest,240
+india,241
+indie,242
+insanity,243
+inspirational,244
+inspiring,245
+intellectual,246
+intense,247
+interesting,248
+internet,249
+interracial romance,250
+investigation,251
+iran,252
+iraq,253
+ireland,254
+irish,255
+islam,256
+isolation,257
+israel,258
+italian,259
+italy,260
+japan,261
+jazz,262
+jewish,263
+jews,264
+journalism,265
+judaism,266
+jungle,267
+justice,268
+kidnapping,269
+kids,270
+las vegas,271
+latin america,272
+lawyers,273
+lesbian,274
+life,275
+light,276
+lions,277
+literature,278
+london,279
+loneliness,280
+los angeles,281
+love,282
+love story,283
+mafia,284
+magic,285
+marijuana,286
+marriage,287
+mars,288
+martial arts,289
+mathematics,290
+medieval,291
+memory,292
+memory loss,293
+mental illness,294
+metaphysics,295
+mexico,296
+middle east,297
+midlife crisis,298
+military,299
+mining,300
+minnesota,301
+mistaken identity,302
+modern fantasy,303
+money,304
+moon,305
+morality,306
+mountain climbing,307
+moving,308
+murder,309
+music,310
+musical,311
+musicians,312
+mutants,313
+mystery,314
+mythology,315
+native americans,316
+nature,317
+nazis,318
+nerds,319
+new jersey,320
+new orleans,321
+new york,322
+new york city,323
+new zealand,324
+noir,325
+nostalgia,326
+nuclear,327
+nuclear war,328
+obsession,329
+office,330
+olympics,331
+opera,332
+organized crime,333
+orphans,334
+palestine,335
+parallel universe,336
+parenthood,337
+paris,338
+parody,339
+philosophical,340
+philosophy,341
+photography,342
+pigs,343
+pirates,344
+plot twist,345
+poetry,346
+police,347
+political,348
+politics,349
+pornography,350
+post apocalyptic,351
+poverty,352
+predictable,353
+pregnancy,354
+prejudice,355
+private detective,356
+prohibition,357
+prostitution,358
+psychiatry,359
+psychological,360
+psychology,361
+pulp,362
+punk,363
+puppets,364
+queer,365
+quirky,366
+rabbits,367
+race,368
+racing,369
+racism,370
+rape,371
+realistic,372
+redemption,373
+relationships,374
+religion,375
+revenge,376
+revolution,377
+robots,378
+rock and roll,379
+romance,380
+romantic,381
+romantic comedy,382
+rome,383
+russia,384
+sad,385
+samurai,386
+san francisco,387
+satire,388
+satirical,389
+scary,390
+schizophrenia,391
+school,392
+science,393
+science fiction,394
+scotland,395
+secret service,396
+secrets,397
+segregation,398
+self discovery,399
+sex,400
+sexual,401
+sexual abuse,402
+sexuality,403
+sexy,404
+shopping,405
+silly,406
+single father,407
+sisters,408
+slavery,409
+soccer,410
+social commentary,411
+solitude,412
+south africa,413
+south america,414
+space,415
+space opera,416
+space travel,417
+spain,418
+spanish,419
+spanish civil war,420
+spies,421
+steampunk,422
+story,423
+storytelling,424
+stranded,425
+strange,426
+strippers,427
+suburbia,428
+suicide,429
+superheroes,430
+supernatural,431
+surfing,432
+surprise ending,433
+surreal,434
+surrealism,435
+surveillance,436
+survival,437
+suspense,438
+swedish,439
+sweet,440
+talking animals,441
+technology,442
+teen,443
+teenagers,444
+teleportation,445
+television,446
+terminal illness,447
+terrorism,448
+thought-provoking,449
+thriller,450
+time,451
+time travel,452
+tokyo,453
+torture,454
+toys,455
+tragedy,456
+trains,457
+transgender,458
+travel,459
+treasure,460
+true story,461
+twist,462
+underwater,463
+unique,464
+us history,465
+utopia,466
+vampires,467
+video games,468
+vienna,469
+vietnam,470
+violence,471
+virtual reality,472
+virus,473
+visual,474
+voodoo,475
+war,476
+waste of time,477
+weird,478
+werewolves,479
+western,480
+wilderness,481
+wine,482
+witches,483
+witty,484
+wizards,485
+women,486
+workplace,487
+world war i,488
+world war ii,489
+writers,490
+zombies,491

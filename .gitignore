@@ -1,6 +1,8 @@
 # local development for csv files
 movie_dataset_public_final
 book_dataset
+tag_dataset
+local_datasets
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

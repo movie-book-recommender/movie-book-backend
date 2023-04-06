@@ -1,6 +1,7 @@
 import os
 from os import getenv
 import pandas as pd
+import time
 
 class Recommendations:
     """Class that generates personal recommendations for users. Main fucntion is get_movie_recommendations.
@@ -196,6 +197,23 @@ class Recommendations:
         results = results["item_id"].values.tolist()
 
         return results
+
+    def get_all_recommendations(self, ratings, amount):
+        """Function to fetch both movie- and book recommendations
+
+        Args:
+            ratings (dict): Dictionary that has fields movies and books that have the ratings as id and value
+            amount (int): The amount of results wanted        
+        Returns:
+            dict: Dictionary that has keys "movies" and "books" which includes corresponding lists of recommended item ID's.
+        """
+
+        results = {} # Establish empty dictionary for results
+        results["movies"] = self.get_movie_recommendations(ratings, amount) # Add movie recommendations to results
+        results["books"] = self.get_book_recommendations(ratings, amount) # Add book recommendations to results
+
+        return results # Now results is a dictionary containing two lists
+
 
 recommendations = Recommendations()
 

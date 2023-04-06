@@ -119,7 +119,6 @@ To connect to the virtual machine, instructions from [CSC](https://docs.csc.fi/c
 * Please note that to make a script executable on Linux, the following command is needed `chmod +x filename.sh`.
 * At the moment only one file is yet to be added to the database.
 
-
 ## Populate the database with data on recommendations
 
 * Core functionality in the application lies in an algorithm that calculates recommendations for movies and books. For further details, please see a [video](https://www.youtube.com/watch?v=RD5Xz02x33U) outlining the algorithm used in the research project.
@@ -137,6 +136,15 @@ To connect to the virtual machine, instructions from [CSC](https://docs.csc.fi/c
     * [Book-to-Movies](book_to_movies.py)
 
 * As the results from these calculations do not change over time, the algorithms have been run and their results populated in the database. Please see related commands [here](recommendations.sh).
+
+## Optimize the algorithm to generate recommendations based on user preferences
+
+* One of the core functionalities of the work is to generate recommendations for users based on their indicated preferences. The algorithm is available is in the [Recommendations class](../main/recommendations.py). 
+* As the algorithm has been originally developed for academic use, not for a production environment, it needed to be modified slightly to improve memory usage and time efficiency and to make it stable in production. Primary efforts focused on limiting the tags used in calculations to the most significant ones, since the original data sets were over 300MB for movies and over 200MB for books, and hence impractical to use when calculating the user specific recommendations. 
+* First, datasets for movies and books were limited to **focus only on common tags**, i.e. tags that are available for both movies and books, because these are the only tags used by the algorithm. Script to generate a list of common tags and their ids, is available in [common_tags.py](common_tags.py). They are also saved in the Postgres database in the table called [common_tags](create_db.sql).
+* Second, as the movie and book tags are represented as text, which is more memory consuming, all the common tags used replaced with numeric common tag ids. Scripts to generate tag datasets that only use numeric data for [movies](movies_tagdl_common.py) and [books](books_tagdl_common.py) were developed. These first two steps reduce the movies tags from 10,551,657 lines to 4,779,395 lines, file size reducing to 112M, and the books tags from 6,814,900 lines to 4,602,635 lines, file size reducing to 129MB. These datasets are available in the Postgres database in tables *movies_tagdl_common* and *books_tagdl_common*. These actions speed up the algorithm, but do not incur any reduction in the accuracy of the recommendations. 
+* These optimizations in the file formats and contents do not, however, yet improve the time and memory efficiency of the algorithm enough, for it to be stable in a production environment. Therefore, a further optimization was done: tags were limited to the ones that have **the largest impact in the calculations** for the recommendations, i.e., only tags whose score is above 0.1, were kep in datasets. This [script](mvs_bks_tagdl_common_limited.py) reduced the number of tags for to 1,184,035 and for books to 810,755, which is still on average ~120 tags per movie and ~80 tags per book, which one could presume does not impact the recommendations significantly. 
+* Analysis of speeding up the algorithm to be added. 
 
 ## Write backend API to serve data from database
 

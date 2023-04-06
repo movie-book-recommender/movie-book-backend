@@ -514,3 +514,52 @@ def db_get_movies_by_personal_genre(): #use ?ratings when web
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response
 
+@app.route("/dbgetpersonalrecommendations", methods = ['GET'])
+def get_personal_recommendations():
+    """
+    This route implements a page that lists a limited number (20) of recommended movies and books
+    and they key data based on users personal preference
+    Returns:
+        json: data is returned in json format.
+    """
+    if os.getenv("ACTIONS_CI") == "is_in_github": # added as a test just in case
+        print("Movie route: In GitHUb actions")
+        response = jsonify({'value': 'not available'})
+    else: 
+        print("Movie route: not in GitHub actions")
+
+        response = jsonify({'value': 'not available'}) # Set response as not available default
+        if request.args['ratings'] != '': # Check if there is an input
+            cookie_raw = request.args['ratings'] # Get the input in raw format
+            cookie = json.loads(cookie_raw) # Convert from json to python dict
+            ratings = helper.ratings_helper(cookie) # Call helper function to parse json data
+            if ratings is False:
+                response = jsonify({'value': 'not available'}) # If returns false, the data is not valid
+            else:
+                results = recommendations.get_all_recommendations(ratings, 20) # Call algorithm function to form recommendations
+                movie_values = [] # set a list for movies
+                for result in results["movies"]:
+                    value = TableMovieTmdbDataFull.query \
+                            .filter_by(movie_tmdb_data_full_movieid = result).first() # Get the full data from the database
+                    movie_values.append(value) # Add result to a list
+
+                movie_values_dict = helper.dict_helper(movie_values) # Convert list to a dict
+
+                book_values = [] # set a list for books
+                for result in results["books"]:
+                    value = TableBkMetadata.query \
+                            .filter_by(bk_metadata_item_id = result).first() # Get the full data from the database
+                    book_values.append(value) # Add result to a list
+                
+                book_values_dict = helper.dict_helper(book_values) # Convert list to a dict
+
+                all_values_dict = {} # Establish an empty dict for the final response
+                all_values_dict["movies"] = movie_values_dict # Add the movie dict to the all values dict
+                all_values_dict["books"] = book_values_dict # Add the book dict to the all values dict
+
+                response = jsonify(all_values_dict) # Turn dict to json
+        else:
+            response = jsonify({'value': 'not available'})
+
+    response.headers.add('Access-Control-Allow-Origin', '*') # Add correct headers
+    return response

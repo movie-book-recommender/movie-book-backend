@@ -116,7 +116,7 @@ def get_top_10_newest_published_movies():
     date_value = date.today()
     allvalues = TableMovieTmdbDataFull.query \
                     .filter(TableMovieTmdbDataFull.movie_tmdb_data_full_releasedate<date_value) \
-                    .order_by(TableMovieTmdbDataFull.movie_tmdb_data_full_releasedate.desc()) \
+                    .order_by(TableMovieTmdbDataFull.movie_tmdb_data_full_releasedate.desc().nulls_last()) \
                     .limit(10).all()
     allvalues_dict = helper.dict_helper(allvalues)
     response = jsonify(allvalues_dict)

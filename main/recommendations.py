@@ -1,6 +1,7 @@
 import os
 from os import getenv
 import pandas as pd
+import time
 
 class Recommendations:
     """Class that generates personal recommendations for users. Main fucntion is get_movie_recommendations.
@@ -10,47 +11,15 @@ class Recommendations:
         """
         self.data_uploaded = False
         pass
-#        if os.getenv("ACTIONS_CI") == "is_in_github":
-#            print("Recommendations constructor: In GitHUb actions")
-#            print(os.getenv("ACTIONS_CI"))
-#            self.tg_movies = {}
-#            self.tg_books = {}
-#            self.common_tags = {}
-#        else: 
-#            print("Recommendations constructor: not in GitHub actions")
-#            print(os.getenv("ACTIONS_CI"))
-#            self.tg_movies = pd.read_csv("./movie_dataset_public_final/scores/tagdl.csv")
-#            self.tg_books = pd.read_csv("./book_dataset/scores/tagdl.csv")
-#
-##            self.tg_movies = pd.read_csv("C:/MyFolder/Projects/ohtu_project/key_data/movies_tagdl.csv") # OWN MACHINE TESTING ONLY
-##            self.tg_books = pd.read_csv("C:/MyFolder/Projects/ohtu_project/key_data/books_tagdl.csv") # OWN MACHINE TESTING ONLY
-#
-#            self.book_tags = set(self.tg_books.tag.unique()) # not needed during algo
-#            self.movie_tags = set(self.tg_movies.tag.unique()) # not needed during algo
-#            self.common_tags = self.book_tags.intersection(self.movie_tags)
 
     def get_data(self):
         print("is in getting data function")
         if os.getenv("ACTIONS_CI") != "is_in_github":
             print("... and is not github action")
-            self.tg_movies = pd.read_csv("/home/mvbkrunner/data/movietagdl.csv") # correct # IN TEST. MOVED UP
-            self.tg_books = pd.read_csv("/home/mvbkrunner/data/booktagdl.csv") # correct # IN TEST. MOVED UP
-    #
-#            self.tg_movies = pd.read_csv("C:/MyFolder/Projects/ohtu_project/key_data/movies_tagdl.csv") # testing only
-#            self.tg_books = pd.read_csv("C:/MyFolder/Projects/ohtu_project/key_data/books_tagdl.csv") # testing only
-#    #       self.tg_movies = pd.read_csv("/home/seppaemi/Documents/deniksen algo/se_project/tagdl_movies.csv") # testing only
-#    #       self.tg_books = pd.read_csv("/home/seppaemi/Documents/deniksen algo/se_project/tagdl_books.csv") # testing only
-#
-            self.book_tags = set(self.tg_books.tag.unique()) # not needed during algo # IN TEST. MOVED UP
-            self.movie_tags = set(self.tg_movies.tag.unique()) # not needed during algo # IN TEST. MOVED UP
-            self.common_tags = self.book_tags.intersection(self.movie_tags) # IN TEST. MOVED UP
-            self.data_uploaded = True
+            self.tg_movies = pd.read_csv("./datasets/movies_tagdl_common_limited.csv") # includes limited movie tags (where score is over 0.1)
+            self.tg_books = pd.read_csv("./datasets/books_tagdl_common_limited.csv") # includes limited book tags (where score is over 0.1)
 
-    #def get_movie_tags(self):
-    #    allvalues = TableMvTagDl.query.all()
-    #    allvalues_dict = helper.dict_helper(allvalues)
-    #    response = pd.DataFrame(allvalues_dict)
-    #    return response
+            self.data_uploaded = True
 
     def get_user_profile(self, tg, domain_ratings):
         """Generates a dataframe that represents user's preferences.
@@ -62,12 +31,14 @@ class Recommendations:
         Returns:
             Dataframe: Dataframe that includes the vector for the user.
         """
-        df = pd.DataFrame()
+        df = pd.DataFrame() # Establish empty dataframe
+
         for rating in domain_ratings:
             weight = rating["rating"] - 2.5 # this is the weight of each rating
             item = tg[tg.item_id == rating["item_id"]].copy()
             item.score = item.score * weight # we multiply item vector by the weight based on the rating
             df = pd.concat([df, item]) # we add the item vector to the dataframe
+
         return df
     
     def get_dot_product(self, profile, tg_df):
@@ -80,8 +51,11 @@ class Recommendations:
         Returns:
             Dataframe: Dataframe that has the item_id_x and the dot products
         """
-        tg_domain_profile = pd.merge(tg_df, profile, on="tag", how="inner")
+
+        tg_domain_profile = pd.merge(tg_df, profile, on="tag_id", how="inner")
+
         tg_domain_profile["dot_product"] = tg_domain_profile.score_x * tg_domain_profile.score_y
+
         dot_product_df = tg_domain_profile.groupby("item_id_x").dot_product.sum().reset_index()
 
         # Returns:
@@ -133,13 +107,11 @@ class Recommendations:
         Returns:
             float: The calculated vector length.
         """
+
         prof_tmp = profile.copy()
         prof_tmp.score = prof_tmp.score * prof_tmp.score
         profile_vector_len = prof_tmp.score.sum()
         profile_vector_len = profile_vector_len**(1/2)
-
-        # Returns:
-        # 26.098431988201902
 
         return profile_vector_len
     
@@ -156,7 +128,6 @@ class Recommendations:
         """
         sim_df = pd.merge(dot_product_df, len_df, left_on="item_id_x", right_on="item_id")
         sim_df["sim"] = sim_df["dot_product"] / sim_df["length"] / profile_vector_len
-
 
         return sim_df
 
@@ -176,30 +147,18 @@ class Recommendations:
         else: 
             print("data is already uploaded")
 
-#        if os.getenv("ACTIONS_CI") == "is_in_github":
-#            print("Movie recommendations in GitHub actions, not in constructor")
-#        self.tg_movies = pd.read_csv("/home/mvbkrunner/data/movietagdl.csv") # correct # IN TEST. MOVED UP
-#        self.tg_books = pd.read_csv("/home/mvbkrunner/data/booktagdl.csv") # correct # IN TEST. MOVED UP
-#
-##            self.tg_movies = pd.read_csv("C:/MyFolder/Projects/ohtu_project/key_data/movies_tagdl.csv") # testing only
-##            self.tg_books = pd.read_csv("C:/MyFolder/Projects/ohtu_project/key_data/books_tagdl.csv") # testing only
-#    #       self.tg_movies = pd.read_csv("/home/seppaemi/Documents/deniksen algo/se_project/tagdl_movies.csv") # testing only
-#    #       self.tg_books = pd.read_csv("/home/seppaemi/Documents/deniksen algo/se_project/tagdl_books.csv") # testing only
-#
-#        self.book_tags = set(self.tg_books.tag.unique()) # not needed during algo # IN TEST. MOVED UP
-#        self.movie_tags = set(self.tg_movies.tag.unique()) # not needed during algo # IN TEST. MOVED UP
-#        self.common_tags = self.book_tags.intersection(self.movie_tags) # IN TEST. MOVED UP
-
         profile = self.get_user_profile(self.tg_movies, ratings["movies"])
+
         profile = pd.concat([profile, self.get_user_profile(self.tg_books, ratings["books"])])
 
-        movie_dot_product = self.get_dot_product(profile[profile.tag.isin(self.common_tags)], self.tg_movies) # we only consider common tags
+        movie_dot_product = self.get_dot_product(profile, self.tg_movies)
 
-        movie_len_df = self.get_item_length_df(self.tg_movies[self.tg_movies.tag.isin(self.common_tags)])
+        movie_len_df = self.get_item_length_df(self.tg_movies)
 
-        profile_vector_len = self.get_vector_length(profile[profile.tag.isin(self.common_tags)])
+        profile_vector_len = self.get_vector_length(profile)
 
         movie_sim_df = self.get_sim_df(movie_dot_product, movie_len_df, profile_vector_len)
+
         results = movie_sim_df.sort_values("sim", ascending=False, ignore_index=True).head(amount).drop(columns=["dot_product", "length", "item_id_x", "sim"])
 
         results = results["item_id"].values.tolist()
@@ -211,7 +170,7 @@ class Recommendations:
         Main function to fetch recommendations based on ratings.
         Args:
             ratings (dict): Dictionary that has fields movies and books that have the ratings as id and value
-            amount (int): The amount of results
+            amount (int): The amount of results        
         Returns:
             list: List of id's, which are the recommended movies for the user. Best one is at index 0.
         """
@@ -220,33 +179,41 @@ class Recommendations:
             self.get_data()
         else: 
             print("data is already uploaded")
-#        if os.getenv("ACTIONS_CI") == "is_in_github":
-#            print("book recommendations in GitHub actions, not in constructor")
-#        self.tg_movies = pd.read_csv("/home/mvbkrunner/data/movietagdl.csv") # correct
-#        self.tg_books = pd.read_csv("/home/mvbkrunner/data/booktagdl.csv") # correct
-#
-##            self.tg_movies = pd.read_csv("C:/MyFolder/Projects/ohtu_project/key_data/movies_tagdl.csv") # testing only
-##            self.tg_books = pd.read_csv("C:/MyFolder/Projects/ohtu_project/key_data/books_tagdl.csv") # testing only
-#
-#    #        self.tg_movies = pd.read_csv("/home/seppaemi/Documents/deniksen algo/se_project/tagdl_movies.csv") # testing only
-#    #        self.tg_books = pd.read_csv("/home/seppaemi/Documents/deniksen algo/se_project/tagdl_books.csv") # testing only
-#    #        self.tg_movies = pd.read_csv("/home/seppaemi/Documents/deniksen algo/se_project/tagdl_movies.csv") # testing only
-#    #        self.tg_books = pd.read_csv("/home/seppaemi/Documents/deniksen algo/se_project/tagdl_books.csv") # testing only
-#
-#        self.book_tags = set(self.tg_books.tag.unique()) # not needed during algo
-#        self.movie_tags = set(self.tg_movies.tag.unique()) # not needed during algo
-#        self.common_tags = self.movie_tags.intersection(self.book_tags)
 
         profile = self.get_user_profile(self.tg_books, ratings["books"])
+
         profile = pd.concat([profile, self.get_user_profile(self.tg_movies, ratings["movies"])])
-        book_dot_product = self.get_dot_product(profile[profile.tag.isin(self.common_tags)], self.tg_books) # we only consider common tags
-        book_len_df = self.get_item_length_df(self.tg_books[self.tg_books.tag.isin(self.common_tags)])
-        profile_vector_len = self.get_vector_length(profile[profile.tag.isin(self.common_tags)])
+
+        book_dot_product = self.get_dot_product(profile, self.tg_books)
+
+        book_len_df = self.get_item_length_df(self.tg_books)
+
+        profile_vector_len = self.get_vector_length(profile)
+
         book_sim_df = self.get_sim_df(book_dot_product, book_len_df, profile_vector_len)
+
         results = book_sim_df.sort_values("sim", ascending=False, ignore_index=True).head(amount).drop(columns=["dot_product", "length", "item_id_x", "sim"])
+
         results = results["item_id"].values.tolist()
-        
+
         return results
+
+    def get_all_recommendations(self, ratings, amount):
+        """Function to fetch both movie- and book recommendations
+
+        Args:
+            ratings (dict): Dictionary that has fields movies and books that have the ratings as id and value
+            amount (int): The amount of results wanted        
+        Returns:
+            dict: Dictionary that has keys "movies" and "books" which includes corresponding lists of recommended item ID's.
+        """
+
+        results = {} # Establish empty dictionary for results
+        results["movies"] = self.get_movie_recommendations(ratings, amount) # Add movie recommendations to results
+        results["books"] = self.get_book_recommendations(ratings, amount) # Add book recommendations to results
+
+        return results # Now results is a dictionary containing two lists
+
 
 recommendations = Recommendations()
 
@@ -262,4 +229,4 @@ recommendations = Recommendations()
 ##example:
 #print(recommendations.get_movie_recommendations(ratings, 11))
 
-# Result: [5445, 1240, 589, 68358, 1270, 2571, 1036, 6537, 85414, 8644, 2916]
+# Result: [5445 minority report, 1240 terminator, 589 terminator 2, 68358 star trek, 1270 back to the future, 2571 the matrix, 1036 die hard, 6537 terminator 3, 85414, 8644 i, robot, 2916 total recall]

@@ -115,6 +115,7 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+service_start.sh
 
 # Spyder project settings
 .spyderproject

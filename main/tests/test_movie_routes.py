@@ -15,39 +15,39 @@ class TestMovieRoutes(unittest.TestCase):
         self.test_client = app.test_client()
 
     def test_get_given_movie_data(self):
-        """Tests given movie data with id 210685 which is a movie called Trailer Made
+        """Tests given movie data with id 16 which is a movie called Casino
         """
         response = self.test_client.get(
-            "/dbgetgivenmoviedata?movieid=210685",
+            "/dbgetgivenmoviedata?movieid=16",
         )
         json_response = json.loads(response.text)
 
-        self.assertEqual(json_response["title"], "Trailer Made")
+        self.assertEqual(json_response["title"], "Casino")
 
     def test_get_top_10_movies_by_year(self):
         """Tests top ten movies by year, by checking if the first one is correct.
+        Note. Movie data available as of 2013.
         """
         response = self.test_client.get(
-            "/dbgettop10moviesbyyear?year=2020",
+            "/dbgettop10moviesbyyear?year=2013",
         )
         json_response = json.loads(response.text)
 
-        self.assertEqual(json_response[0]["title"],
-                        "Demon Slayer -Kimetsu no Yaiba- The Movie: Mugen Train")
+        self.assertEqual(json_response[0]["title"], "Frozen")
 
     def test_get_top_10_newest_published_movies(self):
-        """Tests top ten newest published movies
+        """Tests top ten newest published movies.
         """
         response = self.test_client.get(
             "/dbgettop10newestpublishedmovies",
         )
         json_response = json.loads(response.text)
 
-        self.assertEqual(json_response[0]["title"], "Dead Men In The Skitrack")
+        self.assertEqual(json_response[0]["title"], "The Lego Movie")
 
     def test_search_movies_by_name_top_20(self):
         """Tests the search function. The first result with harry potter should be
-        Harry Potter 20th Anniversary: Return to Hogwarts
+        Harry Potter and the Chamber of Secrets.
         """
         response = self.test_client.get(
             "/dbsearchmoviesbyname?input=harry potter",
@@ -55,17 +55,18 @@ class TestMovieRoutes(unittest.TestCase):
         json_response = json.loads(response.text)
 
         self.assertEqual(json_response[0]["title"],
-                        "Harry Potter 20th Anniversary: Return to Hogwarts")
+                        "Harry Potter and the Chamber of Secrets")
 
     def test_get_top_10_highest_rating_movies(self):
-        """Tests the top 10 highest rated movies. The first one should be Assassins (2020)
+        """Tests the top 10 highest rated movies. The first one should be 
+        "Shawshank Redemption, The (1994)".
         """
         response = self.test_client.get("/dbgettop10highestratedmovies",)
         json_response = json.loads(response.text)
 
         self.assertEqual((json_response[0]["title"], json_response[1]["title"],
-                          json_response[2]["title"]), ("Assassins (2020)",
-                          "There Will Be No More Night (2020)", "Halley's Comet (2020)"))
+                          json_response[2]["title"]), ("Shawshank Redemption, The (1994)",
+                          "Godfather, The (1972)", "Usual Suspects, The (1995)"))
 
     def test_get_recommended_items_for_given_movie(self): # POISTA TÄMÄ TESTI
         """Tests whether 10 recommended movies are returned for a given movie.
@@ -225,5 +226,5 @@ class TestMovieRoutes(unittest.TestCase):
         )
         json_response = json.loads(response.text)
 
-        self.assertEqual("King", json_response[0]["title"])
-        self.assertEqual("King", json_response[1]["title"])
+        self.assertEqual("King Kong", json_response[0]["title"])
+        self.assertEqual("King Kong", json_response[1]["title"])

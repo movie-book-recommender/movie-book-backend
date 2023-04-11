@@ -22,28 +22,37 @@ class Helper:
         return [item.object_to_dictionary() for item in object_list]
     
     def ratings_helper(self, cookie):
+        """Helper function between the cookie from the frontend and the recommendation algorithm in the backend to parse the cookie in a form that is easier to handle when forming recommendations.
+
+        Args:
+            cookie (JSON): JSON including ratings, looks something like this: {"Books":[["52951446","1"],["45424741","4"],["1168090","5"],["43166999","1"],["860196","5"]],"Movies":[["210579","1"],["3271","1"],["949","4"],["1938","1"],["3475","5"]]}
+
+        Returns:
+            dict: Dictionary including keys "movies" and "books" and values are their relative ratings as lists.
+        """
         if "Movies" not in cookie:
             ratings = False
         elif "Books" not in cookie:
             ratings = False
-        elif len(cookie["Movies"]) == 0 or len(cookie["Books"]) == 0:
+        elif len(cookie["Movies"]) == 0 and len(cookie["Books"]) == 0: # Check that there is some ratings
             ratings = False
         else:
             ratings = {"movies": [],
                     "books": []}
             movies = cookie["Movies"]
-
-            for movie in movies:
-                if len(movie) < 2:
-                    continue
-                else:
-                    ratings["movies"].append({"item_id": int(movie[0]), "rating": int(movie[1])})
+            if len(movies) != 0: # Check if there is any movie ratings
+                for movie in movies:
+                    if len(movie) < 2:
+                        continue
+                    else:
+                        ratings["movies"].append({"item_id": int(movie[0]), "rating": int(movie[1])})
             books = cookie["Books"]
-            for book in books:
-                if len(book) < 2:
-                    continue
-                else:
-                    ratings["books"].append({"item_id": int(book[0]), "rating": int(book[1])})
+            if len(books) != 0: # Check if there is any book ratings
+                for book in books:
+                    if len(book) < 2:
+                        continue
+                    else:
+                        ratings["books"].append({"item_id": int(book[0]), "rating": int(book[1])})
         return ratings
     
     def split_helper(self, string):
@@ -52,10 +61,3 @@ class Helper:
         return result
 
 helper = Helper()
-
-#Cookie looks like this: {'Books': [], 'Movies': [['210579', '5'], ['270352', '1']]}
-
-#cookie = {"movies": [[0,4], [1,3]],
-#          "books": [[0,4], [1,3]]}
-
-#print(helper.ratings_helper(cookie))

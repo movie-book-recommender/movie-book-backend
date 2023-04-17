@@ -131,38 +131,38 @@ class TableMvMetadataUpdated(db.Model):
             'item_id': self.mv_metadata_updated_item_id,
             }
 
-class TableMvSimilarMvbk(db.Model): # THIS TABLE IT TO BE DELETED AFTER THE MOVIE TO MOVIES (251) UPDATE IS DONE
-    """This class outlines the structure of the MvSimilarMvbk table
-    in the application's database, and the related methods.
-
-    Args:
-        db (object): Table contains for each movie the top 10 movies 
-        that are most similar to this movie.
-
-    Returns:
-        Integer, string: Returns data from table as integers or strings.
-    """
-    __tablename__ = 'mv_similar_mvbk'
-    mv_similar_mvbk_item_id = db.Column('item_id', db.Integer)
-    mv_similar_mvbk_similar_item_id = db.Column('similar_item_id', db.Integer)
-    mv_similar_mvbk_similar_item_type = db.Column('similar_item_type', db.String(16))
-    mv_similar_mvbk_similarity_score = db.Column('similarity_score', db.Integer)
-    mv_similar_mvbk_row_index = db.Column('row_index', db.Integer, primary_key=True)
-
-    def object_to_dictionary(self):
-        """This method returns contents of the MvSimilarMvbk table
-        in a dictionary format.
-
-        Returns:
-            Dictionary: Returns contents of the MvSimilarMvbk table.
-        """
-        return {
-            'item_id': self.mv_similar_mvbk_item_id,
-            'similar_item_id': self.mv_similar_mvbk_similar_item_id,
-            'similar_item_type': self.mv_similar_mvbk_similar_item_type,
-            'similarity_score': self.mv_similar_mvbk_similarity_score,
-            'row_index': self.mv_similar_mvbk_row_index
-            }
+#class TableMvSimilarMvbk(db.Model): # THIS TABLE IT TO BE DELETED AFTER THE MOVIE TO MOVIES (251) UPDATE IS DONE
+#    """This class outlines the structure of the MvSimilarMvbk table
+#    in the application's database, and the related methods.
+#
+#    Args:
+#        db (object): Table contains for each movie the top 10 movies 
+#        that are most similar to this movie.
+#
+#    Returns:
+#        Integer, string: Returns data from table as integers or strings.
+#    """
+#    __tablename__ = 'mv_similar_mvbk'
+#    mv_similar_mvbk_item_id = db.Column('item_id', db.Integer)
+#    mv_similar_mvbk_similar_item_id = db.Column('similar_item_id', db.Integer)
+#    mv_similar_mvbk_similar_item_type = db.Column('similar_item_type', db.String(16))
+#    mv_similar_mvbk_similarity_score = db.Column('similarity_score', db.Integer)
+#    mv_similar_mvbk_row_index = db.Column('row_index', db.Integer, primary_key=True)
+#
+#    def object_to_dictionary(self):
+#        """This method returns contents of the MvSimilarMvbk table
+#        in a dictionary format.
+#
+#        Returns:
+#            Dictionary: Returns contents of the MvSimilarMvbk table.
+#        """
+#        return {
+#            'item_id': self.mv_similar_mvbk_item_id,
+#            'similar_item_id': self.mv_similar_mvbk_similar_item_id,
+#            'similar_item_type': self.mv_similar_mvbk_similar_item_type,
+#            'similarity_score': self.mv_similar_mvbk_similarity_score,
+#            'row_index': self.mv_similar_mvbk_row_index
+#            }
 
 class TableMvSimilarMovies(db.Model):
     """This class outlines the structure of the MvSimilarMovies table

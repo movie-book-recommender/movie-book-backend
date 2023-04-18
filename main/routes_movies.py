@@ -298,7 +298,7 @@ def get_for_given_movie_recommended_movies_all_data():
                             .order_by(TableMvSimilarMovies.mv_similar_movies_similarity_score.desc()) \
                             .offset(1) \
                             .limit(20).all()
-            print(len(allvalues))
+#            print(len(allvalues))
             if len(allvalues) != 0:
                 allvalues_dict = []
                 for value in allvalues:
@@ -320,7 +320,7 @@ def get_for_given_movie_recommended_movies_all_data():
 @app.route('/dbgetrecommendedbooksforgivenmovie', methods = ['GET'])
 def get_recommended_books_for_given_movie():
     """This route implements a page that lists all the recommended books for
-    a given movie that needs to be defined when calling the route. 
+    a given movie that needs to be defined when calling the route.
     It returns all the books that have been recommended for a given movie.
     """
     if request.args['movieid'] != '':
@@ -345,7 +345,7 @@ def get_recommended_books_for_given_movie():
 
 @app.route('/dbgetrecommendedbooksalldataforgivenmovie', methods = ['GET'])
 def get_recommended_books_all_data_for_given_movie():
-    """This route implements a page that lists a limited number of recommended books 
+    """This route implements a page that lists a limited number of recommended books
     and their key data for a given movie that needs to be defined when calling the route
 
     Returns:
@@ -386,57 +386,57 @@ def get_personal_movie_recommendations():
     Returns:
         json: data is returned in json format.
     """
-    if os.getenv("ACTIONS_CI") == "is_in_github": # added as a test just in case
+    if os.getenv("ACTIONS_CI") == "is_in_github":
         print("Movie route: In GitHUb actions")
         response = jsonify({'value': 'not available'})
-    else: 
+    else:
         print("Movie route: not in GitHub actions")
 
-        response = jsonify({'value': 'not available'}) # Set response as not available default
-        if request.args['ratings'] != '': # Check if there is an input
-            cookie_raw = request.args['ratings'] # Get the input in raw format
-            cookie = json.loads(cookie_raw) # Convert from json to python dict
-            ratings = helper.ratings_helper(cookie) # Call helper function to parse json data
+        response = jsonify({'value': 'not available'})
+        if request.args['ratings'] != '':
+            cookie_raw = request.args['ratings']
+            cookie = json.loads(cookie_raw)
+            ratings = helper.ratings_helper(cookie)
             if ratings is False:
-                response = jsonify({'value': 'not available'}) # If returns false, the data is not valid
+                response = jsonify({'value': 'not available'})
             else:
-                results = recommendations.get_movie_recommendations(ratings, 20) # Call algorithm function to form recommendations
+                results = recommendations.get_movie_recommendations(ratings, 20)
                 all_values = []
                 for result in results:
                     value = TableMovieTmdbDataFull.query \
                             .filter_by(movie_tmdb_data_full_movieid = result).first()
-                    all_values.append(value) # Add result to a list
+                    all_values.append(value)
 
-                allvalues_dict = helper.dict_helper(all_values) # Convert list to a dict
-                response = jsonify(allvalues_dict) # Turn dict to json
+                allvalues_dict = helper.dict_helper(all_values)
+                response = jsonify(allvalues_dict)
         else:
             response = jsonify({'value': 'not available'})
 
-    response.headers.add('Access-Control-Allow-Origin', '*') # Add correct headers
+    response.headers.add('Access-Control-Allow-Origin', '*')
     return response
 
 @app.route("/dbgetmoviesbypersonalgenre", methods = ['GET'])
-def db_get_movies_by_personal_genre(): #use ?ratings when web
+def db_get_movies_by_personal_genre():
     """
-    This route implements a page that lists a limited number (20) of recommended movies
-    and they key data based on users personal genre preference
+    This route implements a page that lists a limited number (20) of recommended
+    movies and they key data based on users personal genre preference
     Returns:
         json: data is returned in json format.
     """
-    response = jsonify({'value': 'not available'}) # Set response as not available default
-    if request.args['ratings'] != '': # Check if there is an input
-        cookie_raw = request.args['ratings'] # Get the input in raw format
-        cookie = json.loads(cookie_raw) # Convert from json to python dict
-        ratings = helper.ratings_helper(cookie) # Call helper function to parse json data
-        
+    response = jsonify({'value': 'not available'})
+    if request.args['ratings'] != '':
+        cookie_raw = request.args['ratings']
+        cookie = json.loads(cookie_raw)
+        ratings = helper.ratings_helper(cookie)
+
         if ratings is False:
-            response = jsonify({'value': 'not available'}) # If returns false, the data is not valid
+            response = jsonify({'value': 'not available'})
         else:
-            results = recommendations.get_movie_recommendations(ratings, 1) # Call algorithm function to form recommendations
+            results = recommendations.get_movie_recommendations(ratings, 1)
             for result in results:
                 value = TableMovieTmdbDataFull.query \
                     .filter_by(movie_tmdb_data_full_movieid = result).first()
-            genre = helper.split_helper(value.movie_tmdb_data_full_genres) # return first string in genres
+            genre = helper.split_helper(value.movie_tmdb_data_full_genres)
             allvalues = TableMovieTmdbDataFull.query \
                         .filter(TableMovieTmdbDataFull.movie_tmdb_data_full_genres.ilike(genre)) \
                         .limit(20).all()
@@ -450,49 +450,49 @@ def db_get_movies_by_personal_genre(): #use ?ratings when web
 @app.route("/dbgetpersonalrecommendations", methods = ['GET'])
 def get_personal_recommendations():
     """
-    This route implements a page that lists a limited number (20) of recommended movies and books
-    and they key data based on users personal preference
+    This route implements a page that lists a limited number (20) of recommended
+    movies and books and they key data based on users personal preference
     Returns:
         json: data is returned in json format.
     """
-    if os.getenv("ACTIONS_CI") == "is_in_github": # added as a test just in case
+    if os.getenv("ACTIONS_CI") == "is_in_github":
         print("Movie route: In GitHUb actions")
         response = jsonify({'value': 'not available'})
-    else: 
+    else:
         print("Movie route: not in GitHub actions")
 
-        response = jsonify({'value': 'not available'}) # Set response as not available default
-        if request.args['ratings'] != '': # Check if there is an input
-            cookie_raw = request.args['ratings'] # Get the input in raw format
-            cookie = json.loads(cookie_raw) # Convert from json to python dict
-            ratings = helper.ratings_helper(cookie) # Call helper function to parse json data
+        response = jsonify({'value': 'not available'})
+        if request.args['ratings'] != '':
+            cookie_raw = request.args['ratings']
+            cookie = json.loads(cookie_raw)
+            ratings = helper.ratings_helper(cookie)
             if ratings is False:
-                response = jsonify({'value': 'not available'}) # If returns false, the data is not valid
+                response = jsonify({'value': 'not available'})
             else:
-                results = recommendations.get_all_recommendations(ratings, 20) # Call algorithm function to form recommendations
-                movie_values = [] # set a list for movies
+                results = recommendations.get_all_recommendations(ratings, 20)
+                movie_values = []
                 for result in results["movies"]:
                     value = TableMovieTmdbDataFull.query \
-                            .filter_by(movie_tmdb_data_full_movieid = result).first() # Get the full data from the database
-                    movie_values.append(value) # Add result to a list
+                            .filter_by(movie_tmdb_data_full_movieid = result).first()
+                    movie_values.append(value)
 
-                movie_values_dict = helper.dict_helper(movie_values) # Convert list to a dict
+                movie_values_dict = helper.dict_helper(movie_values)
 
-                book_values = [] # set a list for books
+                book_values = []
                 for result in results["books"]:
                     value = TableBkMetadata.query \
-                            .filter_by(bk_metadata_item_id = result).first() # Get the full data from the database
-                    book_values.append(value) # Add result to a list
-                
-                book_values_dict = helper.dict_helper(book_values) # Convert list to a dict
+                            .filter_by(bk_metadata_item_id = result).first()
+                    book_values.append(value)
 
-                all_values_dict = {} # Establish an empty dict for the final response
-                all_values_dict["movies"] = movie_values_dict # Add the movie dict to the all values dict
-                all_values_dict["books"] = book_values_dict # Add the book dict to the all values dict
+                book_values_dict = helper.dict_helper(book_values)
 
-                response = jsonify(all_values_dict) # Turn dict to json
+                all_values_dict = {}
+                all_values_dict["movies"] = movie_values_dict
+                all_values_dict["books"] = book_values_dict
+
+                response = jsonify(all_values_dict)
         else:
             response = jsonify({'value': 'not available'})
 
-    response.headers.add('Access-Control-Allow-Origin', '*') # Add correct headers
+    response.headers.add('Access-Control-Allow-Origin', '*')
     return response

@@ -44,13 +44,27 @@ class TableBkMetadata(db.Model):
             }
 
 class TableBkRatings(db.Model):
+    """This class outlines the structure of the BkRatings table
+    in the application's database, and the related methods.
 
+    Args:
+        db (object): Table contains ratings for books given by users.
+
+    Returns:
+        Integer, string: Returns data as integers.
+    """
     __tablename__ = "bk_ratings"
     bk_ratings_item_id = db.Column("item_id", db.Integer, primary_key=True)
     bk_ratings_user_id = db.Column("user_id", db.Integer)
     bk_ratings_rating = db.Column("rating", db.Integer)
 
     def object_to_dictionary(self):
+        """This method returns contents of the BkRatings table
+        in a dictionary format.
+
+        Returns:
+            Dictionary: Returns contents of the BkRatings table.
+        """
         return {
             "item_id": self.bk_ratings_item_id,
             "user_id": self.bk_ratings_user_id,
@@ -58,6 +72,16 @@ class TableBkRatings(db.Model):
         }
 
 class TableBkSimilarBooks(db.Model):
+    """This class outlines the structure of the BkSimilarBooks table
+    in the application's database, and the related methods.
+
+    Args:
+        db (object): Table contains for each book the top 251 books 
+        that are most similar to this book.
+
+    Returns:
+        Integer, string: Returns data from table as integers or strings.
+    """
     __tablename__ = "bk_similar_books"
     bk_similar_books_item_id = db.Column('item_id', db.Integer)
     bk_similar_books_similar_item_id = db.Column('similar_item_id', db.Integer)
@@ -73,8 +97,8 @@ class TableBkSimilarBooks(db.Model):
             Dictionary: Returns contents of the BkSimilarBooks table.
         """
         return {
-            'item_id': self.bk_similar_books_item_id, # Original item id is the book of which recommendations are generated from. changed back to original, as it is used everywhere else
-            'similar_item_id': self.bk_similar_books_similar_item_id, # This is named item_id because front end's carousel uses item_id. changed back to original, because it is used everywhere else
+            'item_id': self.bk_similar_books_item_id,
+            'similar_item_id': self.bk_similar_books_similar_item_id,
             'similar_item_type': self.bk_similar_books_similar_item_type,
             'similarity_score': self.bk_similar_books_similarity_score,
             'row_index': self.bk_similar_books_row_index

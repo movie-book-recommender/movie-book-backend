@@ -4,12 +4,12 @@ This module implements routes for books data in the flask app.
 
 import os
 from os import getenv
-from flask import jsonify, request
 import json
+from flask import jsonify, request
 from sqlalchemy.sql import text
 from app import app
 from main.extentions import db
-from main.books import TableBkMetadata, TableBkRatings, TableBkSimilarBooks, TableBkSimilarMovies
+from main.books import TableBkMetadata, TableBkSimilarBooks, TableBkSimilarMovies
 from main.movies import TableMovieTmdbDataFull
 from main.helper import helper
 from main.recommendations import recommendations
@@ -173,7 +173,7 @@ def get_for_given_book_recommended_books_all_data():
 @app.route('/dbgetrecommendedmoviesforgivenbook', methods = ['GET'])
 def get_recommended_movies_for_given_book():
     """This route implements a page that lists all the recommended movies for
-    a given book that needs to be defined when calling the route. 
+    a given book that needs to be defined when calling the route.
     It returns all the movies that have been recommended for a given book.
     """
     if request.args['bookid'] != '':
@@ -199,7 +199,7 @@ def get_recommended_movies_for_given_book():
 
 @app.route('/dbgetrecommendedmoviesalldataforgivenbook', methods = ['GET'])
 def get_recommended_movies_all_data_for_given_book():
-    """This route implements a page that lists a limited number of recommended movies 
+    """This route implements a page that lists a limited number of recommended movies
     and their key data for a given book that needs to be defined when calling the route.
 
     Returns:
@@ -250,35 +250,41 @@ def get_books_by_author():
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response
 
-@app.route("/dbgetpersonalbookrecommendations", methods = ['GET']) # when uusing, add ?ratings to address
+@app.route("/dbgetpersonalbookrecommendations", methods = ['GET'])
 def get_personal_book_recommendations():
-    if os.getenv("ACTIONS_CI") == "is_in_github": # added as a test just in case
+    """
+    This route implements a page that lists a limited number (10) of recommended
+    books and they key data based on users personal preference.
+    Returns:
+        json: data is returned in json format.
+    """
+    if os.getenv("ACTIONS_CI") == "is_in_github":
         print("Book route: In GitHUb actions")
         response = jsonify({'value': 'not available'})
-    else: 
+    else:
         print("Book route: not in GitHub actions")
 
-        response = jsonify({'value' : 'not available'}) # set response as not available default
+        response = jsonify({'value' : 'not available'})
     #   de-bugging
-        if request.args['ratings'] != '': # check if there is an input
-            cookie_raw = request.args['ratings'] # get the input in raw-format
-            cookie = json.loads(cookie_raw) #convert from json to python dict
-            ratings = helper.ratings_helper(cookie) # call helper function to parse json data
+        if request.args['ratings'] != '':
+            cookie_raw = request.args['ratings']
+            cookie = json.loads(cookie_raw)
+            ratings = helper.ratings_helper(cookie)
             if ratings is False:
-                response = jsonify({'value' : 'not available'}) # if returns false data is not valid
+                response = jsonify({'value' : 'not available'})
             else:
-                results = recommendations.get_book_recommendations(ratings, 10) # call algorithm function to form recommendations
+                results = recommendations.get_book_recommendations(ratings, 10)
                 all_values = []
                 for result in results:
                     value = TableBkMetadata.query \
                             .filter_by(bk_metadata_item_id = result).first()
-                    all_values.append(value) # add result to a list
-                allvalues_dict = helper.dict_helper(all_values) # Convert list to a dict
-                response = jsonify(allvalues_dict) # Turn dict to json
+                    all_values.append(value)
+                allvalues_dict = helper.dict_helper(all_values)
+                response = jsonify(allvalues_dict)
         else:
             response = jsonify({'value': 'not available'})
 
-    response.headers.add('Access-Control-Allow-Origin', '*') # Add correct headers
+    response.headers.add('Access-Control-Allow-Origin', '*')
 
 #    ratings = {"movies" : [{"item_id" : 1270, "rating" : 4}, # Back to the Future
 #                           {"item_id" : 5445, "rating" : 5}, # Minority Report

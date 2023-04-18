@@ -8,7 +8,7 @@ from flask import Flask, jsonify, request
 from main.extentions import db
 
 def create_app():
-    """This function returns a Flask application 
+    """This function returns a Flask application
     and SQLAlchemy database.
 
     Returns:
@@ -27,7 +27,7 @@ def create_app():
 
     if os.getenv("ACTIONS_CI") == "is_in_github":
         print("App initialization: In GitHUb actions")
-    else: 
+    else:
         print("App initialization: not in GitHub actions")
 
     # Initiatilize Flask extentions

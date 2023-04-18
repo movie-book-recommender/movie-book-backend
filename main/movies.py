@@ -1,22 +1,22 @@
 """
-This module outlines the contents of all the tables with data 
+This module outlines the contents of all the tables with data
 regarding movies in the application's database.
 """
 
 from main.extentions import db
 
 class TableMvTags(db.Model):
-    """This class outlines the structure of the MvTags table 
+    """This class outlines the structure of the MvTags table
     in the application's database, and the related methods.
-    Note. Use of orm syntax requires setting one one of 
-    items as primary key, though it has not been defined in the 
+    Note. Use of orm syntax requires setting one one of
+    items as primary key, though it has not been defined in the
     underlying database.
 
     Args:
         db (object): Table shows tags for movies.
 
     Returns:
-        Integer, string: Returns data as integers or strings. 
+        Integer, string: Returns data as integers or strings.
     """
     __tablename__ = 'mv_tags'
     mv_tags_tag = db.Column('tag', db.String(255), primary_key=True)
@@ -35,7 +35,7 @@ class TableMvTags(db.Model):
             }
 
 class TableMovieTmdbDataFull(db.Model):
-    """This class outlines the structure of the MovieTMDBDataFull table 
+    """This class outlines the structure of the MovieTMDBDataFull table
     in the application's database, and the related methods.
 
     Args:
@@ -136,7 +136,7 @@ class TableMvSimilarMovies(db.Model):
     in the application's database, and the related methods.
 
     Args:
-        db (object): Table contains for each movie the top 251 movies 
+        db (object): Table contains for each movie the top 251 movies
         that are most similar to this movie.
 
     Returns:
@@ -169,7 +169,7 @@ class TableMvSimilarBooks(db.Model):
     in the application's database, and the related methods.
 
     Args:
-        db (object): Table contains for each movie the top 250 books 
+        db (object): Table contains for each movie the top 250 books
         that are most similar to this movie.
 
     Returns:
@@ -198,17 +198,17 @@ class TableMvSimilarBooks(db.Model):
             }
 
 class TableMvTagDl(db.Model):
-    """This class outlines the structure of the MvTagDl table 
+    """This class outlines the structure of the MvTagDl table
     in the application's database, and the related methods.
-    Note. Use of orm syntax requires setting one one of 
-    items as primary key, though it has not been defined in the 
+    Note. Use of orm syntax requires setting one one of
+    items as primary key, though it has not been defined in the
     underlying database.
 
     Args:
         db (object): Table shows tags for movies.
 
     Returns:
-        Integer, string: Returns data as integers or strings. 
+        Integer, string: Returns data as integers or strings.
     """
     __tablename__ = 'mv_tagdl'
     mv_tagdl_tag = db.Column('tag', db.String(255), primary_key=True)

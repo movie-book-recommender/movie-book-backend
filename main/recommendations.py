@@ -1,10 +1,17 @@
+"""
+This module implements methods to get the data and 
+to calculate recommendations based on user's preferences.
+"""
+
 import os
 from os import getenv
+#import time
 import pandas as pd
-import time
 
 class Recommendations:
-    """Class that generates personal recommendations for users. Main fucntion is get_movie_recommendations.
+    """Class that generates personal recommendations for users.
+       Main functions are get_movie_recommendations and
+       get_book_recommendations.
     """
     def __init__(self):
         """Initializes tag resources from database.
@@ -13,11 +20,16 @@ class Recommendations:
         pass
 
     def get_data(self):
+        """ Method opens and reads files containing data for movies' and 
+            books' tags if the application is not run on GitHub.
+            Note. Data used contains tag files that are limited to tags
+            where the score is above 0.1.
+        """
         print("is in getting data function")
         if os.getenv("ACTIONS_CI") != "is_in_github":
             print("... and is not github action")
-            self.tg_movies = pd.read_csv("./datasets/movies_tagdl_common_limited.csv") # includes limited movie tags (where score is over 0.1)
-            self.tg_books = pd.read_csv("./datasets/books_tagdl_common_limited.csv") # includes limited book tags (where score is over 0.1)
+            self.tg_movies = pd.read_csv("./datasets/movies_tagdl_common_limited.csv")
+            self.tg_books = pd.read_csv("./datasets/books_tagdl_common_limited.csv")
 
             self.data_uploaded = True
 
@@ -31,16 +43,16 @@ class Recommendations:
         Returns:
             Dataframe: Dataframe that includes the vector for the user.
         """
-        df = pd.DataFrame() # Establish empty dataframe
+        df = pd.DataFrame()
 
         for rating in domain_ratings:
-            weight = rating["rating"] - 2.5 # this is the weight of each rating
+            weight = rating["rating"] - 2.5
             item = tg[tg.item_id == rating["item_id"]].copy()
-            item.score = item.score * weight # we multiply item vector by the weight based on the rating
-            df = pd.concat([df, item]) # we add the item vector to the dataframe
+            item.score = item.score * weight
+            df = pd.concat([df, item])
 
         return df
-    
+
     def get_dot_product(self, profile, tg_df):
         """Generates dot product for all items
 
@@ -73,7 +85,7 @@ class Recommendations:
         #        9733     108932    91.859114
 
         return dot_product_df
-    
+
     def get_item_length_df(self, tg_df):
         """Calculates length for each movie
 
@@ -97,7 +109,7 @@ class Recommendations:
         #4        5  3.784929
 
         return len_df
-    
+
     def get_vector_length(self, profile):
         """Calculates the vector length for the user
 
@@ -114,7 +126,7 @@ class Recommendations:
         profile_vector_len = profile_vector_len**(1/2)
 
         return profile_vector_len
-    
+
     def get_sim_df(self, dot_product_df, len_df, profile_vector_len):
         """Generates similarities for movies/books based on user profile
 
@@ -132,19 +144,21 @@ class Recommendations:
         return sim_df
 
     def get_movie_recommendations(self, ratings, amount):
-        """Main function to fetch recommendations based on ratings.
+        """Main function to fetch recommendations for movies based on ratings.
 
         Args:
-            ratings (dict): Dictionary that has fields movies and books that have the ratings as id and value
+            ratings (dict): Dictionary that has fields movies and books
+                            that have the ratings as id and value
             amount (int): The amount of results
 
         Returns:
-            list: List of id's, which are the recommended movies for the user. Best one is at index 0.
+            list: List of id's, which are the recommended movies
+                  for the user. Best one is at index 0.
         """
-        if self.data_uploaded == False: 
+        if self.data_uploaded == False:
             print("data is not yet uploaded")
             self.get_data()
-        else: 
+        else:
             print("data is already uploaded")
 
         profile = self.get_user_profile(self.tg_movies, ratings["movies"])
@@ -167,17 +181,19 @@ class Recommendations:
 
     def get_book_recommendations(self, ratings, amount):
         """
-        Main function to fetch recommendations based on ratings.
+        Main function to fetch recommendations for books based on ratings.
         Args:
-            ratings (dict): Dictionary that has fields movies and books that have the ratings as id and value
-            amount (int): The amount of results        
+            ratings (dict): Dictionary that has fields movies and 
+                            books that have the ratings as id and value
+            amount (int): The amount of results
         Returns:
-            list: List of id's, which are the recommended movies for the user. Best one is at index 0.
+            list: List of id's, which are the recommended movies for 
+                  the user. Best one is at index 0.
         """
-        if self.data_uploaded == False: 
+        if self.data_uploaded == False:
             print("data is not yet uploaded")
             self.get_data()
-        else: 
+        else:
             print("data is already uploaded")
 
         profile = self.get_user_profile(self.tg_books, ratings["books"])
@@ -199,20 +215,22 @@ class Recommendations:
         return results
 
     def get_all_recommendations(self, ratings, amount):
-        """Function to fetch both movie- and book recommendations
+        """Function to fetch both movie and book recommendations
 
         Args:
-            ratings (dict): Dictionary that has fields movies and books that have the ratings as id and value
-            amount (int): The amount of results wanted        
+            ratings (dict): Dictionary that has fields movies and books
+                            that have the ratings as id and value
+            amount (int): The amount of results wanted
         Returns:
-            dict: Dictionary that has keys "movies" and "books" which includes corresponding lists of recommended item ID's.
+            dict: Dictionary that has keys "movies" and "books" 
+            which includes corresponding lists of recommended item ID's.
         """
 
-        results = {} # Establish empty dictionary for results
-        results["movies"] = self.get_movie_recommendations(ratings, amount) # Add movie recommendations to results
-        results["books"] = self.get_book_recommendations(ratings, amount) # Add book recommendations to results
+        results = {}
+        results["movies"] = self.get_movie_recommendations(ratings, amount)
+        results["books"] = self.get_book_recommendations(ratings, amount)
 
-        return results # Now results is a dictionary containing two lists
+        return results
 
 
 recommendations = Recommendations()

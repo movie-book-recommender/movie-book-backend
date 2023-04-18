@@ -11,10 +11,12 @@ This repository contains the code, tests, CI/CD pipe, and documentation for the 
 ## Scope of the backend
 
 Backend for the Movie Book Recommender project contains, e.g.
+* [Technical instructions](documentation/backend.md) with which the project's virtual machine was set up and the Postgres database was established in the production server in cPouta. 
 * [The backend application](app.py) that runs in cPouta
-* [Instructions](documentation/backend.md) with which the project's virtual machine was set up and the Postgres database was established in the production server in cPouta. 
 * Tools and scripts with which the database tables have been [created](documentation/create_db.sql) and [populated](documentation/csc_json_to_csv_to_psql.sh).
-* Instructions how to develop and test the backend APIs (see below). 
+* Instructions how to develop and test the backend APIs (see below).
+* [Documentation of the architecture](documentation/architecture.md)
+* Documentation of back-end tests (to be added)
 
 ## Architecture
 

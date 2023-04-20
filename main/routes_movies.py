@@ -380,31 +380,25 @@ def get_personal_movie_recommendations():
     Returns:
         json: data is returned in json format.
     """
-    if os.getenv("ACTIONS_CI") == "is_in_github":
-        print("Movie route: In GitHUb actions")
-        response = jsonify({'value': 'not available'})
-    else:
-        print("Movie route: not in GitHub actions")
-
-        response = jsonify({'value': 'not available'})
-        if request.args['ratings'] != '':
-            cookie_raw = request.args['ratings']
-            cookie = json.loads(cookie_raw)
-            ratings = helper.ratings_helper(cookie)
-            if ratings is False:
-                response = jsonify({'value': 'not available'})
-            else:
-                results = recommendations.get_movie_recommendations(ratings, 20)
-                all_values = []
-                for result in results:
-                    value = TableMovieTmdbDataFull.query \
-                            .filter_by(movie_tmdb_data_full_movieid = result).first()
-                    all_values.append(value)
-
-                allvalues_dict = helper.dict_helper(all_values)
-                response = jsonify(allvalues_dict)
-        else:
+    response = jsonify({'value': 'not available'})
+    if request.args['ratings'] != '':
+        cookie_raw = request.args['ratings']
+        cookie = json.loads(cookie_raw)
+        ratings = helper.ratings_helper(cookie)
+        if ratings is False:
             response = jsonify({'value': 'not available'})
+        else:
+            results = recommendations.get_movie_recommendations(ratings, 20)
+            all_values = []
+            for result in results:
+                value = TableMovieTmdbDataFull.query \
+                        .filter_by(movie_tmdb_data_full_movieid = result).first()
+                all_values.append(value)
+
+            allvalues_dict = helper.dict_helper(all_values)
+            response = jsonify(allvalues_dict)
+    else:
+        response = jsonify({'value': 'not available'})
 
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response

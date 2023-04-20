@@ -209,3 +209,16 @@ class TestBooksRoutes(unittest.TestCase):
 
         self.assertTrue(author, json_response[0]["authors"])
         self.assertTrue(author, json_response[-1]["authors"])
+
+    def test_get_personal_movie_recommendatios(self):
+        """Testing algorithm with book recommendations. Tests check if the first book is correct."""
+        response = self.test_client.get(
+            """/dbgetpersonalbookrecommendations?ratings={"Books":[["52951446","1"],
+            ["45424741","4"],
+            ["1168090","5"],["43166999","1"],["860196","5"]],
+            "Movies":[["210579","1"],
+            ["3271","1"],["949","4"],["1938","1"],["3475","5"]]}""",
+        )
+        json_response = json.loads(response.text)
+
+        self.assertEqual("The Heart is a Lonely Hunter", json_response[0]["title"])

@@ -4,8 +4,6 @@ to calculate recommendations based on user's preferences.
 """
 
 import os
-from os import getenv
-#import time
 import pandas as pd
 
 class Recommendations:
@@ -70,20 +68,6 @@ class Recommendations:
 
         dot_product_df = tg_domain_profile.groupby("item_id_x").dot_product.sum().reset_index()
 
-        # Returns:
-        #        item_id_x  dot_product
-        #        0             1   108.268884
-        #        1             2    91.426635
-        #        2             3    46.174985
-        #        3             4    33.244906
-        #        4             5    43.244255
-        #        ...         ...          ...
-        #        9729     106920   100.405217
-        #        9730     107069    71.599322
-        #        9731     107141    59.462259
-        #        9732     107348    52.140476
-        #        9733     108932    91.859114
-
         return dot_product_df
 
     def get_item_length_df(self, tg_df):
@@ -99,14 +83,6 @@ class Recommendations:
         len_df["length"] = len_df.score * len_df.score
         len_df = len_df.groupby("item_id")["length"].sum().reset_index()
         len_df["length"] = len_df["length"]**(1/2)
-
-        # Returns
-        #    item_id    length
-        #0        1  6.404624
-        #1        2  5.729404
-        #2        3  3.841003
-        #3        4  3.794552
-        #4        5  3.784929
 
         return len_df
 
@@ -155,7 +131,7 @@ class Recommendations:
             list: List of id's, which are the recommended movies
                   for the user. Best one is at index 0.
         """
-        if self.data_uploaded == False:
+        if self.data_uploaded is False:
             print("data is not yet uploaded")
             self.get_data()
         else:
@@ -190,7 +166,7 @@ class Recommendations:
             list: List of id's, which are the recommended movies for 
                   the user. Best one is at index 0.
         """
-        if self.data_uploaded == False:
+        if self.data_uploaded is False:
             print("data is not yet uploaded")
             self.get_data()
         else:
@@ -232,19 +208,4 @@ class Recommendations:
 
         return results
 
-
 recommendations = Recommendations()
-
-# Ratings should look like this:
-
-#ratings = {"movies" : [{"item_id" : 1270, "rating" : 4}, # Back to the Future
-#                       {"item_id" : 5445, "rating" : 5}, # Minority Report
-#                       {"item_id" : 7361, "rating" : 1}], # Eternal Sunshine of the Spotless Mind
-#           "books" : [{"item_id" : 150259, "rating" : 4}, # Stephen King - IT
-#                      {"item_id" : 3230869, "rating" : 3}]} # Stephen King -Misery
-#
-#
-##example:
-#print(recommendations.get_movie_recommendations(ratings, 11))
-
-# Result: [5445 minority report, 1240 terminator, 589 terminator 2, 68358 star trek, 1270 back to the future, 2571 the matrix, 1036 die hard, 6537 terminator 3, 85414, 8644 i, robot, 2916 total recall]

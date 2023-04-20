@@ -185,3 +185,30 @@ class TestMovieRoutes(unittest.TestCase):
 
         self.assertEqual("King Kong", json_response[0]["title"])
         self.assertEqual("King Kong", json_response[1]["title"])
+
+    def test_get_personal_recommendations(self):
+        """Testing algorithm with recommendations. 
+        Tests check if the first book and first movie are correct."""
+        response = self.test_client.get(
+            """/dbgetpersonalrecommendations?ratings={"Books":[["52951446","1"],["45424741","4"],
+            ["1168090","5"],["43166999","1"],["860196","5"]],"Movies":[["210579","1"],
+            ["3271","1"],["949","4"],["1938","1"],["3475","5"]]}""",
+        )
+        json_response = json.loads(response.text)
+
+        self.assertEqual("The Heart is a Lonely Hunter", json_response["books"][0]["title"])
+        self.assertEqual("A Place in the Sun", json_response["movies"][0]["title"])
+
+    def test_get_personal_movie_recommendations(self):
+        """Testing algorithm with movie recommendations. 
+        Tests check if the first movie is correct."""
+        response = self.test_client.get(
+            """/dbgetpersonalmovierecommendations?ratings={"Books":
+            [["52951446","1"],["45424741","4"],
+            ["1168090","5"],["43166999","1"],["860196","5"]],
+            "Movies":[["210579","1"],
+            ["3271","1"],["949","4"],["1938","1"],["3475","5"]]}""",
+        )
+        json_response = json.loads(response.text)
+
+        self.assertEqual("A Place in the Sun", json_response[0]["title"])

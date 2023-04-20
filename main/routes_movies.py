@@ -3,7 +3,6 @@ This module implements routes for movies data in the flask app.
 """
 
 import os
-from os import getenv
 from datetime import date
 import json
 from flask import jsonify, request
@@ -265,7 +264,6 @@ def get_for_given_movie_recommended_movies():
                             .order_by(TableMvSimilarMovies.mv_similar_movies_similarity_score.desc()) \
                             .offset(1) \
                             .all()
-#            print(len(allvalues))
             if len(allvalues) != 0:
                 allvalues_dict = helper.dict_helper(allvalues)
                 response = jsonify(allvalues_dict)
@@ -287,8 +285,6 @@ def get_for_given_movie_recommended_movies_all_data():
     Returns:
         json: data is returned in json format.
     """
-#    movieid = 1
-#    ref_item_type = 'movie'
     if request.args['movieid'] != '':
         if request.args['movieid'].isdigit():
             movieid = int(request.args['movieid'])
@@ -298,7 +294,6 @@ def get_for_given_movie_recommended_movies_all_data():
                             .order_by(TableMvSimilarMovies.mv_similar_movies_similarity_score.desc()) \
                             .offset(1) \
                             .limit(20).all()
-#            print(len(allvalues))
             if len(allvalues) != 0:
                 allvalues_dict = []
                 for value in allvalues:
@@ -359,7 +354,6 @@ def get_recommended_books_all_data_for_given_movie():
                             .filter_by(mv_similar_books_item_id = movieid) \
                             .order_by(TableMvSimilarBooks.mv_similar_books_similarity_score.desc()) \
                             .limit(20).all()
-#            print(len(allvalues))
             if len(allvalues) != 0:
                 allvalues_dict = []
                 for value in allvalues:

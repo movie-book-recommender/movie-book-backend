@@ -23,7 +23,8 @@ def get_top_10_newest_books():
         json: Data is returned in json format.
     """
     allvalues = TableBkMetadata.query \
-                .order_by(TableBkMetadata.bk_metadata_year.desc().nulls_last(), TableBkMetadata.bk_metadata_title.asc()) \
+                .order_by(TableBkMetadata.bk_metadata_year.desc().nulls_last(),\
+                           TableBkMetadata.bk_metadata_title.asc()) \
                 .limit(10).all()
     allvalues_dict = helper.dict_helper(allvalues)
     response = jsonify(allvalues_dict)
@@ -81,7 +82,8 @@ def get_top_10_highest_rated_books():
     Returns:
         json:
     """
-    sql = """SELECT M.authors, M.description, M.img, M.item_id, M.lang, M.title, M.url, M.year, T.avg_rating
+    sql = """SELECT M.authors, M.description, M.img, M.item_id, 
+    M.lang, M.title, M.url, M.year, T.avg_rating
     FROM (SELECT item_id, AVG(rating) as avg_rating
             FROM bk_ratings
             GROUP BY item_id)
@@ -286,21 +288,4 @@ def get_personal_book_recommendations():
 
     response.headers.add('Access-Control-Allow-Origin', '*')
 
-#    ratings = {"movies" : [{"item_id" : 1270, "rating" : 4}, # Back to the Future
-#                           {"item_id" : 5445, "rating" : 5}, # Minority Report
-#                           {"item_id" : 7361, "rating" : 1}], # Eternal Sunshine of the Spotless Mind
-#               "books" : [{"item_id" : 150259, "rating" : 4}, # Stephen King - IT
-#                          {"item_id" : 3230869, "rating" : 3}]} # Stephen King -Misery
-#
-#    results = recommendations.get_book_recommendations(ratings, 10) # call algorithm function to form recommendations
-#    all_values = []
-#    for result in results:
-#        value = TableBkMetadata.query \
-#                .filter_by(bk_metadata_item_id = result).first()
-#        all_values.append(value) # add result to a list
-#    allvalues_dict = helper.dict_helper(all_values) # Convert list to a dict
-#    response = jsonify(allvalues_dict) # Turn dict to json
-#
-#    response.headers.add('Access-Control-Allow-Origin', '*') # Add correct headers
-#
     return response

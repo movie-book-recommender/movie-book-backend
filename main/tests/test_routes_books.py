@@ -210,7 +210,7 @@ class TestBooksRoutes(unittest.TestCase):
         self.assertTrue(author, json_response[0]["authors"])
         self.assertTrue(author, json_response[-1]["authors"])
 
-    def test_get_personal_movie_recommendatios(self):
+    def test_get_personal_book_recommendatios(self):
         """Testing algorithm with book recommendations. Tests check if the first book is correct."""
         response = self.test_client.get(
             """/dbgetpersonalbookrecommendations?ratings={"Books":[["52951446","1"],

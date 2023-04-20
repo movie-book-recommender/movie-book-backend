@@ -24,12 +24,10 @@ class Recommendations:
             where the score is above 0.1.
         """
         print("is in getting data function")
-        if os.getenv("ACTIONS_CI") != "is_in_github":
-            print("... and is not github action")
-            self.tg_movies = pd.read_csv("./datasets/movies_tagdl_common_limited.csv")
-            self.tg_books = pd.read_csv("./datasets/books_tagdl_common_limited.csv")
+        self.tg_movies = pd.read_csv("./datasets/movies_tagdl_common_limited.csv")
+        self.tg_books = pd.read_csv("./datasets/books_tagdl_common_limited.csv")
 
-            self.data_uploaded = True
+        self.data_uploaded = True
 
     def get_user_profile(self, tg, domain_ratings):
         """Generates a dataframe that represents user's preferences.

@@ -123,7 +123,6 @@ def get_for_given_book_recommended_books():
                             .order_by(TableBkSimilarBooks.bk_similar_books_similarity_score.desc()) \
                             .offset(1) \
                             .all()
-#            print(len(allvalues))
             if len(allvalues) != 0:
                 allvalues_dict = helper.dict_helper(allvalues)
                 response = jsonify(allvalues_dict)
@@ -260,31 +259,24 @@ def get_personal_book_recommendations():
     Returns:
         json: data is returned in json format.
     """
-    if os.getenv("ACTIONS_CI") == "is_in_github":
-        print("Book route: In GitHUb actions")
-        response = jsonify({'value': 'not available'})
-    else:
-        print("Book route: not in GitHub actions")
-
-        response = jsonify({'value' : 'not available'})
-    #   de-bugging
-        if request.args['ratings'] != '':
-            cookie_raw = request.args['ratings']
-            cookie = json.loads(cookie_raw)
-            ratings = helper.ratings_helper(cookie)
-            if ratings is False:
-                response = jsonify({'value' : 'not available'})
-            else:
-                results = recommendations.get_book_recommendations(ratings, 10)
-                all_values = []
-                for result in results:
-                    value = TableBkMetadata.query \
-                            .filter_by(bk_metadata_item_id = result).first()
-                    all_values.append(value)
-                allvalues_dict = helper.dict_helper(all_values)
-                response = jsonify(allvalues_dict)
+    response = jsonify({'value' : 'not available'})
+    if request.args['ratings'] != '':
+        cookie_raw = request.args['ratings']
+        cookie = json.loads(cookie_raw)
+        ratings = helper.ratings_helper(cookie)
+        if ratings is False:
+            response = jsonify({'value' : 'not available'})
         else:
-            response = jsonify({'value': 'not available'})
+            results = recommendations.get_book_recommendations(ratings, 10)
+            all_values = []
+            for result in results:
+                value = TableBkMetadata.query \
+                        .filter_by(bk_metadata_item_id = result).first()
+                all_values.append(value)
+            allvalues_dict = helper.dict_helper(all_values)
+            response = jsonify(allvalues_dict)
+    else:
+        response = jsonify({'value': 'not available'})
 
     response.headers.add('Access-Control-Allow-Origin', '*')
 

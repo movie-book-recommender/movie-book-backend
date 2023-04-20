@@ -2,7 +2,6 @@
 This module implements routes for movies data in the flask app.
 """
 
-import os
 from datetime import date
 import json
 from flask import jsonify, request
@@ -235,13 +234,6 @@ def get_top_10_highest_rating_movies():
 
     allvalues_dict = []
     for value in allvalues:
-        #print(value.TableMovieTmdbDataFull.movie_tmdb_data_full_movieid)
-        #print(value.TableMovieTmdbDataFull.movie_tmdb_data_full_title)
-        #print(value.TableMvMetadataUpdated.mv_metadata_updated_avgrating)
-
-        #allvalues_dict.append({'movieid': value.TableMovieTmdbDataFull.movie_tmdb_data_full_movieid,
-        # 'title': value.TableMovieTmdbDataFull.movie_tmdb_data_full_title,
-        # 'avgrating': value.TableMvMetadataUpdated.mv_metadata_updated_avgrating})
         dict_1 = value.TableMovieTmdbDataFull.object_to_dictionary()
         dict_2 = value.TableMvMetadataUpdated.object_to_dictionary()
         dict_1.update(dict_2)

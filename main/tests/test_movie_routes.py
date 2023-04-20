@@ -24,6 +24,27 @@ class TestMovieRoutes(unittest.TestCase):
 
         self.assertEqual(json_response["title"], "Casino")
 
+    def test_get_give_movie_data_wrong_input(self):
+        """Tests the function with empty input
+        """
+        response = self.test_client.get(
+            "/dbgetgivenmoviedata?movieid=",
+        )
+        json_response = json.loads(response.text)
+
+        self.assertEqual(json_response["value"], "not available")
+
+    def test_get_give_movie_data_non_digit_input(self):
+        """Tests the function with non digit input
+        """
+        response = self.test_client.get(
+            "/dbgetgivenmoviedata?movieid=geaga",
+        )
+        json_response = json.loads(response.text)
+
+        self.assertEqual(json_response["value"], "not available")
+
+
     def test_get_top_10_movies_by_year(self):
         """Tests top ten movies by year, by checking if the first one is correct.
         Note. Movie data available as of 2013.
@@ -34,6 +55,38 @@ class TestMovieRoutes(unittest.TestCase):
         json_response = json.loads(response.text)
 
         self.assertEqual(json_response[0]["title"], "Frozen")
+    
+    def test_get_top_10_oldest_movies(self):
+        """Tests if the function returns the first movie correct"""
+
+        response = self.test_client.get(
+            "/dbgettop10oldestmovies"
+        )
+
+        json_response = json.loads(response.text)
+
+        self.assertEqual(json_response[0]["title"], "A Trip to the Moon")
+    
+    def test_get_top_10_movies_by_year_wrong_input(self):
+        """Tests top ten movies by year with wrong input
+        """
+        response = self.test_client.get(
+            "/dbgettop10moviesbyyear?year=",
+        )
+        json_response = json.loads(response.text)
+
+        self.assertEqual(json_response["value"], "not available")
+
+
+    def test_get_top_10_movies_by_year_wrong_input_non_digit(self):
+        """Tests top ten movies by year with wrong input
+        """
+        response = self.test_client.get(
+            "/dbgettop10moviesbyyear?year=fffds",
+        )
+        json_response = json.loads(response.text)
+
+        self.assertEqual(json_response["value"], "not available")
 
     def test_get_top_10_newest_published_movies(self):
         """Tests top ten newest published movies.
@@ -212,3 +265,18 @@ class TestMovieRoutes(unittest.TestCase):
         json_response = json.loads(response.text)
 
         self.assertEqual("A Place in the Sun", json_response[0]["title"])
+    
+    def test_get_personal_movie_recommendations_with_no_cookie(self):
+        response = self.test_client.get("""/dbgetpersonalmovierecommendations?ratings={}""")
+
+        json_response = json.loads(response.text)
+
+        self.assertEqual(json_response["value"], "not available")
+
+    def test_get_personal_recommendations_with_no_cookie(self):
+        response = self.test_client.get("""/dbgetpersonalrecommendations?ratings={}""")
+
+        json_response = json.loads(response.text)
+
+        self.assertEqual(json_response["value"], "not available")
+

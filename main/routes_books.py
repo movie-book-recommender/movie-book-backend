@@ -2,8 +2,6 @@
 This module implements routes for books data in the flask app.
 """
 
-import os
-from os import getenv
 import json
 from flask import jsonify, request
 from sqlalchemy.sql import text
@@ -184,7 +182,6 @@ def get_recommended_movies_for_given_book():
                             .filter_by(bk_similar_movies_item_id = bookid) \
                             .order_by(TableBkSimilarMovies.bk_similar_movies_similarity_score.desc()) \
                             .all()
-            print(len(allvalues))
             if len(allvalues) != 0:
                 allvalues_dict = helper.dict_helper(allvalues)
                 response = jsonify(allvalues_dict)

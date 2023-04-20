@@ -3,7 +3,6 @@ This module implements methods to get the data and
 to calculate recommendations based on user's preferences.
 """
 
-import os
 import pandas as pd
 
 class Recommendations:
@@ -23,7 +22,6 @@ class Recommendations:
             Note. Data used contains tag files that are limited to tags
             where the score is above 0.1.
         """
-        print("is in getting data function")
         self.tg_movies = pd.read_csv("./datasets/movies_tagdl_common_limited.csv")
         self.tg_books = pd.read_csv("./datasets/books_tagdl_common_limited.csv")
 

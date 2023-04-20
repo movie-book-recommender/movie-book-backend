@@ -127,6 +127,14 @@ class TestBooksRoutes(unittest.TestCase):
         json_response = json.loads(response.text)
 
         self.assertEqual(json_response["value"], "not available")
+    
+    def test_get_for_given_book_recommended_books_no_book_id(self):
+        response = self.test_client.get(
+            "/dbgetforgivenbookrecommendedbooks?bookid=",
+        )
+        json_response = json.loads(response.text)
+
+        self.assertEqual(json_response["value"], "not available")
 
     def test_get_for_given_book_recommended_books_all_data(self):
         """Tests whether data is returned for the correct recommended books.
@@ -151,6 +159,16 @@ class TestBooksRoutes(unittest.TestCase):
 
         self.assertEqual(json_response["value"], "not available")
 
+    def test_get_for_given_book_recommended_books_all_data_no_book_id(self):
+        """Tests whether correct error message is returned, if input is incorrect.
+        """
+        response = self.test_client.get(
+            "/dbgetforgivenbookrecommendedbooksalldata?bookid=",
+        )
+        json_response = json.loads(response.text)
+
+        self.assertEqual(json_response["value"], "not available")
+
     def test_get_recommended_movies_for_given_book(self):
         """Tests whether right number of recommended movies are returned for a given book.
         """
@@ -166,6 +184,26 @@ class TestBooksRoutes(unittest.TestCase):
         """
         response = self.test_client.get(
             "/dbgetrecommendedmoviesforgivenbook?bookid==9iureoit43",
+        )
+        json_response = json.loads(response.text)
+
+        self.assertEqual(json_response["value"], "not available")
+
+    def test_get_recommended_movies_for_given_book_wrong_input(self):
+        """Tests whether correct error message is returned, if input is incorrect.
+        """
+        response = self.test_client.get(
+            "/dbgetrecommendedmoviesforgivenbook?bookid==9iureoit43",
+        )
+        json_response = json.loads(response.text)
+
+        self.assertEqual(json_response["value"], "not available")
+
+    def test_get_recommended_movies_for_given_book_no_book_id(self):
+        """Tests whether correct error message is returned, if input is incorrect.
+        """
+        response = self.test_client.get(
+            "/dbgetrecommendedmoviesforgivenbook?bookid==",
         )
         json_response = json.loads(response.text)
 
@@ -192,6 +230,16 @@ class TestBooksRoutes(unittest.TestCase):
         """
         response = self.test_client.get(
             "/dbgetrecommendedmoviesalldataforgivenbook?bookid=9iureoit43",
+        )
+        json_response = json.loads(response.text)
+
+        self.assertEqual(json_response["value"], "not available")
+
+    def test_get_recommended_movies_all_data_for_given_book_no_book_id(self):
+        """Tests whether correct error message is returned, if input is incorrect.
+        """
+        response = self.test_client.get(
+            "/dbgetrecommendedmoviesalldataforgivenbook?bookid=",
         )
         json_response = json.loads(response.text)
 

@@ -24,6 +24,27 @@ class TestMovieRoutes(unittest.TestCase):
 
         self.assertEqual(json_response["title"], "Casino")
 
+    def test_get_give_movie_data_wrong_input(self):
+        """Tests the function with empty input
+        """
+        response = self.test_client.get(
+            "/dbgetgivenmoviedata?movieid=",
+        )
+        json_response = json.loads(response.text)
+
+        self.assertEqual(json_response["value"], "not available")
+
+    def test_get_give_movie_data_non_digit_input(self):
+        """Tests the function with non digit input
+        """
+        response = self.test_client.get(
+            "/dbgetgivenmoviedata?movieid=geaga",
+        )
+        json_response = json.loads(response.text)
+
+        self.assertEqual(json_response["value"], "not available")
+
+
     def test_get_top_10_movies_by_year(self):
         """Tests top ten movies by year, by checking if the first one is correct.
         Note. Movie data available as of 2013.
@@ -34,6 +55,38 @@ class TestMovieRoutes(unittest.TestCase):
         json_response = json.loads(response.text)
 
         self.assertEqual(json_response[0]["title"], "Frozen")
+    
+    def test_get_top_10_oldest_movies(self):
+        """Tests if the function returns the first movie correct"""
+
+        response = self.test_client.get(
+            "/dbgettop10oldestmovies"
+        )
+
+        json_response = json.loads(response.text)
+
+        self.assertEqual(json_response[0]["title"], "A Trip to the Moon")
+    
+    def test_get_top_10_movies_by_year_wrong_input(self):
+        """Tests top ten movies by year with wrong input
+        """
+        response = self.test_client.get(
+            "/dbgettop10moviesbyyear?year=",
+        )
+        json_response = json.loads(response.text)
+
+        self.assertEqual(json_response["value"], "not available")
+
+
+    def test_get_top_10_movies_by_year_wrong_input_non_digit(self):
+        """Tests top ten movies by year with wrong input
+        """
+        response = self.test_client.get(
+            "/dbgettop10moviesbyyear?year=fffds",
+        )
+        json_response = json.loads(response.text)
+
+        self.assertEqual(json_response["value"], "not available")
 
     def test_get_top_10_newest_published_movies(self):
         """Tests top ten newest published movies.
@@ -185,3 +238,45 @@ class TestMovieRoutes(unittest.TestCase):
 
         self.assertEqual("King Kong", json_response[0]["title"])
         self.assertEqual("King Kong", json_response[1]["title"])
+
+    def test_get_personal_recommendations(self):
+        """Testing algorithm with recommendations. 
+        Tests check if the first book and first movie are correct."""
+        response = self.test_client.get(
+            """/dbgetpersonalrecommendations?ratings={"Books":[["52951446","1"],["45424741","4"],
+            ["1168090","5"],["43166999","1"],["860196","5"]],"Movies":[["210579","1"],
+            ["3271","1"],["949","4"],["1938","1"],["3475","5"]]}""",
+        )
+        json_response = json.loads(response.text)
+
+        self.assertEqual("The Heart is a Lonely Hunter", json_response["books"][0]["title"])
+        self.assertEqual("A Place in the Sun", json_response["movies"][0]["title"])
+
+    def test_get_personal_movie_recommendations(self):
+        """Testing algorithm with movie recommendations. 
+        Tests check if the first movie is correct."""
+        response = self.test_client.get(
+            """/dbgetpersonalmovierecommendations?ratings={"Books":
+            [["52951446","1"],["45424741","4"],
+            ["1168090","5"],["43166999","1"],["860196","5"]],
+            "Movies":[["210579","1"],
+            ["3271","1"],["949","4"],["1938","1"],["3475","5"]]}""",
+        )
+        json_response = json.loads(response.text)
+
+        self.assertEqual("A Place in the Sun", json_response[0]["title"])
+    
+    def test_get_personal_movie_recommendations_with_no_cookie(self):
+        response = self.test_client.get("""/dbgetpersonalmovierecommendations?ratings={}""")
+
+        json_response = json.loads(response.text)
+
+        self.assertEqual(json_response["value"], "not available")
+
+    def test_get_personal_recommendations_with_no_cookie(self):
+        response = self.test_client.get("""/dbgetpersonalrecommendations?ratings={}""")
+
+        json_response = json.loads(response.text)
+
+        self.assertEqual(json_response["value"], "not available")
+

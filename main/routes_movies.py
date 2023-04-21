@@ -2,8 +2,6 @@
 This module implements routes for movies data in the flask app.
 """
 
-import os
-from os import getenv
 from datetime import date
 import json
 from flask import jsonify, request
@@ -236,13 +234,6 @@ def get_top_10_highest_rating_movies():
 
     allvalues_dict = []
     for value in allvalues:
-        #print(value.TableMovieTmdbDataFull.movie_tmdb_data_full_movieid)
-        #print(value.TableMovieTmdbDataFull.movie_tmdb_data_full_title)
-        #print(value.TableMvMetadataUpdated.mv_metadata_updated_avgrating)
-
-        #allvalues_dict.append({'movieid': value.TableMovieTmdbDataFull.movie_tmdb_data_full_movieid,
-        # 'title': value.TableMovieTmdbDataFull.movie_tmdb_data_full_title,
-        # 'avgrating': value.TableMvMetadataUpdated.mv_metadata_updated_avgrating})
         dict_1 = value.TableMovieTmdbDataFull.object_to_dictionary()
         dict_2 = value.TableMvMetadataUpdated.object_to_dictionary()
         dict_1.update(dict_2)
@@ -265,7 +256,6 @@ def get_for_given_movie_recommended_movies():
                             .order_by(TableMvSimilarMovies.mv_similar_movies_similarity_score.desc()) \
                             .offset(1) \
                             .all()
-#            print(len(allvalues))
             if len(allvalues) != 0:
                 allvalues_dict = helper.dict_helper(allvalues)
                 response = jsonify(allvalues_dict)
@@ -287,8 +277,6 @@ def get_for_given_movie_recommended_movies_all_data():
     Returns:
         json: data is returned in json format.
     """
-#    movieid = 1
-#    ref_item_type = 'movie'
     if request.args['movieid'] != '':
         if request.args['movieid'].isdigit():
             movieid = int(request.args['movieid'])
@@ -298,7 +286,6 @@ def get_for_given_movie_recommended_movies_all_data():
                             .order_by(TableMvSimilarMovies.mv_similar_movies_similarity_score.desc()) \
                             .offset(1) \
                             .limit(20).all()
-#            print(len(allvalues))
             if len(allvalues) != 0:
                 allvalues_dict = []
                 for value in allvalues:
@@ -359,7 +346,6 @@ def get_recommended_books_all_data_for_given_movie():
                             .filter_by(mv_similar_books_item_id = movieid) \
                             .order_by(TableMvSimilarBooks.mv_similar_books_similarity_score.desc()) \
                             .limit(20).all()
-#            print(len(allvalues))
             if len(allvalues) != 0:
                 allvalues_dict = []
                 for value in allvalues:
@@ -386,31 +372,25 @@ def get_personal_movie_recommendations():
     Returns:
         json: data is returned in json format.
     """
-    if os.getenv("ACTIONS_CI") == "is_in_github":
-        print("Movie route: In GitHUb actions")
-        response = jsonify({'value': 'not available'})
-    else:
-        print("Movie route: not in GitHub actions")
-
-        response = jsonify({'value': 'not available'})
-        if request.args['ratings'] != '':
-            cookie_raw = request.args['ratings']
-            cookie = json.loads(cookie_raw)
-            ratings = helper.ratings_helper(cookie)
-            if ratings is False:
-                response = jsonify({'value': 'not available'})
-            else:
-                results = recommendations.get_movie_recommendations(ratings, 20)
-                all_values = []
-                for result in results:
-                    value = TableMovieTmdbDataFull.query \
-                            .filter_by(movie_tmdb_data_full_movieid = result).first()
-                    all_values.append(value)
-
-                allvalues_dict = helper.dict_helper(all_values)
-                response = jsonify(allvalues_dict)
-        else:
+    response = jsonify({'value': 'not available'})
+    if request.args['ratings'] != '':
+        cookie_raw = request.args['ratings']
+        cookie = json.loads(cookie_raw)
+        ratings = helper.ratings_helper(cookie)
+        if ratings is False:
             response = jsonify({'value': 'not available'})
+        else:
+            results = recommendations.get_movie_recommendations(ratings, 20)
+            all_values = []
+            for result in results:
+                value = TableMovieTmdbDataFull.query \
+                        .filter_by(movie_tmdb_data_full_movieid = result).first()
+                all_values.append(value)
+
+            allvalues_dict = helper.dict_helper(all_values)
+            response = jsonify(allvalues_dict)
+    else:
+        response = jsonify({'value': 'not available'})
 
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response
@@ -455,44 +435,38 @@ def get_personal_recommendations():
     Returns:
         json: data is returned in json format.
     """
-    if os.getenv("ACTIONS_CI") == "is_in_github":
-        print("Movie route: In GitHUb actions")
-        response = jsonify({'value': 'not available'})
-    else:
-        print("Movie route: not in GitHub actions")
-
-        response = jsonify({'value': 'not available'})
-        if request.args['ratings'] != '':
-            cookie_raw = request.args['ratings']
-            cookie = json.loads(cookie_raw)
-            ratings = helper.ratings_helper(cookie)
-            if ratings is False:
-                response = jsonify({'value': 'not available'})
-            else:
-                results = recommendations.get_all_recommendations(ratings, 20)
-                movie_values = []
-                for result in results["movies"]:
-                    value = TableMovieTmdbDataFull.query \
-                            .filter_by(movie_tmdb_data_full_movieid = result).first()
-                    movie_values.append(value)
-
-                movie_values_dict = helper.dict_helper(movie_values)
-
-                book_values = []
-                for result in results["books"]:
-                    value = TableBkMetadata.query \
-                            .filter_by(bk_metadata_item_id = result).first()
-                    book_values.append(value)
-
-                book_values_dict = helper.dict_helper(book_values)
-
-                all_values_dict = {}
-                all_values_dict["movies"] = movie_values_dict
-                all_values_dict["books"] = book_values_dict
-
-                response = jsonify(all_values_dict)
-        else:
+    response = jsonify({'value': 'not available'})
+    if request.args['ratings'] != '':
+        cookie_raw = request.args['ratings']
+        cookie = json.loads(cookie_raw)
+        ratings = helper.ratings_helper(cookie)
+        if ratings is False:
             response = jsonify({'value': 'not available'})
+        else:
+            results = recommendations.get_all_recommendations(ratings, 20)
+            movie_values = []
+            for result in results["movies"]:
+                value = TableMovieTmdbDataFull.query \
+                        .filter_by(movie_tmdb_data_full_movieid = result).first()
+                movie_values.append(value)
+
+            movie_values_dict = helper.dict_helper(movie_values)
+
+            book_values = []
+            for result in results["books"]:
+                value = TableBkMetadata.query \
+                        .filter_by(bk_metadata_item_id = result).first()
+                book_values.append(value)
+
+            book_values_dict = helper.dict_helper(book_values)
+
+            all_values_dict = {}
+            all_values_dict["movies"] = movie_values_dict
+            all_values_dict["books"] = book_values_dict
+
+            response = jsonify(all_values_dict)
+    else:
+        response = jsonify({'value': 'not available'})
 
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response

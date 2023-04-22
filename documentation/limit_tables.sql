@@ -1,4 +1,5 @@
-/* These commands limit the data in the relevant tables for movies to the ones with tags in movies_tagdl, which containts 9734 movies*/
+/* These commands limit the data in the relevant tables for movies to the ones with tags
+in movies_tagdl, which containts 9734 movies*/
 
 /* Entries in movie_tmdb_data_full are limited to movies with tags available */
 /* Number of movies was limited from 102690 movies to 9722 movies */

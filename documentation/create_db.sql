@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS mv_ratings (
 );
 CREATE TABLE IF NOT EXISTS mv_reviews (
 	item_id INT,
-	txt VARCHAR(65535)
+	txt VARCHAR
 );
 CREATE TABLE IF NOT EXISTS mv_tag_count (
 	item_id INT,

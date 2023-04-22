@@ -187,7 +187,7 @@ class TableMvSimilarBooks(db.Model):
         in a dictionary format.
 
         Returns:
-            Dictionary: Returns contents of the MvSimilarMvbk table.
+            Dictionary: Returns contents of the MvSimilarBooks table.
         """
         return {
             'item_id': self.mv_similar_books_item_id,

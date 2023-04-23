@@ -8,8 +8,6 @@ movie_tags = set(tg_movies.tag.unique())
 common_tags = book_tags.intersection(movie_tags)
 book_ids = set(tg_books.item_id.unique())
 movie_ids = set(tg_movies.item_id.unique())
-#print(len(book_ids))
-#print(len(movie_ids))
 
 def get_vector_length(target_item):
     item_tmp = target_item.copy()
@@ -41,8 +39,6 @@ full_dataframe.to_csv("bk_to_mvs.csv", index=False)
 
 for i in book_ids:
     print(i)
-#    if i == 21856269:
-#        break
     target_book = tg_books[tg_books.item_id == i].copy()
     target_book_limited_len = get_vector_length(target_book[target_book.tag.isin(common_tags)])
     book_to_movies_dot_product = get_dot_product(target_book[target_book.tag.isin(common_tags)], tg_movies)

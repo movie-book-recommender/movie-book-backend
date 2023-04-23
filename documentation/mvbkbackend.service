@@ -1,0 +1,12 @@
+[Unit]
+Description=mvbkbackend.service - A Flask application run with Gunicorn.
+After=network.target
+
+[Service]
+User=mvbkrunner
+Group=mvbkrunner
+WorkingDirectory=/home/mvbkrunner/movie-book-backend/
+ExecStart=/home/mvbkrunner/movie-book-backend/service_start.sh
+
+[Install]
+WantedBy=multi-user.target

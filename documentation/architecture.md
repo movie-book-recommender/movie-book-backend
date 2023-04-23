@@ -2,19 +2,13 @@
 
 ## Overview
 
-Movie Book Recommendation application runs in a virtual machine in cPouta. It consists of two parts: front end and backend. Two relevant users for the application have been created in cPouta: ubuntu and mvbkrunner.
+Movie Book Recommendation application runs in a virtual machine in cPouta. It consists of two parts: front end and backend. Two relevant users for the application have been created in cPouta: *ubuntu* and *mvbkrunner*.
 
-From user's perspective, the architecture for the application as a whole is as presented below.
-
-*Picture to be added*
+## Front End
 
 Front end application is a React application, running on a Docker container under user ubuntu. 
 
-Fron developer's perspective, the architecture and workflow for the application is as presented below.
-
-*Picture to be added*
-
-## Front End
+Further points to be added
 
 ## Backend
 
@@ -25,40 +19,53 @@ Backend of the Movie Book Recommender application can be seen to consist of the 
 
 ### Postgres Database
 
-* **Database.** Application's Postgres database is called **mvbkdb** and it is located in cPouta under user ubuntu.
+* **Database.** Application's Postgres database is called **mvbkdb** and it is located in cPouta under user *ubuntu*.
 * **Users.**   Super user for the database is *postgres* by default. Flask application connects to the database as user *moviebook* which has limited access rights. Each developer has their own user profile to access the database.
-* **Scheme and tables.** All tables in the database are created under *public* scheme. The database contains 30 tables, most of which are based on the data provided by the research project. 
+* **Scheme and tables.** All tables in the database are created under *public* scheme. The database contains approximately 29 tables, most of which are based on the data provided by the research project. 
 * **Source of the data.** 
     * This website uses data from the following three sources: 
-        * MovieLens (https://movielens.org/)
-        * Tag Genome for movies (https://grouplens.org/datasets/movielens/tag-genome-2021/) and 
-        * Tag Genome for books (https://grouplens.org/datasets/book-genome/).
-    * The datasets include data collected from IMDb (https://www.imdb.com/) and Goodreads (https://www.goodreads.com/) and are related to the following publications:
+        * [MovieLens](https://movielens.org/)
+        * [Tag Genome for movies](https://grouplens.org/datasets/movielens/tag-genome-2021/) and 
+        * [Tag Genome for books](https://grouplens.org/datasets/book-genome/).
+    * The datasets include data collected from [IMDb](https://www.imdb.com/) and [Goodreads](https://www.goodreads.com/) and are related to the following publications:
         * Kotkov, D., Medlar, A., Maslov, A., Satyal, U. R., Neovius, M., & Glowacka, D. (2022, March). The Tag Genome Dataset for Books. In ACM SIGIR Conference on Human Information Interaction and Retrieval (pp. 353-357).
         * Kotkov, D., Maslov, A., and Neovius, M. (2021). Revisiting the tag relevance prediction problem. In Proceedings of the 44th International ACM SIGIR conference on Research and Development in Information Retrieval. https://doi.org/10.1145/3404835.3463019
         * Vig, J., Sen, S., and Riedl, J. (2012). The tag genome: Encoding community knowledge to support novel interaction. ACM Trans. Interact. Intell. Syst., 2(3):13:1–13:44. https://doi.org/10.1145/2362394.2362395
 * **Tables for books** are as follows:
     * Tables *bk_metadata*, *bk_ratings*, *bk_reviews*, *bk_survey_answers*, *bk_tag_count* and *bk_tags* are based on data provided by Tag Genome for books in similarly named files.
     * Contents for table *bk_tagdl* is generated based on tagdl.csv file for books developed in Kotkov et al., 2021.
-    * Contents for tables *bk_similar_books*, *bk_similar_movies* and *bk_tagdl_common* are calculated based on algorithms [book_to_books.py](documentation/book_to_books.py), [book_to_movies.py](documentation/book_to_books.py) and [books_tagddl_common.py](books_tagddl_common.py) respectively.
-    * Table *bk_lengths* was generated based on a partial test of the [book_to_books.py](documentation/book_to_books.py) algorithm, and is not used in the application.
+    * Contents for tables *bk_similar_books*, *bk_similar_movies* and *bk_tagdl_common* are calculated based on algorithms [book_to_books.py](../documentation/book_to_books.py), [book_to_movies.py](../documentation/book_to_movies.py) and [books_tagdl_common.py](../documentation/books_tagdl_common.py) respectively.
+    * Table *bk_lengths* was generated based on a partial test of the [book_to_books.py](../documentation/book_to_books.py) algorithm, and is not used in the application.
 * **Tables for movies** are as follows:
     * Tables *mv_metadata_all*, *mv_metadata_updated_all*, *mv_ratings_all*, *mv_reviews*, *mv_survey_answers*, *mv_tag_count*, *mv_tags* are based on data provided by Tag Genome for movies in similarly named files. 
     * Table *movie_tmdb_data_full_all* is based on data provided by Movielens. 
     * Contents for table *mv_tagdl* is generated based on tagdl.csv file for movies developed in Kotkov et al., 2021.
-    * Tables *mv_metadata*, *mv_metadata_updated*, *mv_ratings* and *movie_tmdb_data_full* contain subsets of data in tables *mv_metadata_all*, *mv_metadata_updated_all*, *mv_ratings_all* and *movie_tmdb_data_full_all*. Subsets has been generated by [selecting to the tables](documentation/limit_tables.sql) only those movies that have tags available in *mv_tagdl*. 
-    * Contents for tables *mv_similar_books*, *mv_similar_movies*, and *mv_tagdl_common* are calculated based on algorithms [mv_to_mvs.py](documentation/mv_to_mvs.py), [movies_to_books.py](documentation/movie_to_books.py) and [movies_tagddl_common.py](books_tagddl_common.py) respectively.
-    * Table *mv_lengths* was generated based on a partial test of the [mv_to_mvs.py](documentation/book_to_books.py) algorithm, and is not used in the application.
+    * Tables *mv_metadata*, *mv_metadata_updated*, *mv_ratings* and *movie_tmdb_data_full* contain subsets of data in tables *mv_metadata_all*, *mv_metadata_updated_all*, *mv_ratings_all* and *movie_tmdb_data_full_all*. Subsets has been generated by [selecting to the tables](../documentation/limit_tables.sql) only those movies that have tags available in *mv_tagdl*. 
+    * Contents for tables *mv_similar_books*, *mv_similar_movies*, and *mv_tagdl_common* are calculated based on algorithms [mv_to_mvs.py](../documentation/mv_to_mvs.py), [movies_to_books.py](../documentation/movie_to_books.py) and [movies_tagdl_common.py](../documentation/movies_tagdl_common.py) respectively.
+    * Table *mv_lengths* was generated based on a partial test of the [mv_to_mvs.py](../documentation/book_to_books.py) algorithm, and is not used in the application.
 
-* Please note that the application also uses two **csv files**, that contain subsets of the tagdl.csv files for books and movies. (Description and links to be added)
+### Additional Data Files Used in the Application
+
+* Please note that in addition to the data in Postgres Database, the application uses two **csv files** [movies_tagdl_common_limited.csv](../datasets/movies_tagdl_common_limited.csv) and [books_tagdl_common_limited.csv](../datasets/books_tagdl_common_limited.csv), which contain subsets of the Postgres tables *mv_tagdl* and *bk_tagdl*, respectively.
+* These files are not inserted in the Postgres database, as their contents are not used from the database. In production, they are stored in the virtual machine under user *mvbkrunner*.
+* These files have been generated based on script [mvs_bks_tagdl_common_limited.py](../documentation/mvs_bks_tagdl_common_limited.py).
 
 ### Backend Flask App
 
-Backend application is a Flask application and it runs in cPouta under user mvbkrunner. 
+* Backend application is a Flask application and it runs in cPouta under user *mvbkrunner*. 
+* [app.py](../app.py) starts and runs the application.
+* [routes_movies.py](../main/routes_movies.py) implements API routes for movies data in the flask app.
+* [routes_books.py](../main/routes_books.py) implements API routes for books data in the flask app.
+* Classes *TableMvTags*, *TableMovieTmdbDataFull*, *TableMvMetadataUpdated*, *TableMvSimilarMovies*, *TableMvSimilarBooks* and *TableMvTagDl* in [movies.py](../main/movies.py) outline the contents of all the tables with data regarding movies in the application's database that are used in the application.
+* Classes *TableBkMetadata*, *TableBkRatings*, *TableBkSimilarBooks* and  *TableBkSimilarMovies* in [books.py](../main/books.py) outline the contents of all the tables with data regarding books in the application's database that are used in the application.
+* Class *Recommenations* in [recommendations.py](../main/recommendations.py) implements methods to get the data and to calculate recommendations based on user's preferences.
+* Class *Helper* in [helper.py](../main/helper.py) implements general methods used across all classes.
+* [extentions.py](../main/extentions.py) creates database connection with SQLAlchemy.
 
 ### nginx and Gunicorn
 
-To be added
+* Though flask application is useful in development, it cannot handle multiple requests at the same time, and it should not be run as such in production. 
+* As a result, a WSGI (Web Server Gateway Interface) Gunicorn and production level HTTP server nginx have been installed and configured.
 
 ## Ideas for Future Development
 
@@ -68,4 +75,6 @@ To be added
 
 ### Backend
 
-To be added
+* Test which limitations of the tags data based on different levels of scores or tags provide most relevant recommendations for the user efficiently.
+* Optimize the efficiency of the recommendation algorithm further, identifying clusters of tags that relate to each other to produce more efficiently recommendations for the users. 
+* Focus movie and book recommendations for movies and books only on items that the user has not yet rated or included in the wishlist.

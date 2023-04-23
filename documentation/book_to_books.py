@@ -38,8 +38,6 @@ full_dataframe.to_csv("bk_to_bks_updated.csv", index=False)
 
 for i in book_ids:
     print(i)
-#    if i == 21856269:
-#        break
     target_book = tg_books[tg_books.item_id == i].copy()
 
     target_book_len = get_vector_length(target_book)

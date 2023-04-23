@@ -1,4 +1,4 @@
-# Backend: Instructions
+# Backend: Technical Instructions
 
 This document describes setting up and using the backend for Movie Book Recommender.
 
@@ -72,7 +72,7 @@ To connect to the virtual machine, instructions from [CSC](https://docs.csc.fi/c
 
 ## Create tables in the database
 
-* **Tables** for the database were created with the script [create_db.sql](create_db.sql). 
+* **Tables** for the database were created with the script [create_db.sql](../documentation/create_db.sql). 
 
 * It was run with the following command:
     ```
@@ -115,9 +115,60 @@ To connect to the virtual machine, instructions from [CSC](https://docs.csc.fi/c
     psql -U moviebook -d mvbkdb -c "\copy mv_tags FROM 'tags.csv' delimiter '|' csv"
     ```
 
-* The script used to populate the database is available in [csc_json_to_csv_to_psql.sh](csc_json_to_csv_to_psql.sh)
+* The script used to populate the database is available in [csc_json_to_csv_to_psql.sh](../documentation/csc_json_to_csv_to_psql.sh)
 * Please note that to make a script executable on Linux, the following command is needed `chmod +x filename.sh`.
-* At the moment only one file is yet to be added to the database.
+
+## Write backend APIs to serve data from database
+
+* The **APIs** were written using python, Flask, and SQLAlchemy. The following commands were used to install the needed packages:
+    ```
+    sudo apt-get install python3-pip libpq-dev python3-flask
+    pip install sqlalchemy psycopg2 flask_sqlalchemy
+    ```
+
+* Code for the backend APIs is available for [movies](../main/movies.py) and [books](../main/routes_books.py).
+
+* To establish connection with the database, the following command needs to be run on the command line:
+    ```
+    export DATABASE_URL="postgresql://user:password@128.214.253.51:5432/mvbkdb"
+    ```
+
+* Backend APIs can be run from command line on the virtual machine with the following command:
+    ```
+    flask run --host=0.0.0.0 --port=3000
+    ```
+
+## Examples of API endpoints available
+
+* Output from the backend API is available via the address [http://128.214.253.51:3000/](http://128.214.253.51:3000/).
+
+* Data can be accessed by using the routes created for [movies](../main/routes_movies.py) and [books](../main/routes_books.py)
+* For example the following data is available for use in the front end:
+
+1. All information available for **one movie** 
+    * Data is provided via the route `@app.route('/dbgetonemoviedata', methods = ['GET'])`
+    * You will need to specify the movie based on the movieid in the tmbd_movie_data_full table, for example movie *Heat* has movieid 6.
+    * Results are available in JSON form from address [http://128.214.253.51:3000/dbgetgivenmoviedata?movieid=6](http://128.214.253.51:3000/dbgetgivenmoviedata?movieid=6).
+    * Output looks as follows (note: this page is only done for debugging and illustrative purposes. In reality, front end uses just the routes and addresses stated above)
+    ![Heat](one_movie.jpg)
+
+2. All information available for **top 10 movies by revenue for a given year**
+    * Data is provided via the route `@app.route('/dbgettop10moviesbyyear', methods = ['GET']`
+    * You will need to specify the release year of the movie.
+    * Results are available in JSON form from address [http://128.214.253.51:3000/dbgettop10moviesbyyear?year=2010](http://128.214.253.51:3000/dbgettop10moviesbyyear?year=2010).
+
+3. All information available for various sorting methods
+    * **Newest 10 movies**: Data is provided via the route `@app.route('/dbgettop10newestpublishedmovies', methods = ['GET'])`
+    * **Oldest 10 movies**: Data is provided via the route `@app.route('/dbgettop10oldestmovies', methods = ['GET'])`
+    * **Highest rated 10 movies**: Data is provided via the route `@app.route('/dbgettop10highestratedmovies', methods = ['GET'])`
+    * **Search based on name**: Also, movies can be searched based on name via the route `@app.route('/dbsearchmoviesbyname', methods = ['GET'])`
+
+4. APIs for books follow the same logic. 
+    * **Newest 10 books**: Data is provided via the route `@app.route('/dbgettop10newestbooks', methods = ['GET'])`
+    * **All information for one book**: Data is provided via the route `@app.route('/dbgetgivenbookdata', methods = ['GET'])`, e.g. [http://128.214.253.51:3000/dbgetgivenbookdata?bookid=44752519](http://128.214.253.51:3000/dbgetgivenbookdata?bookid=44752519)
+    * **Search based on name**: Books can be searched based on name via the route `@app.route('/dbsearchbooksbyname', methods = ['GET'])`, e.g. [http://128.214.253.51:3000/dbsearchbooksbyname?input=Sookie%20stackhouse](http://128.214.253.51:3000/dbsearchbooksbyname?input=Sookie%20stackhouse)
+
+* The JSON output for movies provides fields such as *posterpath* and *backdroppaths*. These are actually just the file names, but can be joined together with the string https://image.tmdb.org/t/p/original in order to build the full url. For example, https://image.tmdb.org/t/p/original/obpPQskaVpSiC9RcJRB6iWDTCXS.jpg
 
 ## Populate the database with data on recommendations
 
@@ -130,89 +181,65 @@ To connect to the virtual machine, instructions from [CSC](https://docs.csc.fi/c
 
 * Research project has previously calculated for each movie and book ratings that indicate the movie's/book's characteristics. Based on this data, an algorithm calculates recommendations between movies and books for the following pairs:
 
-    * [Movie-to-Movies](mv_to_mvs.py)
-    * [Book-to-Books](book_to_books.py)
-    * [Movie-to-Books](movie_to_books.py) (TBC)
-    * [Book-to-Movies](book_to_movies.py)
+    * [Movie-to-Movies](../documentation/mv_to_mvs.py)
+    * [Book-to-Books](../documentation/book_to_books.py)
+    * [Movie-to-Books](../documentation/movie_to_books.py)
+    * [Book-to-Movies](../documentation/book_to_movies.py)
 
-* As the results from these calculations do not change over time, the algorithms have been run and their results populated in the database. Please see related commands [here](recommendations.sh).
+* As the results from these calculations do not change over time, the algorithms have been run and their results populated in the database. Please see related commands [here](../documentation/recommendations.sh).
 
 ## Optimize the algorithm to generate recommendations based on user preferences
 
-* One of the core functionalities of the work is to generate recommendations for users based on their indicated preferences. The algorithm is available is in the [Recommendations class](../main/recommendations.py). 
-* As the algorithm has been originally developed for academic use, not for a production environment, it needed to be modified slightly to improve memory usage and time efficiency and to make it stable in production. Primary efforts focused on limiting the tags used in calculations to the most significant ones, since the original data sets were over 300MB for movies and over 200MB for books, and hence impractical to use when calculating the user specific recommendations. 
+* One of the core functionalities of the work is to generate recommendations for users based on their indicated preferences. The algorithm is available is in the class [Recommendations](../main/recommendations.py).
+* As the algorithm has been originally developed for academic use, not for a production environment, it was modified slightly to improve memory usage and time efficiency and to make it stable in production. Primary efforts focused on limiting the tags used in calculations to the most significant ones, since the original data sets were over 300MB for movies and over 200MB for books, and hence impractical to use when calculating the user specific recommendations. 
 * First, datasets for movies and books were limited to **focus only on common tags**, i.e. tags that are available for both movies and books, because these are the only tags used by the algorithm. Script to generate a list of common tags and their ids, is available in [common_tags.py](common_tags.py). They are also saved in the Postgres database in the table called [common_tags](create_db.sql).
 * Second, as the movie and book tags are represented as text, which is more memory consuming, all the common tags used replaced with numeric common tag ids. Scripts to generate tag datasets that only use numeric data for [movies](movies_tagdl_common.py) and [books](books_tagdl_common.py) were developed. These first two steps reduce the movies tags from 10,551,657 lines to 4,779,395 lines, file size reducing to 112M, and the books tags from 6,814,900 lines to 4,602,635 lines, file size reducing to 129MB. These datasets are available in the Postgres database in tables *movies_tagdl_common* and *books_tagdl_common*. These actions speed up the algorithm, but do not incur any reduction in the accuracy of the recommendations. 
-* These optimizations in the file formats and contents do not, however, yet improve the time and memory efficiency of the algorithm enough, for it to be stable in a production environment. Therefore, a further optimization was done: tags were limited to the ones that have **the largest impact in the calculations** for the recommendations, i.e., only tags whose score is above 0.1, were kep in datasets. This [script](mvs_bks_tagdl_common_limited.py) reduced the number of tags for to 1,184,035 and for books to 810,755, which is still on average ~120 tags per movie and ~80 tags per book, which one could presume does not impact the recommendations significantly. 
-* Analysis of speeding up the algorithm to be added. 
+* These optimizations in the file formats and contents do not, however, yet improve the time and memory efficiency of the algorithm enough, for it to be stable in a production environment. Therefore, a further optimization was done: tags were limited to the ones that have **the largest impact in the calculations** for the recommendations, i.e., only tags whose score is above 0.1, were kep in datasets. This [script](mvs_bks_tagdl_common_limited.py) reduced the number of tags for to 1,184,035 and for books to 810,755, which is still on average ~120 tags per movie and ~80 tags per book, which one could presume does not impact the recommendations significantly. Resulting files and data that are used in production are available here for [movies](../datasets/movies_tagdl_common_limited.csv) and [books](../datasets/books_tagdl_common_limited.csv). 
+* These efforts reduced time to generate user specific recommendations from approximately 40 seconds to 4 seconds, while the recommended movies and books remained largely the same.
 
-## Write backend API to serve data from database
-
-* The **API** was written using python, Flask, and SQLAlchemy. The following commands were used to install the needed packages:
-    ```
-    sudo apt install python3-pip
-    sudo apt-get install libpq-dev
-    sudo apt install python3-flask
-    pip install sqlalchemy
-    pip install psycopg2
-    pip install flask_sqlalchemy
-    ```
-
-* Code for backend the APIs is available for [movies](../main/movies.py) and [books](../main/routes_books.py).
-
-* To establish connection with the database, the following command needs to be run in the command line:
-    ```
-    export DATABASE_URL="postgresql://user:password@localhost:5432/mvbkdb"
-    ```
-
-* Backend API can be run from command line in the virtual machine with the following command:
-    ```
-    flask run --host=0.0.0.0 --port=3000
-    ```
-
-## Examples of API endpoints available
-
-* Output from the backend API is availabe via the address [http://128.214.253.51:3000/](http://128.214.253.51:3000/).
-
-* Data can be accessed by using the routes created. For example the following data is available for use in the front end:
-
-1. All information available for **one movie** 
-    * Data is provided via the route `@app.route('/dbgetonemoviedata', methods = ['GET'])`
-    * You will need to specify the movie based on the movieid in the tmbd_movie_data_full table, for example movie *Heat* has movieid 6.
-    * Results are available in JSON form from address [http://128.214.253.51:3000/dbgetgivenmoviedata?movieid=6](http://128.214.253.51:3000/dbgetgivenmoviedata?movieid=6).
-    * Output looks as follows (note: this page is only done for debugging and illustrative purposes. In reality, front end uses just the routes and addresses stated above)
-    ![Heat](one_movie.jpg)
-
-2. All information available for **top 10 movies by budget for a given year**
-    * Data is provided via the route `@app.route('/dbgettop10moviesbyyear', methods = ['GET']`
-    * You will need to specify the release year of the movie.
-    * Results are available in JSON form from address [http://128.214.253.51:3000/dbgettop10moviesbyyear?year=2022](http://128.214.253.51:3000/dbgettop10moviesbyyear?year=2022).
-
-3. All information available for various sorting methods
-    * **Newest 10 movies**: Data is provided via the route `@app.route('/dbgettop10newestpublishedmovies', methods = ['GET'])`
-    * **Oldest 10 movies**: Data is provided via the route `@app.route('/dbgettop10oldestmovies', methods = ['GET'])`
-    * **Highest rated 10 movies**: Data is provided via the route `@app.route('/dbgettop10highestratedmovies', methods = ['GET'])`
-    * **Search based on name**: Also, movies can be searched based on name via the route `@app.route('/dbsearchmoviesbyname', methods = ['GET'])` Note! Route assumes that the input is checked at the front end.
-
-4. APIs for books follow the same logic. 
-    * **Newest 10 books**: Data is provided via the route `@app.route('/dbgettop10newestbooks', methods = ['GET'])`
-    * **All information for one book**: Data is provided via the route `@app.route('/dbgetgivenbookdata', methods = ['GET'])`, e.g. [http://128.214.253.51:3000/dbgetgivenbookdata?bookid=44752519](http://128.214.253.51:3000/dbgetgivenbookdata?bookid=44752519)
-    * **Search based on name**: Books can be searched based on name via the route `@app.route('/dbsearchbooksbyname', methods = ['GET'])`, e.g. [http://128.214.253.51:3000/dbsearchbooksbyname?input=Sookie%20stackhouse](http://128.214.253.51:3000/dbsearchbooksbyname?input=Sookie%20stackhouse)
-
-* The JSON output for movies provides fields such as *posterpath* and *backdroppaths*. These are actually just the file names, but can be joined together with the string https://image.tmdb.org/t/p/original in order to build the full url. For example, https://image.tmdb.org/t/p/original/obpPQskaVpSiC9RcJRB6iWDTCXS.jpg
-
-## Running the backend
+## Running the backend in the cPouta server
 
 * Application can be set to run on the cPouta server with the following command
     ```
     flask run --host=0.0.0.0 --port=3000 > log.txt 2>&1 &
     ```
-* At the moment, the CI/CD pipeline is automated, and the steps taken to deploy to production are part of GitHub workflows.
-* Please note that this method of running an API is incorrect and is done only for development and testing purposes.
+
+* This is a valid approach for development purposes. However, it should not be used in a production environment. Instead a WSGI (Web Server Gateway Interface) Gunicorn and production level HTTP server nginx need to be installed and configured.
+* First, **Gunicorn** is installed
+    ```
+    sudo apt-get install python3-gunicorn gunicorn3
+    ```
+* To help enable Gunicorn to run a project, a new [wsgi.py](../wsgi.py) file is created. 
+* Now it will be possible whether Gunicorn works by running
+    ```
+    sudo gunicorn --workers 5 wsgi:app
+    ```
+* Also a system service was created so that Gunicorn is run in the background. The [configuration file](../documentation/mvbkbackend.service) is `/etc/systemd/system/mvbkbackend.service`. Configuration refers to [service_start.sh](../documentation/anonymized_service_start.sh), which is anonymized in this documentation. Currently, three workers are started.
+
+* Then, **nginx** is installed and configured
+    ```
+    sudo apt-get install nginx
+    ```
+* The [configuration file](mvbkbackend.conf) is `/etc/nginx/sites-available/mvbkbackend.conf`.
+* A particular site configuration is enable using command 
+    ```
+    sudo ln -s /etc/nginx/sites-available/mvbkbackend.conf /etc/nginx/sites-enabled/
+    ```
+* nginx can be started with the command
+    ```
+    sudo systemctl start nginx
+    ```
+* Useful instruction for installing and configuring can be found from e.g. [here](https://linuxhint.com/use-nginx-with-flask/).
+
+## CI/CD pipeline
+
+* The CI/CD pipeline is automated, and the steps taken to deploy to production are part of GitHub workflows:
+    * [Main workflow](../.github/workflows/main.yml) is run when new code is pushed to GitHub. The script checks quality of the code, but does not deploy it to the virtual machine.
+    * [Deployment workflow](../.github/workflows/deploy.yml) is run when the changes in the code are ready to be deployed to the virtual machine.
 
 ## Rebooting the back and front end
 
-* Note! Before running system updates, it is important to make back-up of key files in the virtual machine, both as ubuntu and mvbkrunner users.
+* Note! Before running system updates, it is important to make back-up of key files in the virtual machine, both as *ubuntu* and *mvbkrunner* users.
 * After updating and upgrading the software, in cases of larger system updates (e.g. Linux kernel is updated), the entire virtual machine needs to be **rebooted**.
 
     ```
@@ -221,8 +248,6 @@ To connect to the virtual machine, instructions from [CSC](https://docs.csc.fi/c
     sudo reboot now
     ```
 
-* After this, the **backend** needs to be restarted. To do this, log into the virtual machine as mvbkrunner. Follow key steps in the [deployment workflow](../.github/workflows/deploy.yml)
+* After this, the **backend** may need to be restarted. To do this, log into the virtual machine as mvbkrunner. Follow key steps in the [deployment workflow](../.github/workflows/deploy.yml). 
 
-(https://github.com/movie-book-recommender/movie-book-backend/blob/main/.github/workflows/deploy.yml); script.sh and killscript.sh are the most critical ones. (links to be added)
-
-* Finally, the **front end** needs to be restarted. To do this, log into the virtual machine as ubuntu. Follow the key steps in the publish.sh script (link to be added).
+* Finally, the **front end** may need to be restarted. To do this, log into the virtual machine as *ubuntu*. Follow the key steps in the publish.sh script (link to be added).

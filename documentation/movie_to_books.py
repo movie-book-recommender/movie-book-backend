@@ -8,8 +8,6 @@ movie_tags = set(tg_movies.tag.unique())
 common_tags = book_tags.intersection(movie_tags)
 book_ids = set(tg_books.item_id.unique())
 movie_ids = set(tg_movies.item_id.unique())
-#print(len(book_ids))
-#print(len(movie_ids))
 
 def get_vector_length(target_item):
     item_tmp = target_item.copy()
@@ -40,8 +38,6 @@ full_dataframe = pd.DataFrame(columns=["i", "item_id", "item_type", "sim"])
 
 for i in movie_ids:
     print(i)
-    #if i == 21856269:
-        #break
     target_movie = tg_movies[tg_movies.item_id == i].copy()
 
     target_movie_limited_len = get_vector_length(target_movie[target_movie.tag.isin(common_tags)])
@@ -54,6 +50,5 @@ for i in movie_ids:
     result = related_books_sim_df.sort_values("sim", ascending=False, ignore_index=True).head(250).drop(columns=["dot_product", "length", "item_id_x"])
     result["i"] = i
     result["item_type"] = "book"
-    #print(result)
     full_dataframe = full_dataframe.append(result)
     full_dataframe.to_csv("mv_to_bks_sim.csv", index=False)

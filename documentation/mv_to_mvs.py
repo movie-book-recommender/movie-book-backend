@@ -39,8 +39,6 @@ full_dataframe.to_csv("mv_to_mvs_updated.csv", index=False)
 
 for i in movie_ids:
     print(i)
-#    if i == 5:
-#        break
     target_movie = tg_movies[tg_movies.item_id == i].copy()
     target_movie_len = get_vector_length(target_movie)
     movie_to_movies_dot_product = get_dot_product(target_movie, tg_movies)

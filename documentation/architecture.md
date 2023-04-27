@@ -6,9 +6,9 @@ Movie Book Recommendation application runs in a virtual machine in cPouta. It co
 
 ## Front End
 
-Front end application is a React application, running on a Docker container under user ubuntu. 
+Front end application is a React application, running on a Docker container under user ubuntu, using this backend's API's to fetch data. 
 
-Further points to be added
+Check the [repository for the frontend](https://github.com/movie-book-recommender/movie-book-recommender-project) for specific details.
 
 ## Backend
 
@@ -71,7 +71,7 @@ Backend of the Movie Book Recommender application can be seen to consist of the 
 
 ### Front End
 
-To be added
+Check the [repository for the frontend](https://github.com/movie-book-recommender/movie-book-recommender-project)
 
 ### Backend
 

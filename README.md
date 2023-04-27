@@ -16,7 +16,7 @@ Backend for the Movie Book Recommender project contains
 * [Technical instructions](documentation/backend.md) that show how the project's virtual machine was set up, and how the Postgres database was established in the production server in cPouta.
 * [Documentation of the architecture](documentation/architecture.md)
 * Instructions contain links to tools and scripts showing how, e.g., the database tables have been [created](documentation/create_db.sql) and [populated](documentation/csc_json_to_csv_to_psql.sh).
-* Documentation of back-end tests (to be added)
+* [Documentation of back-end tests](documentation/testing_document.md)
 
 ## Licensing
 

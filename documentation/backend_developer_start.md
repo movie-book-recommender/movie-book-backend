@@ -49,7 +49,7 @@ coverage report -m
 coverage html
 ```
 
-The test files can be seen in folder [main/tests](main/tests/).
+The test files can be seen in folder [main/tests](https://github.com/movie-book-recommender/movie-book-backend/tree/main/main/tests).
 
 ## Local Quality Checks
 
